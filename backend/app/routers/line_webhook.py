@@ -20,6 +20,7 @@ from app.core.db import SessionLocal
 from app.core.settings import settings
 from app.line_messages.summary import build_summary_flex
 from app.line_messages.transaction_confirm import build_transaction_confirmation_message
+from app.line_messages.welcome import build_howto_flex, build_welcome_flex
 from app.locales import th
 from app.models import Attachment, Business, Transaction
 from app.models.enums import TransactionSource, TransactionStatus
@@ -139,13 +140,16 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
 
     # Rich menu buttons that don't reference a transaction id.
     if action == "menu_greeting":
-        line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+        line_service.reply_messages(event.reply_token, [build_welcome_flex()])
         return
     if action == "menu_howto":
-        line_service.reply_text(event.reply_token, th.RICH_MENU_HOWTO_REPLY)
+        line_service.reply_messages(event.reply_token, [build_howto_flex()])
         return
     if action == "menu_help":
-        line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+        line_service.reply_messages(event.reply_token, [build_welcome_flex()])
+        return
+    if action == "menu_settings":
+        line_service.reply_text(event.reply_token, "⚙️ ฟีเจอร์ตั้งค่าร้านกำลังพัฒนาอยู่ครับ รอติดตามเร็วๆ นี้!")
         return
     if action == "menu_summary":
         business = _resolve_business(db, line_user_id)
@@ -157,7 +161,7 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
     txn_id_raw = params.get("id")
     if action not in {"confirm", "cancel", "edit"} or txn_id_raw is None or not txn_id_raw.isdigit():
         if action and action.startswith("menu_"):
-            line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+            line_service.reply_messages(event.reply_token, [build_welcome_flex()])
         return
     txn_id = int(txn_id_raw)
 
