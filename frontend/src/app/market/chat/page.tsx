@@ -11,9 +11,9 @@ type Message = { role: "user" | "bot" | "error"; text: string };
 
 /** U-Bot answers use Markdown **bold** for the key recommendation; render just that. */
 function BotText({ text }: { text: string }) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part,
-  );
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, i) => (part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part));
 }
 
 export default function UBotChatPage() {

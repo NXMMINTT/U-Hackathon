@@ -84,6 +84,39 @@ export type Subscription = {
   };
 };
 
+export type CatalogPlatform = { id: string; name: string; intl: boolean; description: string };
+
+export type CatalogProduct = {
+  product_id: string;
+  category_id: string;
+  name: string;
+  base_price: number;
+  search_growth_pct: number;
+  sold_per_month: number;
+  peak_in_days: number;
+  /** 8 weeks of search interest + 2 forecast weeks */
+  search_index: number[];
+  prices: { platform_id: string; available: boolean; price: number | null; shops: number }[];
+  offers: {
+    platform_id: string;
+    seller: string;
+    price: number;
+    shipping: number;
+    discount: number;
+    rating: number;
+    sold: number;
+    delivery: string;
+    match_pct: number;
+  }[];
+  price_history: { weeks: string[]; series: Record<string, number[]> };
+};
+
+export type TrendCatalog = {
+  platforms: CatalogPlatform[];
+  categories: { category_id: string; name: string; icon_path: string }[];
+  products: CatalogProduct[];
+};
+
 function useMockQuery<T>(key: string, path: string) {
   return useQuery({ queryKey: ["market", key], queryFn: () => apiFetch<T>(path) });
 }
@@ -95,6 +128,7 @@ export const useEuArbitrage = () => useMockQuery<EuArbitrage[]>("eu-arbitrage", 
 export const useMarketInsights = () => useMockQuery<Insight[]>("insights", "/api/insights?tab=market_radar");
 export const usePlatforms = () => useMockQuery<Platform[]>("platforms", "/api/market/platforms");
 export const useSubscription = () => useMockQuery<Subscription>("subscription", "/api/market/subscription");
+export const useTrendCatalog = () => useMockQuery<TrendCatalog>("trend-catalog", "/api/market/trend-catalog");
 
 export function useSponsors(productId: string | undefined) {
   return useQuery({

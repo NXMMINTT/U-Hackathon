@@ -36,11 +36,49 @@ export function platformLogo(platformIdOrName: string): string | null {
 }
 
 /** Fixed colors per platform so the same platform reads the same in every chart.
- * Validated with the dataviz skill's validate_palette.js (light mode): all checks pass;
+ * Validated with the dataviz skill's validate_palette.js (light mode, all pairs): all checks pass;
  * the orange is < 3:1 on white, so lines also carry direct labels. */
 export const PLATFORM_COLORS: Record<string, string> = {
   Shopee: "#1F5FBF",
   Lazada: "#14A0B8",
   "TikTok Shop": "#D9891A",
+  Thaimart: "#C2416B",
 };
 export const FALLBACK_COLOR = "#5A667A";
+
+export function platformColor(name: string): string {
+  return PLATFORM_COLORS[name] ?? FALLBACK_COLOR;
+}
+
+export type TrendStatus = "hot" | "rising" | "stable" | "slowing";
+
+/** Search-growth bands from NIGHT's trend page: >=80% hot, 30-79% rising, 0-29% stable, < 0 slowing. */
+export function trendStatus(growthPct: number): TrendStatus {
+  return growthPct >= 80 ? "hot" : growthPct >= 30 ? "rising" : growthPct >= 0 ? "stable" : "slowing";
+}
+
+export const TREND_STATUS_TONE = { hot: "warning", rising: "info", stable: "neutral", slowing: "neutral" } as const;
+
+export function formatGrowth(pct: number): string {
+  return `${pct >= 0 ? "+" : ""}${pct}%`;
+}
+
+const PICKED_KEY = "mr-platforms";
+
+/** Platforms chosen on /market/platforms (per-viewer convenience, so localStorage). */
+export function loadPickedPlatforms(): string[] | null {
+  try {
+    const raw = window.localStorage.getItem(PICKED_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function savePickedPlatforms(ids: string[]): void {
+  try {
+    window.localStorage.setItem(PICKED_KEY, JSON.stringify(ids));
+  } catch {
+    // storage blocked (private mode) — the choice just isn't remembered
+  }
+}

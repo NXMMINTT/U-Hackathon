@@ -10,8 +10,10 @@ const t = th.marketRadar;
 
 const SUB_NAV = [
   { href: "/market", label: t.nav.overview },
+  { href: "/market/trends", label: t.nav.trends, also: "/market/products/" },
   { href: "/market/compare", label: t.nav.compare },
   { href: "/market/chat", label: t.nav.chat },
+  { href: "/market/platforms", label: t.nav.platforms },
   { href: "/market/plans", label: t.nav.plans },
 ];
 
@@ -32,14 +34,16 @@ export default function MarketLayout({ children }: { children: React.ReactNode }
 
       <nav aria-label={t.title} className="-mx-4 flex gap-1 overflow-x-auto px-4 md:mx-0 md:px-0">
         {SUB_NAV.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname === item.href || (item.also !== undefined && pathname.startsWith(item.also));
           return (
             <Link
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={`inline-flex min-h-[40px] flex-none items-center whitespace-nowrap rounded-[10px] px-3.5 text-sm ${
-                active ? "bg-brand-soft font-semibold text-brand" : "font-medium text-ink-body hover:bg-[#EEF4FC] hover:text-brand"
+                active
+                  ? "bg-brand-soft font-semibold text-brand"
+                  : "font-medium text-ink-body hover:bg-[#EEF4FC] hover:text-brand"
               }`}
             >
               {item.label}

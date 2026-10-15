@@ -47,13 +47,13 @@ function TabIcon({ children }: { children: React.ReactNode }) {
 
 function useActiveTab() {
   const pathname = usePathname();
-  return (tab: (typeof TABS)[number]) =>
-    tab.matches.some((m) => pathname === m || (m !== "/" && pathname.startsWith(`${m}/`)));
+  return (tab: (typeof TABS)[number]) => tab.matches.some((m) => pathname === m || (m !== "/" && pathname.startsWith(`${m}/`)));
 }
 
 /** Top bar: logo everywhere, nav links on desktop (mobile uses the bottom NavTabs). */
 export function SiteHeader() {
   const isActive = useActiveTab();
+  const pathname = usePathname();
 
   return (
     <div className="border-b border-[#E6EBF2] bg-white">
@@ -68,6 +68,17 @@ export function SiteHeader() {
           U-Ledger AI
         </Link>
         <nav aria-label="เมนูหลัก" className="hidden items-center gap-1 md:flex">
+          <Link
+            href="/welcome"
+            aria-current={pathname === "/welcome" ? "page" : undefined}
+            className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-[10px] px-3.5 ${
+              pathname === "/welcome"
+                ? "bg-brand-soft font-semibold text-brand"
+                : "font-medium text-ink-body hover:bg-[#EEF4FC] hover:text-brand"
+            }`}
+          >
+            {th.tabs.home}
+          </Link>
           {TABS.map((tab) => {
             const active = isActive(tab);
             return (
@@ -88,10 +99,7 @@ export function SiteHeader() {
           })}
         </nav>
       </header>
-      <div
-        aria-hidden="true"
-        className="h-2 bg-[repeating-linear-gradient(90deg,#1F5FBF_0_40px,#DCE8F7_40px_80px)]"
-      />
+      <div aria-hidden="true" className="h-2 bg-[repeating-linear-gradient(90deg,#1F5FBF_0_40px,#DCE8F7_40px_80px)]" />
     </div>
   );
 }

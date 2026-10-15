@@ -33,3 +33,8 @@ def get_eu_arbitrage():
 @router.get("/subscription")
 def get_subscription():
     return load_json("subscription.json")
+
+
+@router.get("/trend-catalog")
+def get_trend_catalog():
+    return load_json("trend-catalog.json")

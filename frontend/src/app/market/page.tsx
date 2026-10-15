@@ -46,7 +46,9 @@ export default function MarketOverviewPage() {
 
   const p = prices.data;
   const thai = p.competitors.filter((c) => c.currency === "THB" && c.price !== null);
-  const positionPct = Math.round(((p.my_selling_price - p.price_distribution_thb.median) / p.price_distribution_thb.median) * 100);
+  const positionPct = Math.round(
+    ((p.my_selling_price - p.price_distribution_thb.median) / p.price_distribution_thb.median) * 100,
+  );
   const maxVolume = Math.max(...(keywords.data ?? []).map((k) => k.search_volume), 1);
   const regions = Object.entries(
     (platforms.data ?? []).reduce<Record<string, number>>((acc, pl) => ({ ...acc, [pl.region]: (acc[pl.region] ?? 0) + 1 }), {}),
@@ -109,7 +111,10 @@ export default function MarketOverviewPage() {
                 {eu.data.map((item) => {
                   const retailTHB = Math.round(item.eu_market.avg_retail_price_eur * EUR_TO_THB);
                   return (
-                    <div key={item.product_id} className="flex flex-col gap-2 rounded-xl border border-line-subtle bg-[#F5F7FA] p-4">
+                    <div
+                      key={item.product_id}
+                      className="flex flex-col gap-2 rounded-xl border border-line-subtle bg-[#F5F7FA] p-4"
+                    >
                       <div>
                         <div className="font-semibold">{item.product_name}</div>
                         <div className="text-xs text-ink-muted">{item.eu_market.region}</div>
@@ -178,7 +183,10 @@ export default function MarketOverviewPage() {
                         <Badge tone={TREND_TONE[k.trend]}>{t.trend[k.trend]}</Badge>
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-line-subtle">
-                        <div className="h-full rounded-full bg-brand" style={{ width: `${(k.search_volume / maxVolume) * 100}%` }} />
+                        <div
+                          className="h-full rounded-full bg-brand"
+                          style={{ width: `${(k.search_volume / maxVolume) * 100}%` }}
+                        />
                       </div>
                       <span className="text-xs text-ink-muted">
                         {k.platform} · {k.search_volume.toLocaleString("en-US")} {t.searches}
@@ -193,7 +201,10 @@ export default function MarketOverviewPage() {
             <Card className="flex flex-col gap-3">
               <h2 className="text-lg font-semibold">{t.sponsoredTitle}</h2>
               {sponsors.data.map((s) => (
-                <div key={s.listing_id} className="flex flex-col gap-1.5 border-t border-line-subtle pt-3 first:border-t-0 first:pt-0">
+                <div
+                  key={s.listing_id}
+                  className="flex flex-col gap-1.5 border-t border-line-subtle pt-3 first:border-t-0 first:pt-0"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs text-ink-muted">
                       {s.sponsor_name} · {s.sponsor_type}

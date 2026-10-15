@@ -18,6 +18,7 @@ Mock data สำหรับ demo U-Ledger AI แบ่งตาม 2 Tab หล
 - `market-trend.json` — ยอดขายรายสัปดาห์แยกตามแพลตฟอร์ม (Omni-Channel trend)
 - `keyword-volume.json` — ปริมาณการค้นหาคำยอดฮิตต่อแพลตฟอร์ม
 - `eu-arbitrage.json` — โอกาสตลาดยุโรป (ราคาขายแนะนำ + demand score)
+- `trend-catalog.json` — หน้าเทรนด์ตลาด/หน้าสินค้า (`GET /api/market/trend-catalog`): 20 หมวด × 4 สินค้า × 5 แพลตฟอร์ม พร้อม `search_growth_pct`, `search_index` (8 สัปดาห์ + คาดการณ์ 2), ราคา/จำนวนร้านต่อแพลตฟอร์ม, `offers` (ค่าส่ง โค้ดส่วนลด เรตติ้ง ยอดขาย ระยะส่ง) และ `price_history` 8 สัปดาห์ — **ไฟล์สร้างจากสคริปต์** `scripts/generate_trend_catalog.js` (ย้าย sample generator จาก branch NIGHT มา) อย่าแก้มือ ให้แก้สคริปต์แล้วรันใหม่
 
 ## ทุก Tab
 

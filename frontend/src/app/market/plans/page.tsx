@@ -84,7 +84,11 @@ export default function PlansPage() {
                 type="button"
                 disabled={isCurrent}
                 className={`min-h-[44px] rounded-full px-5 text-sm font-semibold ${
-                  isCurrent ? "bg-line-subtle text-ink-muted" : isPremium ? "bg-brand text-white" : "border-[1.5px] border-brand text-brand"
+                  isCurrent
+                    ? "bg-line-subtle text-ink-muted"
+                    : isPremium
+                      ? "bg-brand text-white"
+                      : "border-[1.5px] border-brand text-brand"
                 }`}
               >
                 {isCurrent ? t.using : t.choose}

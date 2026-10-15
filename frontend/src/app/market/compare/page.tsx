@@ -141,7 +141,10 @@ export default function ComparePage() {
                 const diff = r.thb === null ? null : r.thb - data.my_selling_price;
                 const isCheapest = cheapest?.seller === r.seller && cheapest.platform_id === r.platform_id;
                 return (
-                  <tr key={`${r.platform_id}-${r.seller}`} className={`border-t border-line-subtle ${isCheapest ? "bg-[#F0FDF4]" : ""}`}>
+                  <tr
+                    key={`${r.platform_id}-${r.seller}`}
+                    className={`border-t border-line-subtle ${isCheapest ? "bg-[#F0FDF4]" : ""}`}
+                  >
                     <td className="px-3.5 py-3">
                       <div className="flex items-center gap-2.5">
                         <PlatformBadge id={r.platform_id} name={r.platform} />
@@ -152,7 +155,11 @@ export default function ComparePage() {
                       </div>
                     </td>
                     <td className="px-3.5 py-3 text-right text-ink-muted">
-                      {r.price === null ? "-" : r.currency === "THB" ? `฿${r.price}` : `${r.price.toLocaleString("en-US")} ${r.currency}`}
+                      {r.price === null
+                        ? "-"
+                        : r.currency === "THB"
+                          ? `฿${r.price}`
+                          : `${r.price.toLocaleString("en-US")} ${r.currency}`}
                     </td>
                     <td className="px-3.5 py-3 text-right font-semibold">
                       {r.thb === null ? "-" : `${r.currency === "THB" ? "" : "≈"}฿${r.thb.toLocaleString("en-US")}`}
@@ -161,7 +168,9 @@ export default function ComparePage() {
                       {diff === null ? "-" : `${diff > 0 ? "+" : diff < 0 ? "−" : ""}฿${Math.abs(diff).toLocaleString("en-US")}`}
                     </td>
                     <td className="px-3.5 py-3">
-                      <Badge tone={r.stock === "มีสินค้า" ? "success" : r.stock === "สินค้าหมด" ? "warning" : "neutral"}>{r.stock}</Badge>
+                      <Badge tone={r.stock === "มีสินค้า" ? "success" : r.stock === "สินค้าหมด" ? "warning" : "neutral"}>
+                        {r.stock}
+                      </Badge>
                     </td>
                   </tr>
                 );
