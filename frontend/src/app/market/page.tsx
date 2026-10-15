@@ -157,11 +157,6 @@ export default function MarketOverviewPage() {
           >
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">{t.insightsTitle}</h2>
-              {ubot.data && (
-                <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px]">
-                  {ubot.data.generated_by === "gemini" ? t.byGemini : t.byRules}
-                </span>
-              )}
             </div>
             {!ubot.data ? (
               <p className="text-sm text-[#CBD5E1]">{ubot.error ? ubot.error.message : t.thinking}</p>
