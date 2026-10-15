@@ -54,12 +54,29 @@ u-ledger-ai/
    ```bash
    docker compose up -d
    ```
+   **ไม่มี Docker?** ลง PostgreSQL ผ่าน Homebrew แทนได้:
+   ```bash
+   brew install postgresql@16
+   brew services start postgresql@16
+   ```
+   ถ้าเครื่องมี PostgreSQL ตัวอื่นครองพอร์ต 5432 อยู่แล้ว (เช่น EDB installer / Postgres.app) — เช็คด้วย
+   `lsof -nP -iTCP:5432 -sTCP:LISTEN` — ให้เปลี่ยน Homebrew instance ไปพอร์ตอื่นแทนที่จะไปยุ่งกับตัวเดิม:
+   ```bash
+   echo "port = 5433" >> /opt/homebrew/var/postgresql@16/postgresql.conf
+   brew services restart postgresql@16
+   ```
+   แล้วสร้าง role/database (ปรับพอร์ตในคำสั่งถ้าใช้ 5433):
+   ```bash
+   psql -d postgres -c "CREATE ROLE uledger WITH LOGIN PASSWORD 'uledger' SUPERUSER;"
+   psql -d postgres -c "CREATE DATABASE uledger OWNER uledger;"
+   ```
+   อย่าลืมแก้ `DATABASE_URL` ใน `backend/.env` ให้ตรงพอร์ตที่ใช้จริง
 2. เข้าโฟลเดอร์ backend แล้วคัดลอกไฟล์ environment:
    ```bash
    cd backend
    cp .env.example .env
    ```
-   ใส่ `GEMINI_API_KEY` (parse สลิป), `UBOT_GEMINI_API_KEY` (KKU IntelSphere, ใช้โดย U-Bot/Market Radar), และ `ELEVENLABS_API_KEY` ตามที่ต้องการใช้งาน — รายละเอียด endpoint ของฝั่ง Market Radar/U-Bot/B2B ดูที่ [backend/README.md](backend/README.md)
+   ใส่ `GEMINI_API_KEY` (parse สลิป), `KKU_API_KEY` (KKU IntelSphere, ใช้โดย U-Bot/Market Radar), และ `ELEVENLABS_API_KEY` ตามที่ต้องการใช้งาน — รายละเอียด endpoint ของฝั่ง Market Radar/U-Bot/B2B ดูที่ [backend/README.md](backend/README.md)
 3. ติดตั้ง dependencies (ใช้ Python 3.12):
    ```bash
    python -m venv .venv
@@ -85,7 +102,7 @@ u-ledger-ai/
    ถ้าไม่ได้ตั้ง `LIFF_ID` endpoint ของ dashboard จะคืนข้อมูลร้านสาธิตโดยไม่ต้อง login (สำหรับ dev/เดโม)
    — **ก่อนใช้งานจริงต้องตั้ง `LIFF_ID` และ `JWT_SECRET` ที่ยาวอย่างน้อย 32 ตัวอักษร**
 
-   Market Radar/U-Bot/B2B/เสียง/ความรู้ธุรกิจประจำวัน **ไม่ต้องมี PostgreSQL/migration** — อ่านจาก `mock-data/*.json` ตรงๆ ใช้ได้ทันทีแค่ตั้ง `UBOT_GEMINI_API_KEY`/`ELEVENLABS_API_KEY`
+   Market Radar/U-Bot/B2B/เสียง/ความรู้ธุรกิจประจำวัน **ไม่ต้องมี PostgreSQL/migration** — อ่านจาก `mock-data/*.json` ตรงๆ ใช้ได้ทันทีแค่ตั้ง `KKU_API_KEY`/`ELEVENLABS_API_KEY`
 
 ## Frontend
 
