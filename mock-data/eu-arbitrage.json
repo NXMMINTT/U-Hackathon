@@ -1,0 +1,26 @@
+[
+  {
+    "product_id": "P001",
+    "product_name": "น้ำพริกตาแดงโบราณ 200g",
+    "thailand_avg_price_thb": 85,
+    "eu_market": {
+      "region": "Germany / Netherlands",
+      "avg_retail_price_eur": 6.5,
+      "suggested_wholesale_price_eur": 3.8,
+      "demand_score": 82,
+      "demand_note": "ความต้องการสินค้ากลุ่ม Asian pantry เติบโตต่อเนื่อง"
+    }
+  },
+  {
+    "product_id": "P002",
+    "product_name": "กระเป๋าผ้าทอมือเชียงใหม่",
+    "thailand_avg_price_thb": 350,
+    "eu_market": {
+      "region": "France / Belgium",
+      "avg_retail_price_eur": 28,
+      "suggested_wholesale_price_eur": 14,
+      "demand_score": 67,
+      "demand_note": "กลุ่ม handmade/eco-friendly fashion ได้รับความนิยมในตลาดยุโรปตะวันตก"
+    }
+  }
+]

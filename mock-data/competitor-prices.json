@@ -1,0 +1,36 @@
+{
+  "product_id": "P001",
+  "product_name": "น้ำพริกตาแดงโบราณ 200g",
+  "my_cost_price": 45,
+  "my_selling_price": 89,
+  "competitors": [
+    { "platform_id": "shopee_th", "platform": "Shopee", "seller": "ร้านแม่สมศรี", "price": 75, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "shopee_th", "platform": "Shopee", "seller": "ครัวคุณยาย", "price": 95, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "lazada_th", "platform": "Lazada", "seller": "Thai Food Market", "price": 82, "currency": "THB", "stock": "สินค้าหมด" },
+    { "platform_id": "tiktok_shop_th", "platform": "TikTok Shop", "seller": "น้ำพริกไทยแท้", "price": 69, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "tiktok_shop_th", "platform": "TikTok Shop", "seller": "พริกแซ่บช็อป", "price": 99, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "line_shopping", "platform": "LINE SHOPPING", "seller": "ร้านป้าแดง", "price": 85, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "central_online", "platform": "Central Online (JD Central)", "seller": "Central Grocery", "price": 98, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "weloveshopping", "platform": "WeLoveShopping", "seller": "ครัวไทยออนไลน์", "price": 79, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "facebook_marketplace_th", "platform": "Facebook Marketplace", "seller": "ตลาดนัดออนไลน์", "price": 70, "currency": "THB", "stock": "มีสินค้า" },
+    { "platform_id": "shopee_vn", "platform": "Shopee Vietnam", "seller": "Gia Vi Thai", "price": 2.3, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "tiki", "platform": "Tiki", "seller": "Thai Import Store", "price": 2.6, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "tokopedia", "platform": "Tokopedia", "seller": "Toko Bumbu Thailand", "price": 35000, "currency": "IDR", "stock": "มีสินค้า" },
+    { "platform_id": "amazon_us", "platform": "Amazon", "seller": "Thai Spice Co.", "price": 6.99, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "ebay", "platform": "eBay", "seller": "AsianPantryUS", "price": 7.5, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "etsy", "platform": "Etsy", "seller": "ThaiKitchenGoods", "price": 8.2, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "aliexpress", "platform": "AliExpress", "seller": "Thailand Food Export", "price": 1.9, "currency": "USD", "stock": "มีสินค้า" },
+    { "platform_id": "zalando", "platform": "Zalando", "seller": "ไม่มีจำหน่าย", "price": null, "currency": "EUR", "stock": "ไม่มีสินค้าหมวดนี้" },
+    { "platform_id": "bol_com", "platform": "Bol.com", "seller": "Thai Food Import NL", "price": 5.95, "currency": "EUR", "stock": "มีสินค้า" },
+    { "platform_id": "rakuten", "platform": "Rakuten", "seller": "タイ食品ストア", "price": 980, "currency": "JPY", "stock": "มีสินค้า" },
+    { "platform_id": "coupang", "platform": "Coupang", "seller": "태국식품마켓", "price": 9900, "currency": "KRW", "stock": "มีสินค้า" },
+    { "platform_id": "noon", "platform": "Noon", "seller": "Thai Spice House", "price": 28, "currency": "AED", "stock": "มีสินค้า" }
+  ],
+  "price_distribution_thb": {
+    "min": 69,
+    "p25": 75,
+    "median": 83.5,
+    "p75": 92,
+    "max": 99
+  }
+}

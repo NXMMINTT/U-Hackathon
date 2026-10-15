@@ -1,0 +1,29 @@
+[
+  {
+    "product_id": "P001",
+    "name": "น้ำพริกตาแดงโบราณ 200g",
+    "category": "อาหาร/เครื่องปรุง",
+    "cost_price": 45,
+    "my_selling_price": 89,
+    "stock_qty": 120,
+    "unit": "กระปุก"
+  },
+  {
+    "product_id": "P002",
+    "name": "กระเป๋าผ้าทอมือเชียงใหม่",
+    "category": "แฟชั่น/งานฝีมือ",
+    "cost_price": 180,
+    "my_selling_price": 350,
+    "stock_qty": 40,
+    "unit": "ใบ"
+  },
+  {
+    "product_id": "P003",
+    "name": "สบู่สมุนไพรกลิ่นมะกรูด 100g",
+    "category": "ความงาม/สุขภาพ",
+    "cost_price": 25,
+    "my_selling_price": 59,
+    "stock_qty": 300,
+    "unit": "ก้อน"
+  }
+]

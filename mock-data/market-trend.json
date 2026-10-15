@@ -1,0 +1,34 @@
+{
+  "product_id": "P001",
+  "product_name": "น้ำพริกตาแดงโบราณ 200g",
+  "granularity": "weekly",
+  "series": [
+    {
+      "platform": "Shopee",
+      "points": [
+        { "week": "2026-W37", "units_sold": 320 },
+        { "week": "2026-W38", "units_sold": 350 },
+        { "week": "2026-W39", "units_sold": 410 },
+        { "week": "2026-W40", "units_sold": 390 }
+      ]
+    },
+    {
+      "platform": "Lazada",
+      "points": [
+        { "week": "2026-W37", "units_sold": 180 },
+        { "week": "2026-W38", "units_sold": 170 },
+        { "week": "2026-W39", "units_sold": 200 },
+        { "week": "2026-W40", "units_sold": 210 }
+      ]
+    },
+    {
+      "platform": "TikTok Shop",
+      "points": [
+        { "week": "2026-W37", "units_sold": 500 },
+        { "week": "2026-W38", "units_sold": 620 },
+        { "week": "2026-W39", "units_sold": 700 },
+        { "week": "2026-W40", "units_sold": 810 }
+      ]
+    }
+  ]
+}
