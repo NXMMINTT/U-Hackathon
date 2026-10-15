@@ -6,15 +6,15 @@ export function Badge({
   tone?: "success" | "warning" | "danger" | "info" | "neutral";
 }) {
   const toneClasses = {
-    success: "bg-[#ECFDF5] text-[#047857]",
-    warning: "bg-[#FFEBC8] text-[#6B4E16]",
-    danger: "bg-[#FEE2E2] text-[#991B1B]",
-    info: "bg-[#DCEAF8] text-[#1E40AF]",
+    success: "bg-[#E6F7EE] text-[#0F6B42]",
+    warning: "bg-sun-soft text-sun-ink",
+    danger: "bg-[#FDECEC] text-expense",
+    info: "bg-brand-soft text-brand",
     neutral: "bg-line-subtle text-ink-body",
   }[tone];
 
   return (
-    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ${toneClasses}`}>
+    <span className={`inline-block whitespace-nowrap rounded-full px-3 py-0.5 text-[13px] font-bold ${toneClasses}`}>
       {children}
     </span>
   );

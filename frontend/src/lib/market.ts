@@ -21,6 +21,85 @@ export function isAvailable(c: Competitor): boolean {
   return c.price !== null && c.stock === "มีสินค้า";
 }
 
+/** Keyword → emoji, checked in order (first match wins) so a quick visual
+ * stands in for a product photo in lists — no licensed product photography
+ * to source for a hackathon demo, but a plain numbered row is hard to scan. */
+const PRODUCT_EMOJI: [string, string][] = [
+  ["น้ำพริก", "🌶️"],
+  ["พริก", "🌶️"],
+  ["กล้วย", "🍌"],
+  ["ชา", "🍵"],
+  ["กาแฟ", "☕"],
+  ["ข้าว", "🍚"],
+  ["สบู่", "🧼"],
+  ["เซรั่ม", "🧴"],
+  ["กันแดด", "🧴"],
+  ["ลิป", "💄"],
+  ["คุชชั่น", "💄"],
+  ["กระเป๋า", "👜"],
+  ["เป้", "🎒"],
+  ["ผ้าขาวม้า", "🧵"],
+  ["ผ้า", "🧵"],
+  ["เสื้อ", "👕"],
+  ["เดรส", "👗"],
+  ["ชุด", "👗"],
+  ["กางเกง", "👖"],
+  ["รองเท้า", "👟"],
+  ["นาฬิกา", "⌚"],
+  ["แว่น", "🕶️"],
+  ["หูฟัง", "🎧"],
+  ["ลำโพง", "🔊"],
+  ["พาวเวอร์แบงก์", "🔋"],
+  ["สายชาร์จ", "🔌"],
+  ["หม้อทอด", "🍳"],
+  ["พัดลม", "🌀"],
+  ["ดูดฝุ่น", "🧹"],
+  ["กาต้มน้ำ", "☕"],
+  ["กล้อง", "📷"],
+  ["ไฟริงไลท์", "💡"],
+  ["เมมโมรี่การ์ด", "💾"],
+  ["ตัวต่อ", "🧩"],
+  ["ขวดนม", "🍼"],
+  ["ผ้าอ้อม", "👶"],
+  ["รถเข็นเด็ก", "🚼"],
+  ["แมว", "🐱"],
+  ["สัตว์เลี้ยง", "🐾"],
+  ["หน้ากากอนามัย", "😷"],
+  ["แอลกอฮอล์", "🧴"],
+  ["ความดัน", "🩺"],
+  ["วิตามิน", "💊"],
+  ["สร้อย", "📿"],
+  ["ต่างหู", "💎"],
+  ["แหวน", "💍"],
+  ["กำไล", "📿"],
+  ["ผ้าปูที่นอน", "🛏️"],
+  ["หมอน", "🛏️"],
+  ["กล่องเก็บของ", "📦"],
+  ["ม่าน", "🪟"],
+  ["เคสมือถือ", "📱"],
+  ["ฟิล์มกระจก", "📱"],
+  ["แท็บเล็ต", "📱"],
+  ["มือถือ", "📱"],
+  ["เมาส์", "🖱️"],
+  ["คีย์บอร์ด", "⌨️"],
+  ["โน้ตบุ๊ก", "💻"],
+  ["ฮับ", "🔌"],
+  ["ดัมเบล", "🏋️"],
+  ["โยคะ", "🧘"],
+  ["ขวดน้ำ", "🧴"],
+  ["จักรยาน", "🚲"],
+  ["จอย", "🎮"],
+  ["เก้าอี้เกมมิ่ง", "🎮"],
+  ["แผ่นรองเมาส์", "🖱️"],
+];
+
+/** Best-effort product emoji from a Thai product name, for list rows that
+ * have no category context. Falls back to a generic package box. */
+export function productEmoji(name: string): string {
+  const hit = PRODUCT_EMOJI.find(([kw]) => name.includes(kw));
+  return hit ? hit[1] : "📦";
+}
+
 const LOGOS: Record<string, string> = {
   shopee: "/logos/shopee.webp",
   lazada: "/logos/lazada.jpg",
@@ -104,4 +183,33 @@ export function savePickedPlatforms(ids: string[]): void {
   } catch {
     // storage blocked (private mode) — the choice just isn't remembered
   }
+}
+
+/** Keyword → real product photo, for the handful of products that have one.
+ * See public/products/CREDITS.md for sourcing/license per file (Wikimedia
+ * Commons, CC-licensed). Everything else uses productEmoji() instead. */
+const PRODUCT_PHOTO: [string, string][] = [
+  ["น้ำพริก", "/products/namprik.jpg"],
+  ["พริก", "/products/namprik.jpg"],
+  ["กล้วย", "/products/banana.jpg"],
+  ["ชา", "/products/tea.jpg"],
+  ["สบู่", "/products/soap.jpg"],
+  ["กระเป๋า", "/products/bag.jpg"],
+];
+
+/** Real photo for a product name, or null to fall back to productEmoji(). */
+export function productPhoto(name: string): string | null {
+  const hit = PRODUCT_PHOTO.find(([kw]) => name.includes(kw));
+  return hit ? hit[1] : null;
+}
+
+/** Market Radar categories (C01–C20) that have a real product photo instead
+ * of just the category SVG glyph — see public/products/CREDITS.md. */
+const CATEGORY_PHOTO = new Set([
+  "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08", "C09", "C10",
+  "C11", "C13", "C14", "C16", "C18", "C20",
+]);
+
+export function categoryPhoto(categoryId: string): string | null {
+  return CATEGORY_PHOTO.has(categoryId) ? `/products/${categoryId}.jpg` : null;
 }

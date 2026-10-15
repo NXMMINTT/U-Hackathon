@@ -11,6 +11,17 @@ export function formatTHB(amount: string | number): string {
   return `฿${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+/** Whole-baht display for headline numbers, e.g. "฿45,450". */
+export function formatBaht(amount: string | number): string {
+  const value = Math.round(typeof amount === "string" ? Number(amount) : amount);
+  return `${value < 0 ? "−" : ""}฿${Math.abs(value).toLocaleString("en-US")}`;
+}
+
+/** Thai month + พ.ศ. year, e.g. "ก.พ. 2570". */
+export function formatThaiMonthYear(date: Date): string {
+  return `${THAI_MONTHS[date.getMonth()]} ${date.getFullYear() + 543}`;
+}
+
 /** Thai (พ.ศ.) date display, e.g. "15 ต.ค. 2569". API requests/responses stay ISO 8601 (ค.ศ.). */
 export function formatThaiDate(isoDate: string): string {
   const d = new Date(isoDate);
