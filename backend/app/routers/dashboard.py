@@ -1,4 +1,4 @@
-"""Read-only endpoints for the web dashboard's My Business tab."""
+"""Endpoints for the web dashboard's My Business tab (pending transactions can be edited, confirmed or cancelled here too)."""
 
 from datetime import date, timedelta
 
@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.analytics import business_overview
 from app.core.db import get_db
+from app.core.errors import ApiError
 from app.models import Business, Product, Transaction
+from app.models.enums import TransactionStatus
 from app.routers.deps import get_current_business
 from app.schemas.dashboard import (
     DailyPointOut,
@@ -17,6 +19,7 @@ from app.schemas.dashboard import (
     TaxMeterOut,
     TopProductOut,
     TransactionOut,
+    TransactionUpdateIn,
 )
 from app.services import transaction_service
 
@@ -87,21 +90,77 @@ def list_transactions(
         .order_by(Transaction.txn_date.desc(), Transaction.id.desc())
         .limit(limit)
     ).scalars().all()
-    return [
-        TransactionOut(
-            id=t.id,
-            type=t.type,
-            amount=t.amount,
-            description=t.description,
-            category=t.category.name_th if t.category else None,
-            txn_date=t.txn_date,
-            status=t.status,
-            source=t.source,
-            product_name=t.product.name if t.product else None,
-            quantity=t.quantity,
-        )
-        for t in txns
-    ]
+    return [_transaction_out(t) for t in txns]
+
+
+def _transaction_out(t: Transaction) -> TransactionOut:
+    return TransactionOut(
+        id=t.id,
+        type=t.type,
+        amount=t.amount,
+        description=t.description,
+        category=t.category.name_th if t.category else None,
+        txn_date=t.txn_date,
+        status=t.status,
+        source=t.source,
+        product_name=t.product.name if t.product else None,
+        quantity=t.quantity,
+    )
+
+
+def _owned(db: Session, transaction_id: int, business: Business) -> Transaction:
+    try:
+        return transaction_service.get_owned_transaction(db, transaction_id, business.id)
+    except transaction_service.TransactionNotFoundError as exc:
+        raise ApiError(404, "transaction_not_found", "ไม่พบรายการนี้") from exc
+
+
+def _require_pending(txn: Transaction) -> None:
+    if txn.status != TransactionStatus.PENDING:
+        raise ApiError(409, "transaction_not_pending", "รายการนี้ยืนยันหรือยกเลิกไปแล้ว แก้ไขไม่ได้")
+
+
+@router.patch("/transactions/{transaction_id}", response_model=TransactionOut)
+def update_transaction(
+    transaction_id: int,
+    body: TransactionUpdateIn,
+    business: Business = Depends(get_current_business),
+    db: Session = Depends(get_db),
+) -> TransactionOut:
+    _require_pending(_owned(db, transaction_id, business))
+    txn = transaction_service.update_pending_transaction(
+        db,
+        transaction_id,
+        business.id,
+        type_=body.type,
+        amount=body.amount,
+        description=body.description,
+        txn_date=body.txn_date,
+        product_name=body.product_name,
+        quantity=body.quantity,
+    )
+    db.commit()
+    return _transaction_out(txn)
+
+
+@router.post("/transactions/{transaction_id}/confirm", response_model=TransactionOut)
+def confirm_transaction(
+    transaction_id: int, business: Business = Depends(get_current_business), db: Session = Depends(get_db)
+) -> TransactionOut:
+    _require_pending(_owned(db, transaction_id, business))
+    txn = transaction_service.confirm_transaction(db, transaction_id, business.id)
+    db.commit()
+    return _transaction_out(txn)
+
+
+@router.post("/transactions/{transaction_id}/cancel", response_model=TransactionOut)
+def cancel_transaction(
+    transaction_id: int, business: Business = Depends(get_current_business), db: Session = Depends(get_db)
+) -> TransactionOut:
+    _require_pending(_owned(db, transaction_id, business))
+    txn = transaction_service.cancel_transaction(db, transaction_id, business.id)
+    db.commit()
+    return _transaction_out(txn)
 
 
 @router.get("/products", response_model=list[ProductOut])

@@ -57,16 +57,13 @@ def _build_bubble(txn: Transaction) -> FlexBubble:
             ),
         ),
     ]
-    if settings.liff_id:
-        buttons.append(
-            FlexButton(
-                style="secondary",
-                action=URIAction(
-                    label=th.TRANSACTION_EDIT_BUTTON,
-                    uri=f"https://liff.line.me/{settings.liff_id}/transactions?edit={txn.id}",
-                ),
-            )
-        )
+    # With LIFF, edit in the web form; without it, edit in chat (cancel + re-send).
+    edit_action = (
+        URIAction(label=th.TRANSACTION_EDIT_BUTTON, uri=f"https://liff.line.me/{settings.liff_id}/transactions?edit={txn.id}")
+        if settings.liff_id
+        else PostbackAction(label=th.TRANSACTION_EDIT_BUTTON, data=f"action=edit&id={txn.id}", display_text=th.TRANSACTION_EDIT_BUTTON)
+    )
+    buttons.append(FlexButton(style="secondary", action=edit_action))
     buttons.append(
         FlexButton(
             style="secondary",

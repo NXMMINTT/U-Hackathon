@@ -231,3 +231,46 @@ def test_line_login_exchanges_id_token_for_jwt(
 def test_liff_channel_id_is_liff_id_prefix(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(auth_service.settings, "liff_id", "1657000000-AbCdEfGh")
     assert auth_service.liff_channel_id() == "1657000000"
+
+
+def test_edit_then_confirm_pending_transaction_moves_stock(client: TestClient, session: Session):
+    biz = _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    _txn(session, biz, IncomeExpenseType.INCOME, "100", date.today(), status=TransactionStatus.PENDING)
+    txn_id = session.query(Transaction).one().id
+
+    body = {
+        "type": "expense",
+        "amount": "1200",
+        "description": "ซื้อน้ำพริก",
+        "txn_date": date.today().isoformat(),
+        "product_name": "น้ำพริกเผา",
+        "quantity": "20",
+    }
+    edited = client.patch(f"/api/v1/transactions/{txn_id}", json=body).json()
+    assert edited["type"] == "expense"
+    assert edited["product_name"] == "น้ำพริกเผา"
+    assert edited["status"] == "pending"
+
+    assert client.post(f"/api/v1/transactions/{txn_id}/confirm").json()["status"] == "confirmed"
+    product = client.get("/api/v1/products").json()[0]
+    assert Decimal(product["stock_qty"]) == Decimal("20")
+
+
+def test_confirmed_transaction_is_not_editable(client: TestClient, session: Session):
+    biz = _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    _txn(session, biz, IncomeExpenseType.INCOME, "100", date.today())
+    txn_id = session.query(Transaction).one().id
+
+    response = client.post(f"/api/v1/transactions/{txn_id}/cancel")
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "transaction_not_pending"
+
+
+def test_other_shops_transaction_is_not_found(client: TestClient, session: Session):
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    other = _shop(session, "Uother", "ร้านอื่น")
+    _txn(session, other, IncomeExpenseType.INCOME, "100", date.today(), status=TransactionStatus.PENDING)
+    txn_id = session.query(Transaction).one().id
+
+    response = client.post(f"/api/v1/transactions/{txn_id}/confirm")
+    assert response.status_code == 404

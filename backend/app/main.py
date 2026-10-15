@@ -16,6 +16,7 @@ from app.routers import (
     onboarding,
     premium,
     ubot,
+    ubot_insights,
     voice,
 )
 
@@ -41,6 +42,7 @@ app.include_router(my_business.router)
 app.include_router(market_radar.router)
 app.include_router(insights.router)
 app.include_router(ubot.router)
+app.include_router(ubot_insights.router)
 app.include_router(b2b.router)
 app.include_router(premium.router)
 app.include_router(onboarding.router)

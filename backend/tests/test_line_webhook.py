@@ -170,6 +170,45 @@ def test_confirm_postback_marks_transaction_confirmed(client: TestClient, monkey
     session.close()
 
 
+def test_edit_postback_cancels_draft_and_asks_for_correction(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    parsed = GeminiParseResult(
+        intent=ParsedIntent.RECORD_TRANSACTIONS,
+        transactions=[
+            ParsedTransaction(
+                type=ParsedTransactionType.INCOME,
+                amount=Decimal("3500"),
+                category_hint="ขายหน้าร้าน",
+                description="ขายหน้าร้าน",
+                txn_date=date(2026, 10, 15),
+                is_personal=False,
+                confidence=Decimal("0.9"),
+            )
+        ],
+        clarification_question=None,
+    )
+    replies = []
+    monkeypatch.setattr(line_webhook.gemini_service, "parse_user_message", lambda text, **kwargs: parsed)
+    monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: replies.append(text))
+
+    body = _message_event_body("ขายของได้ 3500")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    from app.models import Transaction
+    from app.models.enums import TransactionStatus
+
+    session = line_webhook.SessionLocal()
+    txn_id = session.query(Transaction).one().id
+    session.close()
+
+    edit_body = _postback_event_body(f"action=edit&id={txn_id}")
+    client.post("/api/v1/line/webhook", content=edit_body, headers={"x-line-signature": _sign(edit_body)})
+
+    session = line_webhook.SessionLocal()
+    assert session.query(Transaction).one().status == TransactionStatus.CANCELLED
+    session.close()
+    assert replies[-1] == line_webhook.th.TRANSACTION_EDIT_REPLY
+
+
 def test_unsupported_message_type_replies_politely(client: TestClient, monkeypatch: pytest.MonkeyPatch):
     sent = []
     monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: sent.append(text))

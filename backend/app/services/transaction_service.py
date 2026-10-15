@@ -88,6 +88,43 @@ def cancel_transaction(db: Session, transaction_id: int, business_id: int) -> Tr
     return txn
 
 
+class TransactionNotEditableError(Exception):
+    pass
+
+
+def update_pending_transaction(
+    db: Session,
+    transaction_id: int,
+    business_id: int,
+    *,
+    type_: IncomeExpenseType,
+    amount: Decimal,
+    description: str | None,
+    txn_date: date,
+    product_name: str | None,
+    quantity: Decimal | None,
+) -> Transaction:
+    """Edits a transaction before it's confirmed. Confirmed ones have already
+    moved stock (inventory_service.apply_stock_movement), so they stay read-only."""
+    txn = get_owned_transaction(db, transaction_id, business_id)
+    if txn.status != TransactionStatus.PENDING:
+        raise TransactionNotEditableError(f"transaction {transaction_id} is {txn.status.value}")
+    txn.type = type_
+    txn.amount = amount
+    txn.description = description
+    txn.txn_date = txn_date
+    product = (
+        inventory_service.get_or_create_product(db, business_id, product_name)
+        if product_name and quantity is not None
+        else None
+    )
+    txn.product_id = product.id if product else None
+    txn.quantity = quantity if product else None
+    db.flush()
+    db.refresh(txn)
+    return txn
+
+
 def get_owned_transaction(db: Session, transaction_id: int, business_id: int) -> Transaction:
     txn = db.get(Transaction, transaction_id)
     if txn is None or txn.business_id != business_id:

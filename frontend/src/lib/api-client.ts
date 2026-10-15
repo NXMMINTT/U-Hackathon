@@ -36,7 +36,7 @@ function ensureSession(): Promise<void> {
   return sessionPromise;
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, as: "json" | "blob" = "json"): Promise<T> {
   const token = getStoredJwt();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
@@ -50,18 +50,26 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     if (response.status === 401) clearStoredJwt();
     const body = await response.json().catch(() => null);
-    const message = body?.error?.message_th ?? `คำขอล้มเหลว (${response.status})`;
+    // Mock-data routes (Market Radar, U-Bot) use FastAPI's default `{ detail }` shape.
+    const detail = typeof body?.detail === "string" ? body.detail : undefined;
+    const message = body?.error?.message_th ?? detail ?? `คำขอล้มเหลว (${response.status})`;
     throw new Error(message);
   }
 
-  return response.json() as Promise<T>;
+  return (as === "blob" ? response.blob() : response.json()) as Promise<T>;
 }
 
 /** Thin fetch wrapper: base URL + JSON + bearer token. Backend error shape is
- * always `{ error: { code, message_th } }` (backend/app/core/errors.py). */
+ * `{ error: { code, message_th } }` (backend/app/core/errors.py), or `{ detail }` from mock-data routes. */
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   await ensureSession();
   return request<T>(path, init);
+}
+
+/** Same as apiFetch but returns the raw body, e.g. audio from /api/voice/speak. */
+export async function apiFetchBlob(path: string, init?: RequestInit): Promise<Blob> {
+  await ensureSession();
+  return request<Blob>(path, init, "blob");
 }
 
 export async function checkHealth(): Promise<{ status: string }> {

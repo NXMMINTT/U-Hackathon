@@ -16,6 +16,11 @@ LOW_CONFIDENCE_BADGE = "โปรดตรวจสอบอีกครั้�
 
 TRANSACTION_CONFIRMED_REPLY = "บันทึกเรียบร้อยแล้วค่ะ ✅"
 TRANSACTION_CANCELLED_REPLY = "ยกเลิกรายการแล้วค่ะ"
+TRANSACTION_EDIT_REPLY = (
+    "ได้เลยค่ะ ยกเลิกรายการเดิมให้แล้ว ✏️\n"
+    "พิมพ์ ส่งรูป หรืออัดเสียงรายการที่ถูกต้องมาได้เลย เช่น \"ขายน้ำพริก 3 กระปุก 150 บาท\" "
+    "แล้วจะส่งการ์ดให้ยืนยันใหม่ค่ะ"
+)
 TRANSACTION_ALREADY_RESOLVED_REPLY = "รายการนี้ถูกดำเนินการไปแล้วค่ะ"
 TRANSACTION_NOT_FOUND_REPLY = "ไม่พบรายการนี้ค่ะ"
 

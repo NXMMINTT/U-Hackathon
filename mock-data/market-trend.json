@@ -29,6 +29,15 @@
         { "week": "2026-W39", "units_sold": 700 },
         { "week": "2026-W40", "units_sold": 810 }
       ]
+    },
+    {
+      "platform": "Amazon",
+      "points": [
+        { "week": "2026-W37", "units_sold": 45 },
+        { "week": "2026-W38", "units_sold": 60 },
+        { "week": "2026-W39", "units_sold": 85 },
+        { "week": "2026-W40", "units_sold": 120 }
+      ]
     }
   ]
 }

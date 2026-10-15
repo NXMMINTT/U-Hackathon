@@ -18,10 +18,17 @@ pnpm dev
 ## หน้าที่มี
 
 - `/` — **My Business**: Tax Meter (เขียว/เหลือง/แดง), รายรับ-รายจ่าย-กำไรเดือนนี้,
-  สินค้าขายดี 3 อันดับ, กราฟ 30 วัน
-- `/transactions` — รายการบันทึกล่าสุด (ทั้งที่ยืนยันแล้วและรอยืนยัน)
+  สินค้าขายดี 3 อันดับ, กราฟ 30 วัน, แจ้งเตือนเทรนด์, แพ็กเกจปัจจุบัน
+- `/transactions` — รายการบันทึกล่าสุด; รายการที่รอยืนยันกด แก้ไข / ยกเลิก / ยืนยัน ได้
+  (`?edit=<id>` เปิดฟอร์มแก้ไข — ปุ่ม "แก้ไข" ใน Flex card ลิงก์มาที่นี่เมื่อตั้ง LIFF แล้ว)
 - `/stock` — สต็อกสินค้าคงเหลือและต้นทุนต่อหน่วย
-- `/market` — **Market Radar** (placeholder)
+- `/market` — **Market Radar** (mock data จาก `mock-data/` ผ่าน backend):
+  - `/market` ภาพรวม: Price Radar + ราคาแนะนำ/คำแนะนำจาก U-Bot (Gemini), เทรนด์ข้ามแพลตฟอร์ม, คีย์เวิร์ด, ตลาดยุโรป, B2B Sponsored
+  - `/market/trends`, `/market/products/[id]` — เทรนด์ตลาดและหน้าสินค้า (ย้ายมาจาก branch NIGHT)
+  - `/market/compare` — เทียบราคาคู่แข่ง + คำนวณกำไร
+  - `/market/chat` — แชทกับ U-Bot พร้อมปุ่มฟังเสียง (ElevenLabs)
+  - `/market/platforms`, `/market/plans` — เลือกแพลตฟอร์ม, แพ็กเกจ Free/Premium
+- `/welcome` — หน้าแรก (landing)
 
 ## Generate API types จาก backend
 
@@ -38,7 +45,7 @@ pnpm gen:api
 
 ## ที่ยังไม่ได้ทำ (รอ phase ถัดไป)
 
-- หน้าแก้ไขรายการ (ปุ่ม "แก้ไข" ใน Flex card ลิงก์ไป `/transactions?edit=<id>` แต่ยังไม่มีฟอร์มแก้ไข)
-- Tab 2 Market Radar ทั้งหมด
+- ตั้งค่า LIFF จริง (ตอนนี้ dev ใช้ `DASHBOARD_LINE_USER_ID` ใน backend/.env แทนการ login)
+- Dark mode (มีใน branch NIGHT แต่สีในโปรเจกต์ยังเป็นค่าตายตัว)
 - Vitest / Playwright ยังไม่ตั้งค่า
 - Dockerfile ฝั่ง frontend ยังไม่มี (ตามแผนอยู่ phase 6)

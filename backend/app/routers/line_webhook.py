@@ -134,7 +134,7 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
     params = dict(pair.split("=", 1) for pair in event.postback.data.split("&") if "=" in pair)
     action = params.get("action")
     txn_id_raw = params.get("id")
-    if action not in {"confirm", "cancel"} or txn_id_raw is None or not txn_id_raw.isdigit():
+    if action not in {"confirm", "cancel", "edit"} or txn_id_raw is None or not txn_id_raw.isdigit():
         return
     txn_id = int(txn_id_raw)
 
@@ -159,9 +159,11 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
         line_service.reply_text(event.reply_token, reply)
         _maybe_push_vat_warning(db, business, line_user_id)
     else:
+        # "edit" without LIFF: drop the draft and let the user send the corrected one.
         transaction_service.cancel_transaction(db, txn_id, business.id)
         db.commit()
-        line_service.reply_text(event.reply_token, th.TRANSACTION_CANCELLED_REPLY)
+        reply = th.TRANSACTION_EDIT_REPLY if action == "edit" else th.TRANSACTION_CANCELLED_REPLY
+        line_service.reply_text(event.reply_token, reply)
 
 
 def _save_attachment(

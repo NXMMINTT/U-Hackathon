@@ -51,3 +51,21 @@ def test_confirm_and_cancel_postback_data_reference_transaction_id():
     datas = [b.action.data for b in bubble.footer.contents if hasattr(b.action, "data")]
     assert "action=confirm&id=42" in datas
     assert "action=cancel&id=42" in datas
+
+
+def test_edit_button_is_a_chat_postback_without_liff(monkeypatch):
+    from app.line_messages import transaction_confirm
+
+    monkeypatch.setattr(transaction_confirm.settings, "liff_id", "")
+    bubble = build_transaction_confirmation_message([_txn(42, "3500", "0.9")]).contents.contents[0]
+    datas = [b.action.data for b in bubble.footer.contents if hasattr(b.action, "data")]
+    assert "action=edit&id=42" in datas
+
+
+def test_edit_button_opens_liff_form_when_liff_is_set(monkeypatch):
+    from app.line_messages import transaction_confirm
+
+    monkeypatch.setattr(transaction_confirm.settings, "liff_id", "1234567890-abcdefgh")
+    bubble = build_transaction_confirmation_message([_txn(42, "3500", "0.9")]).contents.contents[0]
+    uris = [b.action.uri for b in bubble.footer.contents if hasattr(b.action, "uri")]
+    assert uris == ["https://liff.line.me/1234567890-abcdefgh/transactions?edit=42"]
