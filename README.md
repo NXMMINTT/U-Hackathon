@@ -1,7 +1,110 @@
 # U-Ledger AI
 
-U-Hackathon 2026 project.
+MVP สำหรับ U-Hackathon 2026 — Market Intelligence Platform สำหรับ SME
+ใช้บัญชี Zero-UI ผ่าน LINE เป็นตัวดึงผู้ใช้เข้าระบบ แล้วต่อยอดเป็น Web Dashboard (Next.js + LIFF) แบบ 2 Tabs
+
+> สถานะปัจจุบัน:
+> - **Tab 1 — My Business เสร็จแล้ว** (MINT)
+>   - LINE: บันทึกรายรับ-รายจ่ายจาก **ข้อความ / รูปสลิป-ใบเสร็จ / ข้อความเสียง** (Gemini) → การ์ดยืนยัน →
+>     **ตัดสต็อกอัตโนมัติ** เมื่อยืนยันการขาย และเพิ่มสต็อกพร้อมบันทึกต้นทุนเมื่อยืนยันการซื้อ
+>   - Dashboard: Tax Meter (เขียว/เหลือง/แดง), รายรับ-รายจ่าย-กำไรสุทธิ, สินค้าขายดี 3 อันดับ, สต็อก
+> - **Tab 2 — Market Radar + U-Bot + B2B เสร็จแล้ว** (natchanon, mock-data backed — ดู `backend/README.md`)
+>   - ราคาคู่แข่งข้ามแพลตฟอร์ม, เทรนด์ Omni-channel, Keyword volume, EU arbitrage, B2B Sponsored Placements
+>   - U-Bot ต่อ Gemini จริงผ่าน KKU IntelSphere + ตอบด้วยเสียงผ่าน ElevenLabs, ความรู้ธุรกิจประจำวัน
+> - Premium/Subscription — mock data พร้อมแล้ว (EARTH), ยังไม่มี billing logic จริง
+> - Frontend ตัวจริง — อยู่ระหว่างรวมงาน (ดู branch `MINT`, `NIGHT`)
+
+## โครงสร้างโปรเจกต์
+
+```
+u-ledger-ai/
+├── backend/             # FastAPI + PostgreSQL + LINE Bot (Python 3.12)
+│   ├── app/
+│   │   ├── core/          # settings, db session, errors
+│   │   ├── models/        # SQLAlchemy models
+│   │   ├── schemas/       # Pydantic request/response
+│   │   ├── routers/       # API endpoints: LINE webhook, auth, dashboard (DB),
+│   │   │                  # market_radar, ubot, b2b, voice, knowledge, insights (mock-data)
+│   │   ├── services/      # business logic (Gemini, LINE, สต็อก, auth)
+│   │   ├── analytics/     # สรุปภาพรวมสำหรับ dashboard
+│   │   ├── line_messages/ # Flex message templates
+│   │   ├── prompts/       # system prompts ของ Gemini
+│   │   ├── locales/       # ข้อความภาษาไทย
+│   │   ├── tax_engine/    # pure functions, config-driven ผ่าน config/tax_rules.yaml
+│   │   ├── config.py      # ตั้งค่า U-Bot/ElevenLabs (KKU IntelSphere) แยกจาก core/settings.py
+│   │   └── main.py
+│   ├── alembic/           # migrations
+│   ├── config/tax_rules.yaml
+│   ├── scripts/           # seed_demo.py, export_openapi.py
+│   ├── tests/
+│   └── .env.example
+├── frontend/            # Next.js + LIFF dashboard (ดู frontend/README.md)
+│   ├── src/
+│   │   ├── app/           # หน้าเว็บ (App Router)
+│   │   ├── components/    # UI components
+│   │   └── hooks/ lib/ locales/ types/
+│   └── .env.example
+├── mock-data/           # ข้อมูลจำลองสำหรับ Market Radar/B2B/ความรู้ธุรกิจ (ดู mock-data/README.md)
+└── docker-compose.yml   # PostgreSQL
+```
+
+## Backend
+
+1. สตาร์ท PostgreSQL (ที่ root ของโปรเจกต์):
+   ```bash
+   docker compose up -d
+   ```
+2. เข้าโฟลเดอร์ backend แล้วคัดลอกไฟล์ environment:
+   ```bash
+   cd backend
+   cp .env.example .env
+   ```
+   ใส่ `GEMINI_API_KEY` (parse สลิป), `UBOT_GEMINI_API_KEY` (KKU IntelSphere, ใช้โดย U-Bot/Market Radar), และ `ELEVENLABS_API_KEY` ตามที่ต้องการใช้งาน — รายละเอียด endpoint ของฝั่ง Market Radar/U-Bot/B2B ดูที่ [backend/README.md](backend/README.md)
+3. ติดตั้ง dependencies (ใช้ Python 3.12):
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   pip install -e ".[dev]"
+   ```
+4. รัน migration:
+   ```bash
+   alembic upgrade head
+   ```
+5. สร้างข้อมูลตัวอย่าง (ร้านของฝากสาธิต + สินค้า/สต็อก + รายการตั้งแต่ต้นปี ให้ Tax Meter อยู่โซนเหลือง):
+   ```bash
+   python scripts/seed_demo.py          # เพิ่ม --reset เพื่อลบร้านสาธิตเดิมแล้วสร้างใหม่
+   ```
+6. รันเทส `tax_engine`:
+   ```bash
+   pytest -q
+   ```
+7. รัน API (health check ที่ `/health`, เอกสาร API ที่ `/docs`):
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+   ถ้าไม่ได้ตั้ง `LIFF_ID` endpoint ของ dashboard จะคืนข้อมูลร้านสาธิตโดยไม่ต้อง login (สำหรับ dev/เดโม)
+   — **ก่อนใช้งานจริงต้องตั้ง `LIFF_ID` และ `JWT_SECRET` ที่ยาวอย่างน้อย 32 ตัวอักษร**
+
+   Market Radar/U-Bot/B2B/เสียง/ความรู้ธุรกิจประจำวัน **ไม่ต้องมี PostgreSQL/migration** — อ่านจาก `mock-data/*.json` ตรงๆ ใช้ได้ทันทีแค่ตั้ง `UBOT_GEMINI_API_KEY`/`ELEVENLABS_API_KEY`
+
+## Frontend
+
+```bash
+cd frontend
+cp .env.example .env.local
+pnpm install
+pnpm dev        # http://localhost:3000
+```
+
+รายละเอียดเพิ่มเติม: [frontend/README.md](frontend/README.md)
+
+## หมายเหตุ
+
+- ตัวเลขภาษีทั้งหมดอยู่ใน `backend/config/tax_rules.yaml` — ห้าม hardcode logic ภาษีในโค้ด
+- `tax_engine/` เป็น pure functions ล้วน ไม่ติดต่อฐานข้อมูลหรือ side effects
+- รูปสลิป/ไฟล์เสียงจาก LINE เก็บไว้ที่ `backend/uploads/` (อยู่ใน .gitignore)
+- Market Radar/U-Bot/B2B/เสียง/ความรู้ธุรกิจประจำวัน ใช้ mock data ใน `mock-data/` — แก้ schema ที่นั่นแล้ว API ได้ตามทันที ไม่ต้อง sync ซ้ำ
 
 ## Branches
 
-Each team member works on their own branch, named after them, then merges into `main` via PR.
+แต่ละคนทำงานบน branch ของตัวเอง ตั้งชื่อตามคน แล้ว merge เข้า `main` ผ่าน PR

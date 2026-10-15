@@ -1,0 +1,63 @@
+{
+  "tabs": {
+    "myBusiness": "My Business",
+    "marketRadar": "Market Radar"
+  },
+  "myBusiness": {
+    "monthToDate": "สรุปเดือนนี้",
+    "income": "รายรับ",
+    "expense": "รายจ่าย",
+    "netProfit": "กำไรสุทธิ",
+    "trendTitle": "รายรับ-รายจ่าย 30 วันล่าสุด",
+    "loading": "กำลังโหลดข้อมูล...",
+    "seeAll": "ดูทั้งหมด",
+    "greeting": "สวัสดี {name}",
+    "profitMargin": "อัตรากำไร {percent}%",
+    "quickLinks": "เมนูร้าน"
+  },
+  "taxMeter": {
+    "title": "Tax Meter — ความเสี่ยงภาษี",
+    "subtitle": "ยอดขายสะสมปี {year}",
+    "green": "ปลอดภัย ยังห่างจากเกณฑ์จดทะเบียน VAT",
+    "yellow": "ใกล้เกณฑ์ VAT แล้ว เตรียมเอกสารและวางแผนภาษีล่วงหน้า",
+    "red": "ใกล้ถึงหรือถึงเกณฑ์ VAT แล้ว ต้องจดทะเบียนภายใน 30 วันนับจากวันที่รายได้เกิน 1.8 ล้านบาท",
+    "ofThreshold": "{percent}% ของเกณฑ์จด VAT {threshold}"
+  },
+  "topProducts": {
+    "title": "สินค้าขายดี 3 อันดับ (เดือนนี้)",
+    "empty": "ยังไม่มียอดขายที่ระบุสินค้าในเดือนนี้",
+    "sold": "ขายได้",
+    "stock": "คงเหลือ"
+  },
+  "stock": {
+    "title": "สต็อกสินค้า",
+    "empty": "ยังไม่มีสินค้า — บอก U-Bot ใน LINE เช่น \"ซื้อน้ำพริก 20 กระปุก 1,200 บาท\"",
+    "outOfStock": "หมด",
+    "low": "ใกล้หมด",
+    "unitCost": "ต้นทุน/หน่วย"
+  },
+  "transactions": {
+    "title": "รายการบันทึก",
+    "empty": "ยังไม่มีรายการ — ลองพิมพ์ ส่งรูปสลิป หรืออัดเสียงคุยกับ U-Bot ใน LINE ดูค่ะ",
+    "status": {
+      "pending": "รอยืนยัน",
+      "confirmed": "ยืนยันแล้ว",
+      "cancelled": "ยกเลิก"
+    },
+    "source": {
+      "text": "ข้อความ",
+      "voice": "เสียง",
+      "image": "สลิป",
+      "web": "เว็บ"
+    }
+  },
+  "marketRadar": {
+    "title": "Market Radar",
+    "comingSoon": "กำลังพัฒนา — วิเคราะห์ราคาคู่แข่งข้ามแพลตฟอร์ม เทรนด์ คีย์เวิร์ด และตลาดยุโรป",
+    "premium": "Premium"
+  },
+  "backend": {
+    "connected": "เชื่อมต่อ Backend สำเร็จ",
+    "disconnected": "เชื่อมต่อ Backend ไม่ได้"
+  }
+}
