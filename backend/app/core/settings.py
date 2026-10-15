@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     line_channel_secret: str = ""
     line_channel_access_token: str = ""
     liff_id: str = ""
+    # Dev/demo only (ignored when LIFF_ID is set): show this LINE user's shop on the dashboard instead of the demo shop.
+    dashboard_line_user_id: str = ""
 
     # KKU IntelSphere (OpenAI-compatible Gemini) — LINE bot parsing and U-Bot
     kku_base_url: str = "https://gen.ai.kku.ac.th/api/v1"
