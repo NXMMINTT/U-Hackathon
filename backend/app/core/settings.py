@@ -10,6 +10,13 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+psycopg://uledger:uledger@localhost:5432/uledger"
 
+    @property
+    def effective_database_url(self) -> str:
+        url = self.database_url
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+        return url
+
     line_channel_secret: str = ""
     line_channel_access_token: str = ""
     liff_id: str = ""
