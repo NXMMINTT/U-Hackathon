@@ -5,6 +5,8 @@ venv/
 *.egg-info/
 .pytest_cache/
 .env
+.env.local
 node_modules/
 .next/
 .DS_Store
+apps/api/openapi.json

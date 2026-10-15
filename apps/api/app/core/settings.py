@@ -23,6 +23,7 @@ class Settings(BaseSettings):
 
     jwt_secret: str = "change-me"
     public_base_url: str = "http://localhost:8000"
+    frontend_origin: str = "http://localhost:3000"
     macro_data_mode: str = "mock"
 
     tax_rules_path: Path = API_ROOT / "config" / "tax_rules.yaml"
