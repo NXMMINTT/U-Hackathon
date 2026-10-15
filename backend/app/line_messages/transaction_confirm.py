@@ -11,6 +11,7 @@ from linebot.v3.messaging import (
     FlexButton,
     FlexCarousel,
     FlexMessage,
+    FlexSeparator,
     FlexText,
     PostbackAction,
     URIAction,
@@ -20,38 +21,117 @@ from app.core.formatting import format_thai_date, format_thb
 from app.core.settings import settings
 from app.locales import th
 from app.models import Transaction
-from app.models.enums import IncomeExpenseType
+from app.models.enums import IncomeExpenseType, TransactionSource
 
 LOW_CONFIDENCE_THRESHOLD = Decimal("0.70")
+
+INCOME_COLOR = "#16A34A"
+EXPENSE_COLOR = "#DC2626"
+MUTED_TEXT = "#8B98A8"
+BODY_TEXT = "#33415A"
+
+SOURCE_ICON = {
+    TransactionSource.TEXT: "📝",
+    TransactionSource.VOICE: "🎙️",
+    TransactionSource.IMAGE: "🧾",
+    TransactionSource.WEB: "🖥️",
+}
+SOURCE_LABEL = {
+    TransactionSource.TEXT: "ข้อความ",
+    TransactionSource.VOICE: "เสียง",
+    TransactionSource.IMAGE: "รูปสลิป",
+    TransactionSource.WEB: "เว็บ",
+}
 
 
 def _build_bubble(txn: Transaction) -> FlexBubble:
     is_income = txn.type == IncomeExpenseType.INCOME
     type_label = th.INCOME_LABEL if is_income else th.EXPENSE_LABEL
-    amount_color = "#1DB446" if is_income else "#E03C3C"
+    accent = INCOME_COLOR if is_income else EXPENSE_COLOR
+    sign = "+" if is_income else "−"
 
-    body_contents: list = [
-        FlexText(text=type_label, weight="bold", color=amount_color, size="sm"),
-        FlexText(
-            text=format_thb(txn.amount),
-            weight="bold",
-            size="xl",
-            margin="sm",
-        ),
-        FlexText(text=txn.description or "-", size="sm", color="#666666", margin="md", wrap=True),
-        FlexText(text=format_thai_date(txn.txn_date), size="xs", color="#999999", margin="sm"),
+    header = FlexBox(
+        layout="vertical",
+        background_color=accent,
+        padding_all="16px",
+        corner_radius="12px",
+        contents=[
+            FlexBox(
+                layout="horizontal",
+                contents=[
+                    FlexText(text=f"{'📈' if is_income else '📉'} {type_label}", color="#FFFFFF", weight="bold", size="sm", flex=1),
+                    FlexText(
+                        text=f"{SOURCE_ICON[txn.source]} {SOURCE_LABEL[txn.source]}",
+                        color="#FFFFFF",
+                        size="xs",
+                        align="end",
+                    ),
+                ],
+            ),
+            FlexText(
+                text=f"{sign}{format_thb(txn.amount)}",
+                weight="bold",
+                size="3xl",
+                color="#FFFFFF",
+                margin="sm",
+            ),
+        ],
+    )
+
+    detail_rows: list = [
+        FlexText(text=txn.description or "-", size="md", color=BODY_TEXT, wrap=True, weight="bold"),
     ]
-    if txn.ai_confidence is not None and txn.ai_confidence < LOW_CONFIDENCE_THRESHOLD:
-        body_contents.insert(
-            0, FlexText(text=f"⚠ {th.LOW_CONFIDENCE_BADGE}", size="xs", color="#E09000", weight="bold")
+    if txn.product is not None:
+        qty = f" × {txn.quantity:g}" if txn.quantity is not None else ""
+        detail_rows.append(
+            FlexBox(
+                layout="baseline",
+                margin="sm",
+                contents=[
+                    FlexText(text="📦", size="sm", flex=0),
+                    FlexText(text=f"{txn.product.name}{qty}", size="sm", color=MUTED_TEXT, margin="sm", wrap=True),
+                ],
+            )
         )
+    if txn.category is not None:
+        detail_rows.append(
+            FlexBox(
+                layout="baseline",
+                margin="sm",
+                contents=[
+                    FlexText(text="🏷️", size="sm", flex=0),
+                    FlexText(text=txn.category.name_th, size="sm", color=MUTED_TEXT, margin="sm"),
+                ],
+            )
+        )
+    detail_rows.append(
+        FlexBox(
+            layout="baseline",
+            margin="sm",
+            contents=[
+                FlexText(text="📅", size="sm", flex=0),
+                FlexText(text=format_thai_date(txn.txn_date), size="sm", color=MUTED_TEXT, margin="sm"),
+            ],
+        )
+    )
+
+    body_contents: list = []
+    if txn.ai_confidence is not None and txn.ai_confidence < LOW_CONFIDENCE_THRESHOLD:
+        body_contents.append(
+            FlexText(text=f"⚠ {th.LOW_CONFIDENCE_BADGE}", size="xs", color="#E09000", weight="bold")
+        )
+        body_contents.append(FlexSeparator(margin="md"))
+    body_contents.append(
+        FlexBox(layout="vertical", contents=detail_rows, margin="md" if body_contents else "none")
+    )
 
     buttons = [
         FlexButton(
             style="primary",
-            color=amount_color,
+            color=accent,
+            height="sm",
             action=PostbackAction(
-                label=th.TRANSACTION_CONFIRM_BUTTON,
+                label=f"✓ {th.TRANSACTION_CONFIRM_BUTTON}",
                 data=f"action=confirm&id={txn.id}",
                 display_text=th.TRANSACTION_CONFIRM_BUTTON,
             ),
@@ -63,10 +143,11 @@ def _build_bubble(txn: Transaction) -> FlexBubble:
         if settings.liff_id
         else PostbackAction(label=th.TRANSACTION_EDIT_BUTTON, data=f"action=edit&id={txn.id}", display_text=th.TRANSACTION_EDIT_BUTTON)
     )
-    buttons.append(FlexButton(style="secondary", action=edit_action))
+    buttons.append(FlexButton(style="secondary", height="sm", action=edit_action))
     buttons.append(
         FlexButton(
             style="secondary",
+            height="sm",
             action=PostbackAction(
                 label=th.TRANSACTION_CANCEL_BUTTON,
                 data=f"action=cancel&id={txn.id}",
@@ -76,8 +157,10 @@ def _build_bubble(txn: Transaction) -> FlexBubble:
     )
 
     return FlexBubble(
-        body=FlexBox(layout="vertical", contents=body_contents),
-        footer=FlexBox(layout="horizontal", spacing="sm", contents=buttons),
+        size="mega",
+        header=header,
+        body=FlexBox(layout="vertical", contents=body_contents, padding_all="16px"),
+        footer=FlexBox(layout="vertical", spacing="sm", padding_all="16px", padding_top="0px", contents=buttons),
     )
 
 
