@@ -2,16 +2,19 @@
 
 ## Setup
 
+ดูขั้นตอนเต็ม (PostgreSQL, migration, seed) ที่ [README หลัก](../README.md#backend)
+
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
 cp .env.example .env
 ```
 
 แก้ `.env` ใส่:
-- `GEMINI_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat)
+- `KKU_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ใช้กับ U-Bot / voice / knowledge
+- `GEMINI_API_KEY` (Google AI Studio) — ใช้กับ LINE bot แยกรายการจากข้อความ/สลิป/เสียง
 - `ELEVENLABS_API_KEY` (สมัครฟรีได้ที่ elevenlabs.io มี free tier) — ถ้าไม่ใส่ endpoint เสียงจะตอบ 503 แต่ endpoint อื่นใช้ได้ปกติ
 
 ไฟล์ `.env` ไม่ถูก commit เข้า git
@@ -47,7 +50,7 @@ API docs: http://localhost:8000/docs
     -H "Content-Type: application/json" \
     -d '{"question":"ตอนนี้ควรปรับราคาน้ำพริกไหม","product_id":"P001"}'
   ```
-  ถ้ายังไม่ตั้งค่า `GEMINI_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
+  ถ้ายังไม่ตั้งค่า `KKU_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
 
 ### เสียง U-Bot (ElevenLabs)
 - `POST /api/voice/speak` — รับข้อความ คืนไฟล์เสียง MP3 ตรงๆ (`{"text": "..."}`)

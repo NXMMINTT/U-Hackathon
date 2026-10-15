@@ -1,17 +1,40 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import b2b, insights, knowledge, market_radar, my_business, ubot, voice
+from app.core.errors import register_error_handlers
+from app.core.logging import configure_logging
+from app.core.settings import settings
+from app.routers import (
+    auth,
+    b2b,
+    dashboard,
+    insights,
+    knowledge,
+    line_webhook,
+    market_radar,
+    my_business,
+    ubot,
+    voice,
+)
+
+configure_logging()
 
 app = FastAPI(title="U-Ledger AI API")
+register_error_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[settings.frontend_origin],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Real data (PostgreSQL + LINE)
+app.include_router(line_webhook.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(dashboard.router, prefix="/api/v1")
+
+# Mock data (reads ../mock-data/*.json)
 app.include_router(my_business.router)
 app.include_router(market_radar.router)
 app.include_router(insights.router)
@@ -21,6 +44,6 @@ app.include_router(voice.router)
 app.include_router(knowledge.router)
 
 
-@app.get("/")
-def health_check():
-    return {"status": "ok", "service": "U-Ledger AI API"}
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
