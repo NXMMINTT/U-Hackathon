@@ -50,7 +50,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     if (response.status === 401) clearStoredJwt();
     const body = await response.json().catch(() => null);
-    const message = body?.error?.message_th ?? `คำขอล้มเหลว (${response.status})`;
+    // Mock-data routes (Market Radar, U-Bot) use FastAPI's default `{ detail }` shape.
+    const detail = typeof body?.detail === "string" ? body.detail : undefined;
+    const message = body?.error?.message_th ?? detail ?? `คำขอล้มเหลว (${response.status})`;
     throw new Error(message);
   }
 
@@ -58,7 +60,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 /** Thin fetch wrapper: base URL + JSON + bearer token. Backend error shape is
- * always `{ error: { code, message_th } }` (backend/app/core/errors.py). */
+ * `{ error: { code, message_th } }` (backend/app/core/errors.py), or `{ detail }` from mock-data routes. */
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   await ensureSession();
   return request<T>(path, init);

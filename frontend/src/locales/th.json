@@ -53,8 +53,125 @@
   },
   "marketRadar": {
     "title": "Market Radar",
-    "comingSoon": "กำลังพัฒนา — วิเคราะห์ราคาคู่แข่งข้ามแพลตฟอร์ม เทรนด์ คีย์เวิร์ด และตลาดยุโรป",
-    "premium": "Premium"
+    "subtitle": "วิเคราะห์ราคาคู่แข่ง เทรนด์ข้ามแพลตฟอร์ม และโอกาสตลาดยุโรป",
+    "sampleNotice": "ข้อมูลตลาดในแท็บนี้เป็นข้อมูลจำลองสำหรับเดโม (mock-data) ราคาต่างประเทศแปลงเป็นบาทด้วยอัตราโดยประมาณ",
+    "nav": {
+      "overview": "ภาพรวมตลาด",
+      "compare": "เทียบราคาคู่แข่ง",
+      "chat": "ผู้ช่วย AI",
+      "plans": "แพ็กเกจ"
+    },
+    "locked": {
+      "title": "Market Radar สำหรับสมาชิก Premium",
+      "body": "ทดลองใช้ฟรี 7 วัน เพื่อดูราคาคู่แข่งข้ามแพลตฟอร์ม เทรนด์ คีย์เวิร์ด และโอกาสตลาดยุโรป",
+      "cta": "ดูแพ็กเกจ"
+    },
+    "overview": {
+      "foundIn": "พบใน {platforms} แพลตฟอร์ม · {sellers} ร้าน",
+      "myCost": "ต้นทุนของคุณ",
+      "myPrice": "ราคาขายของคุณ",
+      "median": "ราคากลางตลาด (ไทย)",
+      "position": "ราคาคุณเทียบตลาด",
+      "above": "สูงกว่าราคากลาง {pct}%",
+      "below": "ต่ำกว่าราคากลาง {pct}%",
+      "insightsTitle": "U-Bot แนะนำ",
+      "radarTitle": "Competitor Price Radar",
+      "radarHint": "แต่ละจุดคือร้านคู่แข่ง · แถบสีฟ้า = ช่วงราคา 50% กลางของตลาดไทย",
+      "thaiMarket": "ตลาดไทย",
+      "abroad": "ต่างประเทศ (≈บาท)",
+      "trendTitle": "ยอดขายรายสัปดาห์ข้ามแพลตฟอร์ม",
+      "unitsSold": "ชิ้น",
+      "keywordsTitle": "คีย์เวิร์ดยอดฮิต",
+      "searches": "ครั้ง/เดือน",
+      "trend": {
+        "up": "กำลังขึ้น",
+        "down": "ชะลอตัว",
+        "stable": "ทรงตัว"
+      },
+      "euTitle": "European Market Arbitrage",
+      "euThai": "ราคาไทยเฉลี่ย",
+      "euRetail": "ราคาขายปลีกในยุโรป",
+      "euWholesale": "ราคาส่งที่แนะนำ",
+      "euDemand": "ความต้องการ",
+      "sponsoredTitle": "วัตถุดิบแนะนำจากพาร์ทเนอร์",
+      "sponsored": "Sponsored",
+      "moq": "ขั้นต่ำ {moq} {unit}",
+      "visit": "ดูสินค้า",
+      "platformsTitle": "แพลตฟอร์มที่ติดตาม",
+      "platformsCount": "ครอบคลุม {count} แพลตฟอร์มทั่วโลก",
+      "askUBot": "ถาม U-Bot เรื่องนี้"
+    },
+    "compare": {
+      "title": "เทียบราคาคู่แข่ง",
+      "cheapest": "ถูกที่สุด (มีของ)",
+      "priciest": "แพงที่สุด (มีของ)",
+      "spread": "ส่วนต่างราคา",
+      "sortCheapest": "ราคาถูกสุด",
+      "sortPriciest": "ราคาแพงสุด",
+      "sortPlatform": "แพลตฟอร์ม",
+      "thaiOnly": "เฉพาะตลาดไทย",
+      "all": "ทุกตลาด",
+      "colPlatform": "แพลตฟอร์ม / ร้าน",
+      "colOriginal": "ราคาตั้ง",
+      "colTHB": "ราคา (บาท)",
+      "colVsMine": "เทียบราคาคุณ",
+      "colStock": "สถานะ",
+      "estimate": "≈ ประมาณ",
+      "calcTitle": "คำนวณกำไรต่อชิ้น",
+      "cost": "ต้นทุน (บาท)",
+      "sellPrice": "ราคาที่จะขาย (บาท)",
+      "fee": "ค่าธรรมเนียมแพลตฟอร์ม (%)",
+      "feeBaht": "ค่าธรรมเนียม",
+      "profit": "กำไรต่อชิ้น",
+      "margin": "อัตรากำไร {pct}%",
+      "vsMarket": "ถูกกว่าคู่แข่งไทยที่มีของ {count} จาก {total} ร้าน"
+    },
+    "chat": {
+      "title": "ผู้ช่วย AI — U-Bot",
+      "subtitle": "ถามเรื่องราคา คู่แข่ง กำไร ภาษี หรือสินค้าที่น่าขาย",
+      "empty": "วันนี้ให้ช่วยเรื่องอะไรดี",
+      "placeholder": "พิมพ์คำถาม",
+      "send": "ส่ง",
+      "thinking": "U-Bot กำลังคิด…",
+      "disclaimer": "U-Bot ให้ข้อมูลเบื้องต้นจากข้อมูลตลาดจำลอง ตัวเลขภาษีควรตรวจกับผู้สอบบัญชีก่อนยื่นจริง",
+      "contextTitle": "ข้อมูลที่ U-Bot ใช้ตอบ",
+      "suggestions": [
+        "ควรปรับราคาน้ำพริกไหม",
+        "คู่แข่งที่ไหนขายถูกกว่าเรา",
+        "ควรไปเน้นขายแพลตฟอร์มไหน",
+        "น่าส่งออกไปยุโรปไหม"
+      ]
+    },
+    "plans": {
+      "title": "เริ่มฟรี อัปเกรดเมื่อพร้อมโต",
+      "perMonth": "ต่อเดือน",
+      "forever": "ตลอดไป",
+      "trial": "ทดลองฟรี {days} วัน",
+      "current": "แพ็กเกจปัจจุบัน",
+      "status": "สถานะ",
+      "nextBilling": "รอบเก็บเงินถัดไป",
+      "payment": "ชำระผ่าน",
+      "recommended": "แนะนำสำหรับร้านที่อยากโต",
+      "choose": "เลือกแพ็กเกจนี้",
+      "using": "กำลังใช้อยู่",
+      "statusLabel": {
+        "free": "ฟรี",
+        "trialing": "ทดลองใช้",
+        "active": "ใช้งานอยู่",
+        "past_due": "ค้างชำระ",
+        "canceled": "ยกเลิกแล้ว",
+        "expired": "หมดอายุ"
+      },
+      "features": {
+        "my_business": "บัญชีอัตโนมัติผ่าน LINE + Tax Meter",
+        "market_radar": "Market Radar ทั้งแท็บ",
+        "competitor_prices": "Competitor Price Tracking",
+        "market_trend": "เทรนด์ยอดขายข้ามแพลตฟอร์ม",
+        "keyword_volume": "Keyword Search Volume",
+        "eu_arbitrage": "European Market Arbitrage",
+        "ubot_insights": "U-Bot Market Analyst"
+      }
+    }
   },
   "backend": {
     "connected": "เชื่อมต่อ Backend สำเร็จ",

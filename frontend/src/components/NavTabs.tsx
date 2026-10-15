@@ -47,7 +47,8 @@ function TabIcon({ children }: { children: React.ReactNode }) {
 
 function useActiveTab() {
   const pathname = usePathname();
-  return (tab: (typeof TABS)[number]) => tab.matches.includes(pathname);
+  return (tab: (typeof TABS)[number]) =>
+    tab.matches.some((m) => pathname === m || (m !== "/" && pathname.startsWith(`${m}/`)));
 }
 
 /** Top bar: logo everywhere, nav links on desktop (mobile uses the bottom NavTabs). */

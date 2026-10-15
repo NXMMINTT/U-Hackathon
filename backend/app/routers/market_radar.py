@@ -28,3 +28,8 @@ def get_keyword_volume():
 @router.get("/eu-arbitrage")
 def get_eu_arbitrage():
     return load_json("eu-arbitrage.json")
+
+
+@router.get("/subscription")
+def get_subscription():
+    return load_json("subscription.json")
