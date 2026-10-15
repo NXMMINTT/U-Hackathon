@@ -67,4 +67,12 @@ API docs: http://localhost:8000/docs
 - `GET /api/b2b/sponsors/match?product_id=&keyword=` — กรองเฉพาะ listing ที่ตรงกับสินค้า/คีย์เวิร์ดที่กำลังดูอยู่ เรียงตาม `sponsored_rank` — ไม่ใส่ query เลยจะได้ทั้งหมด
 - `POST /api/b2b/sponsors/{listing_id}/click` — บันทึกคลิกโฆษณา (เก็บ in-memory ไม่เขียนทับไฟล์ mock data, รีสตาร์ท server แล้วรีเซ็ต)
 
+### Premium / Subscription (mock)
+ข้อมูลตัวอย่างสถานะ subscription ครบทุกสถานะ (`free`/`trialing`/`active`/`past_due`/`canceled`/`expired`) ไว้ให้ frontend ทดสอบ UI — **ยังไม่มี payment logic จริง** แค่ query ข้อมูลตัวอย่างจาก `mock-data/subscription.json`
+- `GET /api/premium/plans` — แพ็กเกจ Free/Premium (ราคา, features, trial_days)
+- `GET /api/premium/status-rules` — คำอธิบายแต่ละสถานะ (ใช้ขึ้น banner/ข้อความใน UI)
+- `GET /api/premium/status?user_id=` — สถานะ subscription ของ user คนเดียว — ไม่ใส่ `user_id` จะได้ "ร้านของฉัน" (`current_user`, สถานะ `trialing`)
+- `GET /api/premium/users` — รายชื่อ user ตัวอย่างครบทุกสถานะ (6 คน) ไว้สลับทดสอบ
+- `GET /api/premium/billing-history?user_id=` — ประวัติการชำระเงิน กรองตาม user ได้
+
 ข้อมูลทั้งหมดอ่านจากไฟล์ใน `../mock-data/` โดยตรง — แก้ schema ที่ไฟล์ mock data แล้ว API จะได้ตามนั้นทันที ไม่ต้อง sync ซ้ำ
