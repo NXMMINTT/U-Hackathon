@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { type FoxPose, LineAddFriendButton, Logo, UBot, UBotFace } from "@/components/brand";
-import { ReceiptEdge } from "@/components/doodles";
+import { Curl, Paw, ReceiptEdge, Twinkle } from "@/components/doodles";
 import { ChatMarquee, TaxPlayground, TypingChat, UBotLive } from "@/components/playful";
 import { StepDemo } from "@/components/StepDemo";
 
@@ -12,7 +12,7 @@ import { StepDemo } from "@/components/StepDemo";
 const NAV = [
   { href: "#ledger", label: "จดบัญชี" },
   { href: "#tax", label: "ภาษี" },
-  { href: "#radar", label: "Market Radar" },
+  { href: "#radar", label: "ส่องคู่แข่ง" },
   { href: "#pricing", label: "ราคา" },
   { href: "#faq", label: "ถามบ่อย" },
 ];
@@ -66,7 +66,12 @@ export default function HomePage() {
           visuals={[<TextScreen key="text" />, <SlipScreen key="slip" />, <VoiceScreen key="voice" />].map((screen) => (
             <Phone key={screen.key}>{screen}</Phone>
           ))}
-          decor={<UBot pose="ledger" size={150} className="absolute -bottom-6 -right-20 z-[1] max-sm:-right-2 max-sm:w-[110px]" />}
+          decor={
+            <>
+              <UBot pose="ledger" size={150} className="absolute -bottom-6 -right-20 z-[1] max-sm:-right-2 max-sm:w-[110px]" />
+              <Sprinkles />
+            </>
+          }
         />
         <TypingChat bot="ยอดขายเยอะขึ้น กลัวโดนภาษีย้อนหลังไหมคะ?" user="กลัวมาก ช่วยด้วยยย" />
         <StepSection
@@ -85,6 +90,7 @@ export default function HomePage() {
             </Phone>,
             <ProfitSummary key="summary" />,
           ]}
+          decor={<Sprinkles mirror />}
           visualFirst
         />
         <TypingChat bot="แล้วรู้ไหมคะว่าคู่แข่งขายสินค้าแบบเดียวกันเท่าไหร่?" user="ไม่รู้เลย แอบส่องให้หน่อย" />
@@ -101,7 +107,12 @@ export default function HomePage() {
           visuals={[<RadarScreen key="price" />, <WhereToSellScreen key="where" />, <KeywordScreen key="keywords" />].map((screen) => (
             <Phone key={screen.key}>{screen}</Phone>
           ))}
-          decor={<UBot pose="radar" size={150} className="absolute -bottom-6 -left-24 z-[1] max-sm:-left-6" />}
+          decor={
+            <>
+              <UBot pose="radar" size={150} className="absolute -bottom-6 -left-24 z-[1] max-sm:-left-6" />
+              <Sprinkles />
+            </>
+          }
         />
 
         <section aria-label="ฟีเจอร์อื่นๆ" className="px-6 pb-24">
@@ -112,7 +123,10 @@ export default function HomePage() {
               </h2>
               <LineAddFriendButton />
             </div>
-            <div className="flex flex-col gap-8 rounded-[36px] bg-white px-6 py-11 md:px-9">
+            <div className="relative flex flex-col gap-8 rounded-[36px] bg-white px-6 py-11 md:px-9">
+              <Twinkle className="left-8 top-8 h-6 w-6 max-md:hidden" />
+              <Twinkle className="left-16 top-16 h-3.5 w-3.5 max-md:hidden" color="#BBD8FB" />
+              <Paw className="right-10 top-9 h-7 w-7 rotate-12 opacity-80 max-md:hidden" />
               <h2 className="m-0 text-center text-[38px] font-bold leading-tight">
                 นอกจากนี้ U-Bot <span className="text-brand">ทำได้อีกเยอะ</span>
               </h2>
@@ -170,6 +184,11 @@ export default function HomePage() {
 
         <section aria-label="เริ่มใช้งาน" className="px-6 pb-24">
           <div className="relative mx-auto flex max-w-[1100px] flex-col items-center gap-5 overflow-hidden rounded-[36px] bg-white px-9 py-14 text-center">
+            <Twinkle className="left-[12%] top-12 h-8 w-8" />
+            <Twinkle className="left-[18%] top-24 h-4 w-4" color="#BBD8FB" />
+            <Paw className="bottom-14 left-[14%] h-9 w-9 -rotate-12 opacity-80 max-sm:hidden" />
+            <Twinkle className="right-[14%] top-16 h-5 w-5" color="#2563EB" />
+            <Curl className="bottom-16 right-[13%] h-9 w-9 max-sm:hidden" />
             <h2 className="m-0 text-[40px] font-bold leading-tight">
               เริ่มจดกับ U-Bot
               <br />
@@ -203,7 +222,13 @@ function Hero() {
     <section aria-label="U-Ledger AI" className="relative bg-white">
       {/* header + hero fit one screen on desktop */}
       <div className="relative mx-auto flex max-w-[1200px] flex-wrap items-center gap-12 px-6 py-8 lg:h-[calc(100svh-68px)] lg:min-h-[520px] lg:flex-nowrap lg:py-6">
-        <div className="flex min-w-0 flex-[1_1_480px] flex-col gap-5">
+        {/* same twinkles and paws as around the phone, spread over the empty areas (desktop only) */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 max-lg:hidden">
+          <Twinkle className="left-[46%] top-[11%] h-7 w-7" />
+          <Twinkle className="left-[49%] top-[19%] h-3.5 w-3.5" color="#2563EB" />
+          <Twinkle className="bottom-[14%] left-[54%] h-5 w-5" color="#BBD8FB" />
+        </span>
+        <div className="relative flex min-w-0 flex-[1_1_480px] flex-col gap-5">
           <span className="self-start rounded-full bg-brand-soft px-3.5 py-1 text-[15px] font-semibold text-brand">
             U-Bot ผู้ช่วยบัญชีประจำร้านใน LINE
           </span>
@@ -242,10 +267,24 @@ function Hero() {
               </Phone>
             </div>
             <UBotLive size={180} wave className="!absolute -bottom-4 -right-[140px] max-md:-right-10 max-md:[&_img]:!h-[150px] max-md:[&_img]:!w-[150px]" />
+            <Sprinkles />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/** Twinkles, a paw and a curl around a feature visual; `mirror` swaps sides. Desktop only. */
+function Sprinkles({ mirror = false }: { mirror?: boolean }) {
+  return (
+    <span aria-hidden="true" className="max-lg:hidden">
+      <Twinkle className={`top-6 h-8 w-8 ${mirror ? "-left-14" : "-right-14"}`} />
+      <Twinkle className={`top-20 h-4 w-4 ${mirror ? "-left-6" : "-right-6"}`} color="#2563EB" />
+      <Twinkle className={`top-[38%] h-5 w-5 ${mirror ? "-right-12" : "-left-12"}`} color="#BBD8FB" />
+      <Paw className={`top-[56%] h-8 w-8 -rotate-12 opacity-80 ${mirror ? "-right-12" : "-left-12"}`} />
+      <Curl className={`top-[45%] h-8 w-8 ${mirror ? "-left-16" : "-right-16"}`} />
+    </span>
   );
 }
 
@@ -672,6 +711,8 @@ function Pricing() {
       <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-9">
         <div className="relative text-center">
           <UBot pose="love" size={120} className="absolute -left-36 -top-6 max-lg:hidden" />
+          <Twinkle className="-right-14 -top-2 h-7 w-7 max-lg:hidden" />
+          <Twinkle className="-right-6 top-8 h-3.5 w-3.5 max-lg:hidden" color="#2563EB" />
           <h2 id="pricing-title" className="m-0 text-[40px] font-extrabold">
             เริ่ม<span className="text-brand">ฟรี</span> จ่ายเมื่ออยากรู้ใจคู่แข่ง
           </h2>
@@ -755,7 +796,9 @@ function Faq() {
   return (
     <section id="faq" aria-labelledby="faq-title" className="scroll-mt-20 px-6 pb-24">
       <div className="mx-auto flex max-w-[1100px] flex-wrap gap-x-16 gap-y-8">
-        <div className="flex flex-[1_1_300px] flex-col items-start gap-3">
+        <div className="relative flex flex-[1_1_300px] flex-col items-start gap-3">
+          <Paw className="bottom-24 right-8 h-8 w-8 rotate-12 opacity-80 max-md:hidden" />
+          <Twinkle className="bottom-40 right-20 h-5 w-5 max-md:hidden" />
           <span className="rounded-full bg-brand-soft px-3.5 py-1 text-[15px] font-semibold text-brand">คำถามที่พบบ่อย</span>
           <h2 id="faq-title" className="m-0 text-[40px] font-extrabold leading-tight">
             เรื่องที่

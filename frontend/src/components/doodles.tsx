@@ -69,6 +69,39 @@ export function ReceiptEdge({ color = "#FFFFFF" }: { color?: string }) {
 }
 
 /** Little four-point sparkle. */
+/** Soft four-point twinkle, as on the U-Fox stickers. */
+export function Twinkle({ className = "", color = "#60A5FA" }: { className?: string; color?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={`pointer-events-none absolute ${className}`} aria-hidden="true">
+      <path d="M12 0C12.8 7.6 16.4 11.2 24 12C16.4 12.8 12.8 16.4 12 24C11.2 16.4 7.6 12.8 0 12C7.6 11.2 11.2 7.6 12 0Z" fill={color} />
+    </svg>
+  );
+}
+
+/** U-Fox paw print. */
+export function Paw({ className = "", color = "#2563EB" }: { className?: string; color?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={`pointer-events-none absolute ${className}`} aria-hidden="true">
+      <g fill={color}>
+        <ellipse cx="16" cy="22" rx="8" ry="7" />
+        <ellipse cx="6" cy="13" rx="3.2" ry="4" transform="rotate(-20 6 13)" />
+        <ellipse cx="12.5" cy="7" rx="3.2" ry="4.2" transform="rotate(-6 12.5 7)" />
+        <ellipse cx="19.5" cy="7" rx="3.2" ry="4.2" transform="rotate(6 19.5 7)" />
+        <ellipse cx="26" cy="13" rx="3.2" ry="4" transform="rotate(20 26 13)" />
+      </g>
+    </svg>
+  );
+}
+
+/** Small curl, like the fox's tail flick. */
+export function Curl({ className = "", color = "#60A5FA" }: { className?: string; color?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={`pointer-events-none absolute ${className}`} aria-hidden="true">
+      <path d="M6 24c-3-6 1-14 9-14 6 0 9 6 5 9-3 2-6 0-5-3" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function Sparkle({ className = "", color = "#60A5FA" }: { className?: string; color?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
