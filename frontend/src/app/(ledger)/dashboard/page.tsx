@@ -2,214 +2,157 @@
 
 import Link from "next/link";
 
-import { LineAddFriendButton, Ring } from "@/components/brand";
-import { Note } from "@/components/doodles";
-import { UBotLive } from "@/components/playful";
-import { type TaxMeter, type TransactionItem, useOverview, useTaxMeter, useTransactionActions, useTransactions } from "@/hooks/useDashboard";
-import { formatBaht, formatThaiMonthYear } from "@/lib/format";
-import { productPhoto } from "@/lib/market";
+import { UBot } from "@/components/brand";
 
-const ZONE = {
-  green: { label: "โซนเขียว · ยังห่างเพดาน", chip: "bg-[#E6F7EE] text-[#0F6B42]", ring: "#34C27A", mood: "happy", note: "ยังสบาย~", say: "ยอดขายยังห่างเพดาน VAT สบายใจได้ค่ะ" },
-  yellow: { label: "โซนเหลือง · เริ่มวางแผน", chip: "bg-sun-soft text-sun-ink", ring: "#FFC83D", mood: "worried", note: "เริ่มใกล้แล้วนะ!", say: "แต่ยอดขายใกล้เพดาน VAT แล้วนะคะ" },
-  red: { label: "โซนแดง · ใกล้ต้องจด VAT", chip: "bg-[#FDECEC] text-expense", ring: "#F26B5B", mood: "shocked", note: "ระวังๆ!", say: "ยอดขายใกล้ถึงเพดาน VAT มากแล้ว ควรเตรียมจด VAT ค่ะ" },
-} as const;
-
-const TIPS = [
-  "กดยืนยันรายการที่รออยู่ด้วยนะคะ",
-  "ส่งสลิปใน LINE แล้วหนูจดให้เอง",
-  "เก็บใบเสร็จค่าวัตถุดิบไว้ หักภาษีได้ค่ะ",
-  "อยากรู้ราคาคู่แข่ง ไปแท็บ Market Radar เลย",
+const MENU_ITEMS = [
+  { href: "/transactions?mode=income", icon: "income", label: "บันทึกรายรับ", sub: "เพิ่มรายรับ\nง่ายๆเลย", color: "bg-[#FFF4E0]", iconColor: "text-[#F59E0B]" },
+  { href: "/transactions?mode=expense", icon: "expense", label: "บันทึกรายจ่าย", sub: "จดรายจ่าย\nได้ทันที", color: "bg-[#E8F5E9]", iconColor: "text-[#12804F]" },
+  { href: "/dashboard/summary", icon: "summary", label: "สรุปภาพรวม", sub: "ดูรายรับ-รายจ่าย\nรายเดือน", color: "bg-[#E3F2FD]", iconColor: "text-[#2563EB]" },
+  { href: "/stock", icon: "stock", label: "จัดการสินค้า", sub: "เช็ครายการสินค้า\nและสต็อก", color: "bg-[#FFF3E0]", iconColor: "text-[#E65100]" },
+  { href: "/market", icon: "market", label: "ดูตลาดคู่แข่ง", sub: "ส่งสินค้า / เทรนด์\nต่างประเทศ", color: "bg-[#E8EAF6]", iconColor: "text-[#3F51B5]", badge: "ใหม่" },
+  { href: "/market/plans", icon: "premium", label: "อัปเกรดแพ็คเกจ", sub: "ฟีเจอร์เพิ่มเติม\nเพื่อธุรกิจของคุณ", color: "bg-[#FFF8E1]", iconColor: "text-[#F59E0B]" },
 ];
 
-/** When this year's income reaches the VAT threshold at the pace so far, or null if not this year. */
-function thresholdDate(meter: TaxMeter, today = new Date()): Date | null {
-  const income = Number(meter.annual_income);
-  const threshold = Number(meter.threshold);
-  if (income >= threshold) return today;
-  const yearStart = new Date(today.getFullYear(), 0, 1);
-  const days = Math.max(1, (today.getTime() - yearStart.getTime()) / 86_400_000);
-  const perDay = income / days;
-  if (perDay <= 0) return null;
-  const date = new Date(today.getTime() + ((threshold - income) / perDay) * 86_400_000);
-  return date.getFullYear() === today.getFullYear() || date.getFullYear() === today.getFullYear() + 1 ? date : null;
+const BOTTOM_LINKS = [
+  { href: "/settings", icon: "settings", label: "ตั้งค่าร้าน" },
+  { href: "/help", icon: "help", label: "วิธีใช้งาน" },
+  { href: "/chat", icon: "chat", label: "คุยกับ U-Fox" },
+];
+
+function MenuIcon({ type, className = "" }: { type: string; className?: string }) {
+  const c = `w-8 h-8 ${className}`;
+  switch (type) {
+    case "income":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <rect x="6" y="8" width="20" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 16h8M16 12v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case "expense":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M16 11v10M13 14l3-3 3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "summary":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <rect x="8" y="14" width="4" height="10" rx="1" fill="currentColor" />
+          <rect x="14" y="10" width="4" height="14" rx="1" fill="currentColor" />
+          <rect x="20" y="6" width="4" height="18" rx="1" fill="currentColor" />
+        </svg>
+      );
+    case "stock":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <rect x="7" y="6" width="18" height="20" rx="3" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 12h8M12 16h8M12 20h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case "market":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M16 6a10 10 0 000 20M6 16h20M16 6c-3 3-3 17 0 20M16 6c3 3 3 17 0 20" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      );
+    case "premium":
+      return (
+        <svg className={c} viewBox="0 0 32 32" fill="none">
+          <path d="M16 6l3 6 7 1-5 5 1.2 7L16 22l-6.2 3L11 18l-5-5 7-1z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="currentColor" fillOpacity="0.2" />
+        </svg>
+      );
+    case "settings":
+      return (
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+      );
+    case "help":
+      return (
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" strokeLinecap="round" />
+        </svg>
+      );
+    case "chat":
+      return (
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+          <path d="M8 10h.01M12 10h.01M16 10h.01" />
+        </svg>
+      );
+    default:
+      return null;
+  }
 }
 
-const PRODUCT_TINTS = ["bg-[#FFE9E3] text-[#C2410C]", "bg-brand-soft text-brand", "bg-[#E6F7EE] text-income"];
-
-export default function MyBusinessPage() {
-  const overview = useOverview();
-  const meter = useTaxMeter();
-  const transactions = useTransactions(20);
-  const error = overview.error ?? meter.error;
-
-  if (error) {
-    return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อมูลร้านไม่สำเร็จ: {error.message}</p>;
-  }
-  if (!overview.data || !meter.data) {
-    return <p className="rounded-3xl bg-white p-6 text-center text-ink-muted">กำลังโหลดข้อมูลร้าน…</p>;
-  }
-
-  const o = overview.data;
-  const m = meter.data;
-  const zone = ZONE[m.color];
-  const profit = Number(o.net_profit);
-  const reachDate = thresholdDate(m);
-  const pending = (transactions.data ?? []).filter((t) => t.status === "pending");
-
+export default function HomePage() {
   return (
-    <div className="flex flex-col gap-6">
-      <section aria-label="U-Bot และมิเตอร์ภาษี" className="flex flex-wrap items-center gap-x-10 gap-y-7 rounded-[32px] bg-sky-deep p-6 md:p-9">
-        <div className="flex min-w-0 flex-[1_1_480px] items-end gap-4">
-          <UBotLive size={140} wave mood={zone.mood} tips={TIPS} bubbleSide="right" className="shrink-0 max-sm:hidden" />
-          <div className="min-w-0 flex-1 rounded-3xl rounded-bl-md bg-white px-6 py-5 shadow-[0_10px_30px_rgba(26,111,214,.12)]">
-            <div className="text-[15px] font-semibold text-brand">U-Bot</div>
-            <p className="m-0 text-xl leading-normal md:text-[22px]">
-              สวัสดีค่ะ {o.business_name} เดือนนี้{profit >= 0 ? "กำไร" : "ขาดทุน"}{" "}
-              <b className={profit >= 0 ? "text-brand" : "text-expense"}>{formatBaht(Math.abs(profit))}</b> {zone.say}
+    <div className="flex flex-col gap-5 pb-4">
+      {/* Hero greeting */}
+      <section className="relative rounded-[28px] bg-gradient-to-br from-[#E0F2FE] to-[#F0F7FF] px-6 py-7 overflow-hidden">
+        <div className="flex items-start gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-[22px] font-bold text-navy leading-tight mb-1">
+              สวัสดีครับ! 👋
+            </p>
+            <p className="text-[28px] font-extrabold text-brand leading-tight">
+              ผม U-Fox
+            </p>
+            <p className="text-[17px] text-ink-body mt-1 leading-snug">
+              ผู้ช่วยจัดการการเงิน<br />ของคุณครับ
             </p>
           </div>
+          <UBot size={120} pose="ledger" className="shrink-0 -mr-2 -mt-2" />
         </div>
-
-        <div className="relative flex flex-wrap items-center justify-center gap-5 rounded-[28px] bg-white px-6 py-5 max-sm:w-full md:rotate-1">
-          <Note className="absolute -top-5 left-4 rounded-lg bg-sun px-2.5 py-0.5 text-[15px] !text-[#4A3500] shadow-md" tilt={-6}>
-            {zone.note}
-          </Note>
-          <Ring ratio={Number(m.ratio)} color={zone.ring} size={150}>
-            <div className="text-[38px] font-bold leading-none">{Math.round(Number(m.ratio) * 100)}%</div>
-            <div className="text-[13px] text-ink-muted">ของเพดาน VAT</div>
-          </Ring>
-          <div className="flex flex-col gap-1.5">
-            <span className={`self-start rounded-full px-3 py-0.5 text-sm font-bold ${zone.chip}`}>{zone.label}</span>
-            <div className="text-xl font-semibold">{formatBaht(m.annual_income)}</div>
-            <div className="text-[15px] text-ink-muted">
-              จาก {formatBaht(m.threshold)} ในปี {m.year + 543}
-              {reachDate && (
-                <>
-                  <br />
-                  ถึงเพดานราว {formatThaiMonthYear(reachDate)}
-                </>
-              )}
-            </div>
-          </div>
+        <div className="mt-4 rounded-2xl bg-white/80 backdrop-blur-sm px-5 py-3.5 shadow-sm">
+          <p className="text-[15px] text-ink-body m-0">
+            วันนี้อยากให้ผมช่วยเรื่องอะไรดีครับ?
+          </p>
         </div>
       </section>
 
-      <section aria-label="สรุปเดือนนี้" className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-4">
-        <Stat label="รายรับเดือนนี้" value={formatBaht(o.income)} />
-        <Stat label="รายจ่ายเดือนนี้" value={formatBaht(o.expense)} />
-        <Stat label="กำไรสุทธิ" value={formatBaht(o.net_profit)} highlight />
+      {/* Menu grid */}
+      <section className="grid grid-cols-3 gap-3">
+        {MENU_ITEMS.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="relative flex flex-col items-center gap-2 rounded-[20px] bg-white p-4 pt-5 text-center no-underline shadow-[0_2px_12px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform"
+          >
+            {item.badge && (
+              <span className="absolute -top-1.5 -right-1.5 rounded-full bg-expense px-2 py-0.5 text-[10px] font-bold text-white">
+                {item.badge}
+              </span>
+            )}
+            <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color} ${item.iconColor}`}>
+              <MenuIcon type={item.icon} />
+            </span>
+            <span className="text-[13px] font-bold text-navy leading-tight">{item.label}</span>
+            <span className="text-[11px] text-ink-muted leading-tight whitespace-pre-line">{item.sub}</span>
+          </Link>
+        ))}
       </section>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-6">
-        <section aria-label="สินค้าขายดี" className="flex flex-col gap-4 rounded-[28px] bg-white p-7">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="m-0 text-[21px] font-semibold">ขายดีเดือนนี้</h2>
-            <Link href="/stock" className="text-[15px] font-semibold no-underline">
-              ดูสต็อก
-            </Link>
-          </div>
-          {o.top_products.length === 0 && <p className="m-0 text-ink-muted">ยังไม่มียอดขายสินค้าเดือนนี้</p>}
-          {o.top_products.slice(0, 3).map((p, i) => (
-            <div key={p.product_id} className="flex items-center gap-3.5">
-              <ProductThumb name={p.name} rank={i + 1} tint={PRODUCT_TINTS[i]} />
-              <div className="min-w-0 flex-1">
-                <div className="font-semibold">{p.name}</div>
-                <div className="text-[15px] text-ink-muted">
-                  ขาย {Number(p.quantity_sold).toLocaleString("en-US")} {p.unit} · เหลือ {Number(p.stock_qty).toLocaleString("en-US")}
-                </div>
-              </div>
-              <b className="font-semibold">{formatBaht(p.revenue)}</b>
-            </div>
-          ))}
-        </section>
-
-        <PendingCard pending={pending} />
-      </div>
-
-      <Link
-        href="/market"
-        className="flex flex-wrap items-center justify-between gap-4 rounded-[28px] border-2 border-dashed border-sky-line bg-white px-7 py-6 text-ink no-underline"
-      >
-        <span>
-          <span className="block text-xl font-semibold">คู่แข่งขายสินค้าแบบเดียวกับคุณเท่าไหร่?</span>
-          <span className="text-[15px] text-ink-muted">ให้ U-Bot ช่วยหาราคาที่ขายออกและกำไรดีที่สุด</span>
-        </span>
-        <span className="inline-flex min-h-[48px] items-center rounded-full bg-sun px-6 font-bold text-[#4A3500]">ลองฟรี 7 วัน</span>
-      </Link>
+      {/* Bottom links */}
+      <section className="flex justify-center gap-6 py-2">
+        {BOTTOM_LINKS.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="flex flex-col items-center gap-1.5 text-ink-muted no-underline"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-line-subtle">
+              <MenuIcon type={item.icon} />
+            </span>
+            <span className="text-[12px] font-medium">{item.label}</span>
+          </Link>
+        ))}
+      </section>
     </div>
-  );
-}
-
-/** Real product photo when there is one (public/products/CREDITS.md), else the rank on a tinted tile. */
-function ProductThumb({ name, rank, tint }: { name: string; rank: number; tint: string }) {
-  const photo = productPhoto(name);
-  return (
-    <span className="relative shrink-0">
-      {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={photo} alt="" className="h-[52px] w-[52px] rounded-[18px] object-cover" />
-      ) : (
-        <span className={`grid h-[52px] w-[52px] place-items-center rounded-[18px] text-lg font-bold ${tint}`}>{rank}</span>
-      )}
-      {photo && (
-        <span className="absolute -left-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-sun font-hand text-sm font-bold text-[#4A3500]">{rank}</span>
-      )}
-    </span>
-  );
-}
-
-function Stat({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className={`rounded-[26px] px-7 py-6 ${highlight ? "bg-brand text-white" : "bg-white"}`}>
-      <div className={`text-[15px] ${highlight ? "text-sky-deep" : "text-ink-muted"}`}>{label}</div>
-      <div className="text-[32px] font-semibold leading-snug">{value}</div>
-    </div>
-  );
-}
-
-function PendingCard({ pending }: { pending: TransactionItem[] }) {
-  const { confirm } = useTransactionActions();
-  const first = pending[0];
-
-  return (
-    <section aria-label="รอยืนยัน" className="flex flex-col gap-4 rounded-[28px] bg-white p-7">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="m-0 text-[21px] font-semibold">รอคุณยืนยัน{pending.length > 1 ? ` (${pending.length})` : ""}</h2>
-        <Link href="/transactions" className="text-[15px] font-semibold no-underline">
-          ดูทั้งหมด
-        </Link>
-      </div>
-      {first ? (
-        <div className="flex flex-col gap-3 rounded-[22px] bg-brand-tint p-5">
-          <div>
-            <div className="font-semibold">{first.description ?? first.product_name ?? (first.type === "income" ? "รายรับ" : "รายจ่าย")}</div>
-            <div className="text-[15px] text-ink-muted">
-              {first.type === "income" ? "รายรับ" : "รายจ่าย"} {formatBaht(first.amount)} · จาก LINE
-            </div>
-          </div>
-          <div className="flex gap-2.5">
-            <button
-              type="button"
-              disabled={confirm.isPending}
-              onClick={() => confirm.mutate(first.id)}
-              className="min-h-[46px] flex-1 rounded-full bg-brand font-semibold text-white disabled:opacity-60"
-            >
-              ยืนยัน
-            </button>
-            <Link
-              href={`/transactions?edit=${first.id}`}
-              className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border-2 border-[#C7DEFC] bg-white font-semibold text-ink no-underline"
-            >
-              แก้ไข
-            </Link>
-          </div>
-          {confirm.error && <p className="m-0 text-sm text-expense">{confirm.error.message}</p>}
-        </div>
-      ) : (
-        <p className="m-0 text-ink-muted">ไม่มีรายการค้าง ส่งสลิปหรืออัดเสียงใน LINE แล้วรายการจะมารอตรงนี้</p>
-      )}
-      <LineAddFriendButton label="ส่งสลิปหรืออัดเสียงใน LINE" className="justify-center" />
-    </section>
   );
 }

@@ -15,7 +15,7 @@ import httpx
 from app.core.settings import settings
 
 API = "https://api.line.me/v2/bot"
-ASSET = Path(__file__).resolve().parent.parent / "app" / "line_messages" / "assets" / "rich_menu.png"
+ASSET = Path(__file__).resolve().parent.parent / "app" / "line_messages" / "assets" / "rich_menu.jpg"
 
 LIFF_BASE = f"https://liff.line.me/{settings.liff_id}" if settings.liff_id else ""
 
@@ -33,7 +33,7 @@ def _build_rich_menu_body() -> dict:
         "areas": [
             {
                 "bounds": {"x": 0, "y": 0, "width": 1000, "height": 1686},
-                "action": {"type": "postback", "data": "action=menu_howto", "displayText": "วิธีบันทึก"},
+                "action": {"type": "postback", "data": "action=menu_greeting", "displayText": "สวัสดีครับ"},
             },
             {
                 "bounds": {"x": 1000, "y": 0, "width": 750, "height": 562},
@@ -93,7 +93,7 @@ def main() -> None:
         resp = client.post(
             f"https://api-data.line.me/v2/bot/richmenu/{menu_id}/content",
             content=f.read(),
-            headers={**_headers(), "Content-Type": "image/png"},
+            headers={**_headers(), "Content-Type": "image/jpeg"},
         )
     resp.raise_for_status()
     print("  Image uploaded.")
