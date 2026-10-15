@@ -13,8 +13,8 @@ dependencies = [
     "PyYAML>=6.0",
     "python-dotenv>=1.0",
     "line-bot-sdk>=3.11",
-    "google-genai>=0.3",
     "openai>=1.50",
+    "imageio-ffmpeg>=0.5",
     "httpx>=0.27",
     "PyJWT>=2.9",
 ]

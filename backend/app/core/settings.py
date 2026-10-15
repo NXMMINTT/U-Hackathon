@@ -14,8 +14,10 @@ class Settings(BaseSettings):
     line_channel_access_token: str = ""
     liff_id: str = ""
 
-    gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    # KKU IntelSphere (OpenAI-compatible Gemini) — LINE bot parsing and U-Bot
+    kku_base_url: str = "https://gen.ai.kku.ac.th/api/v1"
+    kku_api_key: str = ""
+    kku_model: str = "gemini-3.5-flash-lite"
 
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""
