@@ -45,7 +45,12 @@ pnpm gen:api
 
 ## ที่ยังไม่ได้ทำ (รอ phase ถัดไป)
 
-- ตั้งค่า LIFF จริง (ตอนนี้ dev ใช้ `DASHBOARD_LINE_USER_ID` ใน backend/.env แทนการ login)
+- **LIFF login**: สร้าง Channel + LIFF app แล้ว (Provider "U-renger" → "U-Ledger AI Web" → LIFF app
+  "U-Ledger AI Dashboard") ทดสอบแล้วว่า backend อ่านค่า `LIFF_ID` ถูกต้อง (error เปลี่ยนจาก
+  `liff_not_configured` เป็น `invalid_id_token` ตามที่ควรจะเป็นเมื่อยังไม่มี id_token จริง) —
+  **เหลือ**: deploy เว็บขึ้นจริง แล้วกลับไปแก้ **Endpoint URL** ของ LIFF app (ตอนนี้เป็น
+  placeholder `https://example.com`) ให้เป็น URL จริง ถึงจะ login ผ่านแอป LINE บนมือถือได้
+  (จนกว่าจะ deploy เสร็จ dev ใช้ `DASHBOARD_LINE_USER_ID` ใน backend/.env แทนการ login ได้ตามปกติ)
 - Dark mode (มีใน branch NIGHT แต่สีในโปรเจกต์ยังเป็นค่าตายตัว)
 - Vitest / Playwright ยังไม่ตั้งค่า
 - Dockerfile ฝั่ง frontend ยังไม่มี (ตามแผนอยู่ phase 6)
