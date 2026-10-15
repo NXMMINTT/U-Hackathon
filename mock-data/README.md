@@ -29,6 +29,8 @@ Mock data สำหรับ demo U-Ledger AI แบ่งตาม 2 Tab หล
 
 - `subscription.json` — แพ็กเกจ Free/Premium (199 บาท/เดือน, trial 7 วัน), กฎแต่ละสถานะ (`status`: `free` | `trialing` | `active` | `past_due` | `canceled` | `expired`), ตาราง `transitions`, ผู้ใช้หลัก `current_user` และ `demo_users` ครบทุกสถานะไว้สลับโชว์ — frontend ใช้ `is_premium` ตัดสินว่าจะล็อก Tab 2 หรือไม่ และแสดง `banner` ตามสถานะ
 
+- `platform-connect.json` — โปรไฟล์ร้าน + สินค้าตัวอย่างที่ "ดึงมา" ตอน onboarding เชื่อมต่อร้านค้า (ดูที่ `/api/onboarding/connect`) key เป็น `platform_id` เดียวกับใน `platforms.json`
+
 ## กติกาการแก้ไข
 
 - ถ้าจะเพิ่ม field ใหม่ แจ้งในกลุ่มก่อน กัน frontend/backend/AI ใช้ field คนละชื่อ
