@@ -157,11 +157,11 @@ export function TaxPlayground() {
   const zone = ZONES.find((z) => ratio < z.upTo) ?? ZONES[ZONES.length - 1];
 
   return (
-    <div className="relative flex w-[340px] max-w-full flex-col items-center gap-4 rounded-[30px] bg-white p-7 shadow-[0_24px_50px_rgba(21,48,90,.14)] md:rotate-1">
-      <span className="absolute -top-5 left-6 -rotate-6 rounded-lg bg-sun px-3 py-1 font-hand font-bold text-[#4A3500] shadow-md">ลองเลื่อนดูสิ!</span>
+    <div className="relative flex w-[340px] max-w-full flex-col items-center gap-4 rounded-[30px] bg-white p-7 shadow-[0_24px_50px_rgba(21,48,90,.14)]">
+      <span className="absolute -top-3.5 left-6 rounded-full bg-sun px-3 py-1 text-sm font-bold text-[#4A3500]">ลองเลื่อนดู</span>
       <div className="flex items-center gap-3">
         <UBot size={96} mood={zone.mood} />
-        <p className="m-0 min-h-[3.2em] max-w-[200px] font-hand text-[15px] font-semibold leading-snug" aria-live="polite">
+        <p className="m-0 min-h-[3.2em] max-w-[200px] text-[15px] font-semibold leading-snug" aria-live="polite">
           {zone.say}
         </p>
       </div>
@@ -199,7 +199,6 @@ export function ChatMarquee({ items }: { items: readonly string[] }) {
           <span
             key={i}
             className={`whitespace-nowrap rounded-2xl px-4 py-2 text-[15px] ${i % 3 === 1 ? "rounded-bl-sm bg-white text-ink" : "rounded-br-sm bg-chat text-[#0F2A12]"}`}
-            style={{ transform: `rotate(${(i % 4) - 1.5}deg)` }}
           >
             {t}
           </span>
