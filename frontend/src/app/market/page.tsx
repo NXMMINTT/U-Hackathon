@@ -18,7 +18,7 @@ import {
   useUBotInsights,
 } from "@/hooks/useMarket";
 import { apiFetch } from "@/lib/api-client";
-import { isAvailable, productEmoji } from "@/lib/market";
+import { isAvailable, productEmoji, productPhoto } from "@/lib/market";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.overview;
@@ -58,8 +58,13 @@ export default function MarketOverviewPage() {
     <div className="flex flex-col gap-[22px]">
       <section className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="grid h-11 w-11 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-2xl" aria-hidden="true">
-            {productEmoji(p.product_name)}
+          <span className="grid h-11 w-11 flex-none place-items-center overflow-hidden rounded-[10px] bg-[#E3EEFB] text-2xl" aria-hidden="true">
+            {productPhoto(p.product_name) ? (
+              // eslint-disable-next-line @next/next/no-img-element -- static product photo
+              <img src={productPhoto(p.product_name)!} alt="" className="h-full w-full object-cover" />
+            ) : (
+              productEmoji(p.product_name)
+            )}
           </span>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold md:text-2xl">{p.product_name}</h2>

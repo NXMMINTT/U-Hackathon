@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-import { CategoryIcon } from "@/components/market/CategoryIcon";
+import { CategoryThumb } from "@/components/market/CategoryIcon";
 import { PlatformBadge } from "@/components/market/PlatformBadge";
 import { PriceHistoryChart } from "@/components/market/PriceHistoryChart";
 import { SearchTrendChart } from "@/components/market/SearchTrendChart";
@@ -76,7 +76,7 @@ export default function ProductPage() {
       </nav>
 
       <Card className="flex flex-wrap gap-6">
-        <CategoryIcon categoryId={category.category_id} path={category.icon_path} size={120} className="rounded-2xl" />
+        <CategoryThumb categoryId={category.category_id} path={category.icon_path} size={120} className="rounded-2xl" />
         <div className="flex min-w-0 flex-[999_1_320px] flex-col gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone={TREND_STATUS_TONE[status]}>{th.marketRadar.trends.status[status]}</Badge>

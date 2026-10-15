@@ -184,3 +184,32 @@ export function savePickedPlatforms(ids: string[]): void {
     // storage blocked (private mode) — the choice just isn't remembered
   }
 }
+
+/** Keyword → real product photo, for the handful of products that have one.
+ * See public/products/CREDITS.md for sourcing/license per file (Wikimedia
+ * Commons, CC-licensed). Everything else uses productEmoji() instead. */
+const PRODUCT_PHOTO: [string, string][] = [
+  ["น้ำพริก", "/products/namprik.jpg"],
+  ["พริก", "/products/namprik.jpg"],
+  ["กล้วย", "/products/banana.jpg"],
+  ["ชา", "/products/tea.jpg"],
+  ["สบู่", "/products/soap.jpg"],
+  ["กระเป๋า", "/products/bag.jpg"],
+];
+
+/** Real photo for a product name, or null to fall back to productEmoji(). */
+export function productPhoto(name: string): string | null {
+  const hit = PRODUCT_PHOTO.find(([kw]) => name.includes(kw));
+  return hit ? hit[1] : null;
+}
+
+/** Market Radar categories (C01–C20) that have a real product photo instead
+ * of just the category SVG glyph — see public/products/CREDITS.md. */
+const CATEGORY_PHOTO = new Set([
+  "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08", "C09", "C10",
+  "C11", "C13", "C14", "C16", "C18", "C20",
+]);
+
+export function categoryPhoto(categoryId: string): string | null {
+  return CATEGORY_PHOTO.has(categoryId) ? `/products/${categoryId}.jpg` : null;
+}

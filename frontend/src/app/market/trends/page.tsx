@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-import { CategoryIcon } from "@/components/market/CategoryIcon";
+import { CategoryThumb } from "@/components/market/CategoryIcon";
 import { Sparkline } from "@/components/market/Sparkline";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -142,7 +142,7 @@ function TrendsView() {
           ) : (
             results.map((r) => (
               <Link key={r.key} href={r.href} className="flex items-center gap-3 rounded-[10px] px-2 py-2 hover:bg-[#F5F7FA]">
-                <CategoryIcon categoryId={r.cat.category_id} path={r.cat.icon_path} />
+                <CategoryThumb categoryId={r.cat.category_id} path={r.cat.icon_path} />
                 <span className="min-w-0">
                   <span className="block truncate font-semibold">{r.name}</span>
                   <span className="block text-xs text-ink-muted">{r.sub}</span>
@@ -171,7 +171,7 @@ function TrendsView() {
                     className="flex flex-col gap-2 rounded-2xl border border-line bg-white p-4 hover:border-brand"
                   >
                     <div className="flex items-center gap-3">
-                      <CategoryIcon categoryId={p.category_id} path={catOf(p).icon_path} />
+                      <CategoryThumb categoryId={p.category_id} path={catOf(p).icon_path} />
                       <div className="min-w-0">
                         <Badge tone="warning">{t.hotRank.replace("{rank}", String(i + 1))}</Badge>
                         <div className="truncate font-semibold">{p.name}</div>
@@ -198,7 +198,7 @@ function TrendsView() {
                   onClick={() => router.push(`/market/trends?cat=${c.category_id}`)}
                   className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-white p-4 text-center text-sm font-medium hover:border-brand"
                 >
-                  <CategoryIcon categoryId={c.category_id} path={c.icon_path} size={52} />
+                  <CategoryThumb categoryId={c.category_id} path={c.icon_path} size={52} />
                   {c.name}
                 </button>
               ))}
@@ -237,7 +237,7 @@ function TrendsView() {
                       className="flex flex-wrap items-center gap-3 py-3 hover:bg-[#F8FAFC]"
                     >
                       <span className="w-6 text-center text-lg font-bold text-ink-faint">{i + 1}</span>
-                      <CategoryIcon categoryId={p.category_id} path={category.icon_path} />
+                      <CategoryThumb categoryId={p.category_id} path={category.icon_path} />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-semibold">{p.name}</span>
