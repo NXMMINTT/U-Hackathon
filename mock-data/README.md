@@ -25,13 +25,10 @@ Mock data สำหรับ demo U-Ledger AI แบ่งตาม 2 Tab หล
 - `b2b-sponsors.json` — สินค้า sponsor จากพาร์ทเนอร์ค้าส่ง B2B (เช่น Thai Mart) ที่จะโชว์แทรกในหน้า Market Radar เมื่อ `target_product_ids`/`target_keywords` ตรงกับสินค้า/เทรนด์ที่ผู้ใช้กำลังดู เรียงการแสดงผลตาม `sponsored_rank` (เลขน้อยแสดงก่อน)
 - `daily-knowledge.json` — หัวข้อความรู้ธุรกิจสำหรับฟีเจอร์ "ข่าวธุรกิจ/อบรมฟรีประจำวัน" แต่ละหัวข้อมี `outline` (ประเด็นคร่าวๆ) ให้ Gemini แต่งเป็นสคริปต์พูดแล้วแปลงเป็นเสียงด้วย ElevenLabs ผ่าน `/api/knowledge/*`
 
-<<<<<<< HEAD
-=======
 ## Premium (mock)
 
 - `subscription.json` — แพ็กเกจ Free/Premium (199 บาท/เดือน, trial 7 วัน), กฎแต่ละสถานะ (`status`: `free` | `trialing` | `active` | `past_due` | `canceled` | `expired`), ตาราง `transitions`, ผู้ใช้หลัก `current_user` และ `demo_users` ครบทุกสถานะไว้สลับโชว์ — frontend ใช้ `is_premium` ตัดสินว่าจะล็อก Tab 2 หรือไม่ และแสดง `banner` ตามสถานะ
 
->>>>>>> eb29eca (add. mock premium)
 ## กติกาการแก้ไข
 
 - ถ้าจะเพิ่ม field ใหม่ แจ้งในกลุ่มก่อน กัน frontend/backend/AI ใช้ field คนละชื่อ
