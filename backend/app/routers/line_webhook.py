@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 
 from app.core.db import SessionLocal
 from app.core.settings import settings
+from app.line_messages.summary import build_summary_flex
 from app.line_messages.transaction_confirm import build_transaction_confirmation_message
 from app.locales import th
 from app.models import Attachment, Business, Transaction
@@ -118,7 +119,9 @@ def _handle_message_event(db: Session, event: MessageEvent) -> None:
         return
 
     if parsed.intent == ParsedIntent.SUMMARY_REQUEST:
-        line_service.reply_text(event.reply_token, _daily_summary_reply(db, business))
+        income_total, expense_total = transaction_service.day_totals(db, business.id, date.today())
+        flex = build_summary_flex(income_total, expense_total, period_label="วันนี้")
+        line_service.reply_messages(event.reply_token, [flex])
         return
 
     line_service.reply_text(
@@ -133,8 +136,28 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
 
     params = dict(pair.split("=", 1) for pair in event.postback.data.split("&") if "=" in pair)
     action = params.get("action")
+
+    # Rich menu buttons that don't reference a transaction id.
+    if action == "menu_greeting":
+        line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+        return
+    if action == "menu_howto":
+        line_service.reply_text(event.reply_token, th.RICH_MENU_HOWTO_REPLY)
+        return
+    if action == "menu_help":
+        line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+        return
+    if action == "menu_summary":
+        business = _resolve_business(db, line_user_id)
+        income_total, expense_total = transaction_service.day_totals(db, business.id, date.today())
+        flex = build_summary_flex(income_total, expense_total, period_label="วันนี้")
+        line_service.reply_messages(event.reply_token, [flex])
+        return
+
     txn_id_raw = params.get("id")
     if action not in {"confirm", "cancel", "edit"} or txn_id_raw is None or not txn_id_raw.isdigit():
+        if action and action.startswith("menu_"):
+            line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
         return
     txn_id = int(txn_id_raw)
 
@@ -183,11 +206,6 @@ def _tax_status_reply(db: Session, business: Business) -> str:
     ratio = vat.vat_threshold_ratio(annual_income)
     required = vat.is_vat_registration_required(annual_income)
     return th.tax_status_reply(annual_income, _percent(ratio), required)
-
-
-def _daily_summary_reply(db: Session, business: Business) -> str:
-    income_total, expense_total = transaction_service.day_totals(db, business.id, date.today())
-    return th.daily_summary_reply(income_total, expense_total)
 
 
 def _maybe_push_vat_warning(db: Session, business: Business, line_user_id: str) -> None:
