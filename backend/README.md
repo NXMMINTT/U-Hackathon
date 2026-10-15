@@ -10,7 +10,11 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-แก้ `.env` ใส่ `GEMINI_API_KEY` ของตัวเอง (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ไฟล์นี้ไม่ถูก commit เข้า git
+แก้ `.env` ใส่:
+- `GEMINI_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat)
+- `ELEVENLABS_API_KEY` (สมัครฟรีได้ที่ elevenlabs.io มี free tier) — ถ้าไม่ใส่ endpoint เสียงจะตอบ 503 แต่ endpoint อื่นใช้ได้ปกติ
+
+ไฟล์ `.env` ไม่ถูก commit เข้า git
 
 ## Run
 
@@ -44,6 +48,17 @@ API docs: http://localhost:8000/docs
     -d '{"question":"ตอนนี้ควรปรับราคาน้ำพริกไหม","product_id":"P001"}'
   ```
   ถ้ายังไม่ตั้งค่า `GEMINI_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
+
+### เสียง U-Bot (ElevenLabs)
+- `POST /api/voice/speak` — รับข้อความ คืนไฟล์เสียง MP3 ตรงๆ (`{"text": "..."}`)
+- `POST /api/voice/ask-and-speak` — ถาม U-Bot แล้วแปลงคำตอบเป็นเสียงในขั้นตอนเดียว คืน JSON `{answer, audio_base64, audio_mime}`
+
+### ความรู้ธุรกิจประจำวัน (Daily Business Briefing)
+เนื้อหาให้ความรู้สั้นๆ แบบ "ข่าวธุรกิจ/ความรู้ประจำวัน" พูดโดย U-Bot — สุ่มหัวข้อหมุนเวียนตามวันที่ (deterministic ต่อวัน ทุกคนที่เปิดวันเดียวกันได้หัวข้อเดียวกัน) แล้วให้ Gemini แต่งสคริปต์พูดจากโครงหัวข้อใน `mock-data/daily-knowledge.json`
+- `GET /api/knowledge/topics` — ดูหัวข้อทั้งหมด (7 หัวข้อ: ภาษี, การตลาด, แพลตฟอร์ม, ส่งออก, การจัดการร้าน)
+- `GET /api/knowledge/daily` — สคริปต์ของวันนี้ (ข้อความอย่างเดียว)
+- `GET /api/knowledge/daily/audio` — สคริปต์ของวันนี้ + เสียงพูด (ต้องมี `ELEVENLABS_API_KEY`)
+- `GET /api/knowledge/topics/{topic_id}/audio` — เลือกฟังหัวข้อไหนก็ได้ ไม่ต้องรอตามวัน
 
 ### B2B Sponsored Placements
 - `GET /api/b2b/sponsors` — รายการสินค้า sponsor ทั้งหมด (เช่น Thai Mart) เรียงตามที่มีในไฟล์

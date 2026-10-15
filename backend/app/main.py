@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import b2b, insights, market_radar, my_business, ubot
+from app.routers import b2b, insights, knowledge, market_radar, my_business, ubot, voice
 
 app = FastAPI(title="U-Ledger AI API")
 
@@ -17,6 +17,8 @@ app.include_router(market_radar.router)
 app.include_router(insights.router)
 app.include_router(ubot.router)
 app.include_router(b2b.router)
+app.include_router(voice.router)
+app.include_router(knowledge.router)
 
 
 @app.get("/")
