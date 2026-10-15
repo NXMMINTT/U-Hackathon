@@ -18,7 +18,7 @@ import {
   useUBotInsights,
 } from "@/hooks/useMarket";
 import { apiFetch } from "@/lib/api-client";
-import { isAvailable } from "@/lib/market";
+import { isAvailable, productEmoji } from "@/lib/market";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.overview;
@@ -57,13 +57,18 @@ export default function MarketOverviewPage() {
   return (
     <div className="flex flex-col gap-[22px]">
       <section className="flex flex-col gap-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-xl font-semibold md:text-2xl">{p.product_name}</h2>
-          <span className="text-[13px] text-ink-faint">
-            {t.foundIn
-              .replace("{platforms}", String(new Set(p.competitors.map((c) => c.platform_id)).size))
-              .replace("{sellers}", String(p.competitors.length))}
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="grid h-11 w-11 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-2xl" aria-hidden="true">
+            {productEmoji(p.product_name)}
           </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-xl font-semibold md:text-2xl">{p.product_name}</h2>
+            <span className="text-[13px] text-ink-faint">
+              {t.foundIn
+                .replace("{platforms}", String(new Set(p.competitors.map((c) => c.platform_id)).size))
+                .replace("{sellers}", String(p.competitors.length))}
+            </span>
+          </div>
         </div>
       </section>
 

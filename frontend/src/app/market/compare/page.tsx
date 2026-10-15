@@ -6,7 +6,7 @@ import { PlatformBadge } from "@/components/market/PlatformBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useCompetitorPrices } from "@/hooks/useMarket";
-import { isAvailable, toTHB } from "@/lib/market";
+import { isAvailable, productEmoji, toTHB } from "@/lib/market";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.compare;
@@ -78,7 +78,10 @@ export default function ComparePage() {
 
   return (
     <div className="flex flex-col gap-[22px]">
-      <h2 className="text-xl font-semibold md:text-2xl">
+      <h2 className="flex items-center gap-3 text-xl font-semibold md:text-2xl">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-xl" aria-hidden="true">
+          {productEmoji(data.product_name)}
+        </span>
         {t.title} · {data.product_name}
       </h2>
 
