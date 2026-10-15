@@ -1,6 +1,7 @@
 import { getIdToken, isLiffConfigured } from "./liff";
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+// Empty = same origin; next.config.ts forwards /api/* to FastAPI (needed for LIFF / phones).
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const JWT_STORAGE_KEY = "u-ledger-jwt";
 
 export function getStoredJwt(): string | null {
