@@ -13,8 +13,7 @@ cp .env.example .env
 ```
 
 แก้ `.env` ใส่:
-- `KKU_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ใช้กับ U-Bot / voice / knowledge
-- `GEMINI_API_KEY` (Google AI Studio) — ใช้กับ LINE bot แยกรายการจากข้อความ/สลิป/เสียง
+- `KKU_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ใช้กับ LINE bot (แยกรายการจากข้อความ/สลิป/เสียง) และ U-Bot / voice / knowledge
 - `ELEVENLABS_API_KEY` (สมัครฟรีได้ที่ elevenlabs.io มี free tier) — ถ้าไม่ใส่ endpoint เสียงจะตอบ 503 แต่ endpoint อื่นใช้ได้ปกติ
 
 ไฟล์ `.env` ไม่ถูก commit เข้า git

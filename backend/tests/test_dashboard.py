@@ -36,6 +36,7 @@ def session() -> Session:
 @pytest.fixture()
 def client(session: Session, monkeypatch: pytest.MonkeyPatch) -> TestClient:
     monkeypatch.setattr(deps.settings, "liff_id", "")
+    monkeypatch.setattr(deps.settings, "dashboard_line_user_id", "")
     app.dependency_overrides[get_db] = lambda: session
     yield TestClient(app)
     app.dependency_overrides.clear()
@@ -174,6 +175,17 @@ def test_bearer_jwt_selects_that_users_shop(client: TestClient, session: Session
 
     token = auth_service.issue_jwt("Ureal")
     body = client.get("/api/v1/dashboard/overview", headers={"Authorization": f"Bearer {token}"}).json()
+    assert body["business_name"] == "ร้านจริง"
+
+
+def test_dashboard_line_user_id_replaces_demo_shop_without_liff(
+    client: TestClient, session: Session, monkeypatch: pytest.MonkeyPatch
+):
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    _shop(session, "Ureal", "ร้านจริง")
+    monkeypatch.setattr(deps.settings, "dashboard_line_user_id", "Ureal")
+
+    body = client.get("/api/v1/dashboard/overview").json()
     assert body["business_name"] == "ร้านจริง"
 
 

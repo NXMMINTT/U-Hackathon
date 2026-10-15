@@ -5,7 +5,7 @@ MVP สำหรับ U-Hackathon 2026 — Market Intelligence Platform สำ�
 
 > สถานะปัจจุบัน:
 > - **Tab 1 — My Business เสร็จแล้ว** (MINT)
->   - LINE: บันทึกรายรับ-รายจ่ายจาก **ข้อความ / รูปสลิป-ใบเสร็จ / ข้อความเสียง** (Gemini) → การ์ดยืนยัน →
+>   - LINE: บันทึกรายรับ-รายจ่ายจาก **ข้อความ / รูปสลิป-ใบเสร็จ / ข้อความเสียง** (Gemini ผ่าน KKU IntelSphere) → การ์ดยืนยัน →
 >     **ตัดสต็อกอัตโนมัติ** เมื่อยืนยันการขาย และเพิ่มสต็อกพร้อมบันทึกต้นทุนเมื่อยืนยันการซื้อ
 >   - Dashboard: Tax Meter (เขียว/เหลือง/แดง), รายรับ-รายจ่าย-กำไรสุทธิ, สินค้าขายดี 3 อันดับ, สต็อก
 > - **Tab 2 — Market Radar + U-Bot + B2B เสร็จแล้ว** (natchanon, mock-data backed — ดู `backend/README.md`)
@@ -76,7 +76,7 @@ u-ledger-ai/
    cd backend
    cp .env.example .env
    ```
-   ใส่ `GEMINI_API_KEY` (parse สลิป), `KKU_API_KEY` (KKU IntelSphere, ใช้โดย U-Bot/Market Radar), และ `ELEVENLABS_API_KEY` ตามที่ต้องการใช้งาน — รายละเอียด endpoint ของฝั่ง Market Radar/U-Bot/B2B ดูที่ [backend/README.md](backend/README.md)
+   ใส่ `KKU_API_KEY` (KKU IntelSphere — ใช้ทั้ง LINE bot แยกรายการ/สลิป/เสียง และ U-Bot/Market Radar), `LINE_CHANNEL_SECRET` / `LINE_CHANNEL_ACCESS_TOKEN` (LINE bot) และ `ELEVENLABS_API_KEY` ตามที่ต้องการใช้งาน — รายละเอียด endpoint ของฝั่ง Market Radar/U-Bot/B2B ดูที่ [backend/README.md](backend/README.md)
 3. ติดตั้ง dependencies (ใช้ Python 3.12):
    ```bash
    python -m venv .venv

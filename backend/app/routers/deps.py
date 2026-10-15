@@ -13,8 +13,9 @@ def get_current_business(
     db: Session = Depends(get_db),
 ) -> Business:
     """Resolves the dashboard's business from the bearer JWT. Without LIFF
-    configured (local dev / demo), unauthenticated requests see the seeded
-    demo shop instead (scripts/seed_demo.py).
+    configured (local dev / demo), unauthenticated requests see the shop of
+    DASHBOARD_LINE_USER_ID if set, else the seeded demo shop
+    (scripts/seed_demo.py).
     """
     if authorization and authorization.startswith("Bearer "):
         try:
@@ -22,7 +23,7 @@ def get_current_business(
         except auth_service.InvalidTokenError as exc:
             raise ApiError(401, "invalid_token", "เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่") from exc
     elif not settings.liff_id:
-        line_user_id = user_service.DEMO_LINE_USER_ID
+        line_user_id = settings.dashboard_line_user_id or user_service.DEMO_LINE_USER_ID
     else:
         raise ApiError(401, "unauthenticated", "กรุณาเข้าสู่ระบบผ่าน LINE")
 
