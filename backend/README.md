@@ -7,7 +7,10 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
 ```
+
+แก้ `.env` ใส่ `GEMINI_API_KEY` ของตัวเอง (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ไฟล์นี้ไม่ถูก commit เข้า git
 
 ## Run
 
@@ -33,6 +36,13 @@ API docs: http://localhost:8000/docs
 - `GET /api/market/eu-arbitrage` — โอกาสตลาดยุโรป
 
 ### Insights (U-Bot)
-- `GET /api/insights?tab=&product_id=` — insight ตามเงื่อนไข filter
+- `GET /api/insights?tab=&product_id=` — insight ตัวอย่างแบบ static (filter ได้)
+- `POST /api/ubot/ask` — ถาม U-Bot จริงผ่าน Gemini (KKU IntelSphere) โดยอัตโนมัติประกอบ context จาก mock data ทั้งหมด (ภาษี, ราคาคู่แข่ง, คำค้นหา) ให้ก่อนส่งคำถาม
+  ```bash
+  curl -X POST http://localhost:8000/api/ubot/ask \
+    -H "Content-Type: application/json" \
+    -d '{"question":"ตอนนี้ควรปรับราคาน้ำพริกไหม","product_id":"P001"}'
+  ```
+  ถ้ายังไม่ตั้งค่า `GEMINI_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
 
 ข้อมูลทั้งหมดอ่านจากไฟล์ใน `../mock-data/` โดยตรง — แก้ schema ที่ไฟล์ mock data แล้ว API จะได้ตามนั้นทันที ไม่ต้อง sync ซ้ำ
