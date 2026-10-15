@@ -22,6 +22,7 @@ Mock data สำหรับ demo U-Ledger AI แบ่งตาม 2 Tab หล
 ## ทุก Tab
 
 - `insights.json` — ข้อความสรุปจาก U-Bot ต่อ insight หนึ่งเรื่อง ผูกกับ `tab` (`my_business` | `market_radar`) และ `related_product_id` — ทีม AI generate ข้อความใหม่แทนที่ array นี้ได้โดยไม่ต้องเปลี่ยน field
+- `b2b-sponsors.json` — สินค้า sponsor จากพาร์ทเนอร์ค้าส่ง B2B (เช่น Thai Mart) ที่จะโชว์แทรกในหน้า Market Radar เมื่อ `target_product_ids`/`target_keywords` ตรงกับสินค้า/เทรนด์ที่ผู้ใช้กำลังดู เรียงการแสดงผลตาม `sponsored_rank` (เลขน้อยแสดงก่อน)
 
 ## กติกาการแก้ไข
 

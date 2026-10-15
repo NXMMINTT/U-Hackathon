@@ -45,4 +45,9 @@ API docs: http://localhost:8000/docs
   ```
   ถ้ายังไม่ตั้งค่า `GEMINI_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
 
+### B2B Sponsored Placements
+- `GET /api/b2b/sponsors` — รายการสินค้า sponsor ทั้งหมด (เช่น Thai Mart) เรียงตามที่มีในไฟล์
+- `GET /api/b2b/sponsors/match?product_id=&keyword=` — กรองเฉพาะ listing ที่ตรงกับสินค้า/คีย์เวิร์ดที่กำลังดูอยู่ เรียงตาม `sponsored_rank` — ไม่ใส่ query เลยจะได้ทั้งหมด
+- `POST /api/b2b/sponsors/{listing_id}/click` — บันทึกคลิกโฆษณา (เก็บ in-memory ไม่เขียนทับไฟล์ mock data, รีสตาร์ท server แล้วรีเซ็ต)
+
 ข้อมูลทั้งหมดอ่านจากไฟล์ใน `../mock-data/` โดยตรง — แก้ schema ที่ไฟล์ mock data แล้ว API จะได้ตามนั้นทันที ไม่ต้อง sync ซ้ำ
