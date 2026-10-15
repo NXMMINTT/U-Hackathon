@@ -43,6 +43,7 @@ export const PLATFORM_COLORS: Record<string, string> = {
   Lazada: "#14A0B8",
   "TikTok Shop": "#D9891A",
   Thaimart: "#C2416B",
+  Amazon: "#7A5C00",
 };
 export const FALLBACK_COLOR = "#5A667A";
 

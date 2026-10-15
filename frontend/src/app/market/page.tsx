@@ -12,10 +12,10 @@ import {
   useCompetitorPrices,
   useEuArbitrage,
   useKeywordVolume,
-  useMarketInsights,
   useMarketTrend,
   usePlatforms,
   useSponsors,
+  useUBotInsights,
 } from "@/hooks/useMarket";
 import { apiFetch } from "@/lib/api-client";
 import { isAvailable } from "@/lib/market";
@@ -36,9 +36,9 @@ export default function MarketOverviewPage() {
   const trend = useMarketTrend();
   const keywords = useKeywordVolume();
   const eu = useEuArbitrage();
-  const insights = useMarketInsights();
   const platforms = usePlatforms();
   const sponsors = useSponsors(prices.data?.product_id);
+  const ubot = useUBotInsights(prices.data?.product_id);
 
   const error = prices.error ?? trend.error ?? keywords.error ?? eu.error;
   if (error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>;
@@ -151,24 +151,56 @@ export default function MarketOverviewPage() {
         </div>
 
         <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-[22px]">
-          {insights.data && insights.data.length > 0 && (
-            <section className="flex flex-col gap-3 rounded-2xl bg-navy p-5 text-white">
+          <section
+            className="flex flex-col gap-3 rounded-2xl bg-navy p-5 text-white"
+            aria-busy={ubot.isLoading || ubot.refresh.isPending}
+          >
+            <div className="flex items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">{t.insightsTitle}</h2>
-              <ul className="flex flex-col gap-2.5">
-                {insights.data.map((i) => (
-                  <li key={i.insight_id} className="rounded-xl bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed">
-                    {i.text}
-                  </li>
-                ))}
-              </ul>
+              {ubot.data && (
+                <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px]">
+                  {ubot.data.generated_by === "gemini" ? t.byGemini : t.byRules}
+                </span>
+              )}
+            </div>
+            {!ubot.data ? (
+              <p className="text-sm text-[#CBD5E1]">{ubot.error ? ubot.error.message : t.thinking}</p>
+            ) : (
+              <>
+                <div className="rounded-xl bg-white px-4 py-3 text-navy">
+                  <div className="text-xs text-ink-muted">{t.suggestedPrice}</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[26px] font-bold">฿{ubot.data.suggested_price}</span>
+                    <span className="text-sm text-ink-muted">{t.vsYours.replace("{price}", String(p.my_selling_price))}</span>
+                  </div>
+                  <p className="text-xs text-ink-body">{ubot.data.reason}</p>
+                </div>
+                <ul className="flex flex-col gap-2.5">
+                  {ubot.data.insights.map((text) => (
+                    <li key={text} className="rounded-xl bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed">
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <div className="flex flex-wrap gap-2">
               <Link
                 href="/market/chat"
-                className="inline-flex min-h-[40px] items-center self-start rounded-[10px] bg-white px-4 text-sm font-semibold text-navy"
+                className="inline-flex min-h-[40px] items-center rounded-[10px] bg-white px-4 text-sm font-semibold text-navy"
               >
                 {t.askUBot}
               </Link>
-            </section>
-          )}
+              <button
+                type="button"
+                onClick={() => ubot.refresh.mutate()}
+                disabled={ubot.refresh.isPending}
+                className="inline-flex min-h-[40px] items-center rounded-[10px] border border-white/40 px-4 text-sm font-semibold disabled:opacity-50"
+              >
+                {ubot.refresh.isPending ? t.thinking : t.reanalyze}
+              </button>
+            </div>
+          </section>
 
           {keywords.data && (
             <Card className="flex flex-col gap-3">

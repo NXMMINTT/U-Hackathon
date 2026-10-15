@@ -36,7 +36,7 @@ function ensureSession(): Promise<void> {
   return sessionPromise;
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, as: "json" | "blob" = "json"): Promise<T> {
   const token = getStoredJwt();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
@@ -56,7 +56,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error(message);
   }
 
-  return response.json() as Promise<T>;
+  return (as === "blob" ? response.blob() : response.json()) as Promise<T>;
 }
 
 /** Thin fetch wrapper: base URL + JSON + bearer token. Backend error shape is
@@ -64,6 +64,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   await ensureSession();
   return request<T>(path, init);
+}
+
+/** Same as apiFetch but returns the raw body, e.g. audio from /api/voice/speak. */
+export async function apiFetchBlob(path: string, init?: RequestInit): Promise<Blob> {
+  await ensureSession();
+  return request<Blob>(path, init, "blob");
 }
 
 export async function checkHealth(): Promise<{ status: string }> {

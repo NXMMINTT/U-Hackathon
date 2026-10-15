@@ -6,7 +6,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.models.enums import IncomeExpenseType, TransactionSource, TransactionStatus
 
@@ -57,6 +57,15 @@ class TransactionOut(BaseModel):
     source: TransactionSource
     product_name: str | None
     quantity: Decimal | None
+
+
+class TransactionUpdateIn(BaseModel):
+    type: IncomeExpenseType
+    amount: Decimal = Field(gt=0)
+    description: str | None = Field(default=None, max_length=500)
+    txn_date: date
+    product_name: str | None = Field(default=None, max_length=200)
+    quantity: Decimal | None = Field(default=None, gt=0)
 
 
 class ProductOut(BaseModel):

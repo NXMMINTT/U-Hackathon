@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { useAskUBot, useCompetitorPrices } from "@/hooks/useMarket";
+import { apiFetchBlob } from "@/lib/api-client";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.chat;
@@ -14,6 +15,54 @@ function BotText({ text }: { text: string }) {
   return text
     .split(/(\*\*[^*]+\*\*)/g)
     .map((part, i) => (part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part));
+}
+
+/** Plays a U-Bot answer through ElevenLabs (/api/voice/speak); audio is fetched once and reused. */
+function SpeakButton({ text }: { text: string }) {
+  const [state, setState] = useState<"idle" | "loading" | "playing" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  async function play() {
+    if (state === "playing") {
+      audioRef.current?.pause();
+      setState("idle");
+      return;
+    }
+    try {
+      if (!audioRef.current) {
+        setState("loading");
+        const blob = await apiFetchBlob("/api/voice/speak", {
+          method: "POST",
+          body: JSON.stringify({ text: text.replace(/\*\*/g, "") }),
+        });
+        audioRef.current = new Audio(URL.createObjectURL(blob));
+        audioRef.current.onended = () => setState("idle");
+      }
+      audioRef.current.currentTime = 0;
+      await audioRef.current.play();
+      setState("playing");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setState("error");
+    }
+  }
+
+  return (
+    <div className="mt-1.5 flex flex-col gap-1">
+      <button
+        type="button"
+        onClick={play}
+        disabled={state === "loading"}
+        aria-label={t.listen}
+        className="inline-flex min-h-[32px] items-center gap-1.5 self-start rounded-full border border-line px-3 text-xs font-semibold text-brand disabled:opacity-50"
+      >
+        <span aria-hidden="true">{state === "playing" ? "⏸" : "🔊"}</span>
+        {state === "loading" ? t.voiceLoading : state === "playing" ? t.stop : t.listen}
+      </button>
+      {state === "error" && <span className="text-xs text-[#991B1B]">{error}</span>}
+    </div>
+  );
 }
 
 export default function UBotChatPage() {
@@ -69,7 +118,14 @@ export default function UBotChatPage() {
                     : "self-start border border-line bg-white text-navy"
               }`}
             >
-              {m.role === "bot" ? <BotText text={m.text} /> : m.text}
+              {m.role === "bot" ? (
+                <>
+                  <BotText text={m.text} />
+                  <SpeakButton text={m.text} />
+                </>
+              ) : (
+                m.text
+              )}
             </div>
           ))}
           {ask.isPending && <div className="self-start text-sm text-ink-muted">{t.thinking}</div>}

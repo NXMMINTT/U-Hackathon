@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiFetch } from "@/lib/api-client";
 
@@ -47,7 +47,15 @@ export type EuArbitrage = {
   };
 };
 
-export type Insight = { insight_id: string; related_product_id: string; tab: string; text: string; generated_at: string };
+/** /api/ubot/insights — Gemini recommendations + Dynamic Pricing, with a rule-based fallback. */
+export type UBotInsights = {
+  product_id: string;
+  rule_price: number;
+  suggested_price: number;
+  reason: string;
+  insights: string[];
+  generated_by: "gemini" | "rules";
+};
 
 export type Sponsor = {
   listing_id: string;
@@ -125,9 +133,34 @@ export const useCompetitorPrices = () => useMockQuery<CompetitorPrices>("competi
 export const useMarketTrend = () => useMockQuery<MarketTrend>("trend", "/api/market/trend");
 export const useKeywordVolume = () => useMockQuery<KeywordVolume[]>("keyword-volume", "/api/market/keyword-volume");
 export const useEuArbitrage = () => useMockQuery<EuArbitrage[]>("eu-arbitrage", "/api/market/eu-arbitrage");
-export const useMarketInsights = () => useMockQuery<Insight[]>("insights", "/api/insights?tab=market_radar");
+export function useUBotInsights(productId: string | undefined) {
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: ["market", "ubot-insights", productId],
+    queryFn: () => apiFetch<UBotInsights>(`/api/ubot/insights?product_id=${productId}`),
+    enabled: Boolean(productId),
+    staleTime: 10 * 60 * 1000, // backend caches for 10 minutes too
+  });
+  const refresh = useMutation({
+    mutationFn: () => apiFetch<UBotInsights>(`/api/ubot/insights?product_id=${productId}&refresh=true`),
+    onSuccess: (data) => queryClient.setQueryData(["market", "ubot-insights", productId], data),
+  });
+  return { ...query, refresh };
+}
 export const usePlatforms = () => useMockQuery<Platform[]>("platforms", "/api/market/platforms");
-export const useSubscription = () => useMockQuery<Subscription>("subscription", "/api/market/subscription");
+/** Plans + the current shop's status from Ball's /api/premium routes, combined for the pages. */
+export function useSubscription() {
+  return useQuery({
+    queryKey: ["market", "subscription"],
+    queryFn: async (): Promise<Subscription> => {
+      const [plans, current_user] = await Promise.all([
+        apiFetch<Subscription["plans"]>("/api/premium/plans"),
+        apiFetch<Subscription["current_user"]>("/api/premium/status"),
+      ]);
+      return { plans, current_user };
+    },
+  });
+}
 export const useTrendCatalog = () => useMockQuery<TrendCatalog>("trend-catalog", "/api/market/trend-catalog");
 
 export function useSponsors(productId: string | undefined) {
