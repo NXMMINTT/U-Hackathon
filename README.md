@@ -54,6 +54,17 @@ u-ledger-ai/
    ```bash
    docker compose up -d
    ```
+   **Port 5432 ชนกับอย่างอื่นในเครื่อง** (container โปรเจกต์อื่น หรือ PostgreSQL ที่ลงไว้แต่เดิม)? สร้าง
+   `docker-compose.override.yml` (ไม่ต้อง commit เข้า repo — อยู่ใน `.gitignore` แล้ว) แมปไปพอร์ตอื่นแทน:
+   ```yaml
+   services:
+     postgres:
+       ports: !override
+         - "5433:5432"
+   ```
+   ต้องใช้ `!override` ไม่ใช่เขียน `ports:` เฉยๆ เพราะ Docker Compose จะ **รวม** list ports จากทั้งสองไฟล์
+   (เปิดทั้งพอร์ตเดิมและพอร์ตใหม่พร้อมกัน) ไม่ใช่แทนที่ — แล้วแก้ `DATABASE_URL` ใน `backend/.env` ให้ตรงพอร์ตที่ใช้จริง
+
    **ไม่มี Docker?** ลง PostgreSQL ผ่าน Homebrew แทนได้:
    ```bash
    brew install postgresql@16

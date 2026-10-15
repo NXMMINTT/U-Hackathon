@@ -16,3 +16,6 @@ backend/uploads/
 .claude/
 .vscode/
 *.tsbuildinfo
+
+# Machine-specific port override (e.g. when something else already owns 5432)
+docker-compose.override.yml
