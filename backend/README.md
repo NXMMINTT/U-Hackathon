@@ -75,4 +75,11 @@ API docs: http://localhost:8000/docs
 - `GET /api/premium/users` — รายชื่อ user ตัวอย่างครบทุกสถานะ (6 คน) ไว้สลับทดสอบ
 - `GET /api/premium/billing-history?user_id=` — ประวัติการชำระเงิน กรองตาม user ได้
 
+### Onboarding — "เชื่อมต่อร้านค้า" (mock, จำลองการดึงข้อมูลจากแพลตฟอร์มจริง)
+Shopee/Lazada/TikTok Shop Open Platform ต้องสมัคร partner แบบ verified แล้วรออนุมัติเป็นสัปดาห์ ไม่ทันเวลาแฮกกาธอน
+ส่วนนี้เลยจำลองขั้นตอน "เชื่อมต่อร้านค้า" ตอน onboarding แบบ end-to-end จริง (ยิง request จริง, delay สมจริง ~1.5-2.2s)
+ให้ดูเหมือนดึงโปรไฟล์ร้าน+สินค้ามาจากแพลตฟอร์มจริง โดยใช้ข้อมูลจาก `mock-data/platform-connect.json`
+- `GET /api/onboarding/platforms` — แพลตฟอร์มที่เชื่อมต่อได้ (Shopee/Lazada/TikTok Shop)
+- `POST /api/onboarding/connect` — `{"platform_id": "shopee_th"}` → รอ ~1.5-2.2 วินาที (จำลอง sync) → คืนโปรไฟล์ร้าน + สินค้าตัวอย่าง
+
 ข้อมูลทั้งหมดอ่านจากไฟล์ใน `../mock-data/` โดยตรง — แก้ schema ที่ไฟล์ mock data แล้ว API จะได้ตามนั้นทันที ไม่ต้อง sync ซ้ำ

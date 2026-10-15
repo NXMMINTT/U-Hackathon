@@ -30,6 +30,14 @@ Mock data สำหรับ demo U-Ledger AI แบ่งตาม 2 Tab หล
 
 - `subscription.json` — แพ็กเกจ Free/Premium (199 บาท/เดือน, trial 7 วัน), กฎแต่ละสถานะ (`status`: `free` | `trialing` | `active` | `past_due` | `canceled` | `expired`), ตาราง `transitions`, ผู้ใช้หลัก `current_user` และ `demo_users` ครบทุกสถานะไว้สลับโชว์ — frontend ใช้ `is_premium` ตัดสินว่าจะล็อก Tab 2 หรือไม่ และแสดง `banner` ตามสถานะ
 
+- `platform-connect.json` — โปรไฟล์ร้าน + สินค้าตัวอย่างที่ "ดึงมา" ตอน onboarding เชื่อมต่อร้านค้า (ดูที่ `/api/onboarding/connect`) key เป็น `platform_id` เดียวกับใน `platforms.json`
+
+## โลโก้แพลตฟอร์ม (`frontend/public/logos/`)
+
+- 24/60 แพลตฟอร์มมีโลโก้จริง (map อยู่ใน `frontend/src/lib/market.ts` ตัวแปร `LOGOS`) — 5 ไฟล์แรก (shopee/lazada/amazon/ebay/thaimart) เป็น asset ที่มีอยู่แล้วจากทีม frontend ส่วนที่เหลือเป็น **Simple Icons** (simpleicons.org, สัญญาอนุญาต CC0) ซึ่งเป็นคลัง brand mark ฟรีที่เปิดให้ใช้ได้ ไม่ใช่โลโก้ทางการที่ดาวน์โหลดจากเว็บแต่ละแพลตฟอร์มโดยตรง
+- แพลตฟอร์มที่เหลือ (~36 ตัว เช่น Kaidee, ShopSpot, Page365, Tiki, Zalora, Gmarket, Noon, Jumia ฯลฯ) **ไม่มีอยู่ใน Simple Icons library** ด้านหน้าเว็บจะ fallback ไปโชว์ตัวอักษรย่อแทน (letter badge) ซึ่งเป็นพฤติกรรมเดิมของ `platformLogo()` อยู่แล้ว
+- ถ้าจะเพิ่มโลโก้จริงให้แพลตฟอร์มที่เหลือ ต้องขอ/ใช้ brand asset อย่างถูกต้องจากแต่ละเจ้าของแบรนด์เอง (มีข้อจำกัดเรื่องลิขสิทธิ์ ไม่ควรดึงจากเว็บแบบสุ่ม)
+
 ## กติกาการแก้ไข
 
 - ถ้าจะเพิ่ม field ใหม่ แจ้งในกลุ่มก่อน กัน frontend/backend/AI ใช้ field คนละชื่อ

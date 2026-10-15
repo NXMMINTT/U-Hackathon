@@ -13,6 +13,7 @@ from app.routers import (
     line_webhook,
     market_radar,
     my_business,
+    onboarding,
     premium,
     ubot,
     ubot_insights,
@@ -44,6 +45,7 @@ app.include_router(ubot.router)
 app.include_router(ubot_insights.router)
 app.include_router(b2b.router)
 app.include_router(premium.router)
+app.include_router(onboarding.router)
 app.include_router(voice.router)
 app.include_router(knowledge.router)
 
