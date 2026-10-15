@@ -209,6 +209,37 @@ def test_edit_postback_cancels_draft_and_asks_for_correction(client: TestClient,
     assert replies[-1] == line_webhook.th.TRANSACTION_EDIT_REPLY
 
 
+def test_rich_menu_howto_postback_replies_with_instructions(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    replies = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: replies.append(text))
+
+    body = _postback_event_body("action=menu_howto")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert replies == [line_webhook.th.RICH_MENU_HOWTO_REPLY]
+
+
+def test_rich_menu_help_postback_replies_with_help_text(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    replies = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: replies.append(text))
+
+    body = _postback_event_body("action=menu_help")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert replies == [line_webhook.th.RICH_MENU_HELP_REPLY]
+
+
+def test_rich_menu_summary_postback_replies_with_daily_summary(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    replies = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: replies.append(text))
+
+    body = _postback_event_body("action=menu_summary")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert len(replies) == 1
+    assert "สรุปวันนี้" in replies[0]
+
+
 def test_unsupported_message_type_replies_politely(client: TestClient, monkeypatch: pytest.MonkeyPatch):
     sent = []
     monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: sent.append(text))

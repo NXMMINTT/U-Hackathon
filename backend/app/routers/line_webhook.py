@@ -133,6 +133,19 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
 
     params = dict(pair.split("=", 1) for pair in event.postback.data.split("&") if "=" in pair)
     action = params.get("action")
+
+    # Rich menu buttons that don't reference a transaction id.
+    if action == "menu_howto":
+        line_service.reply_text(event.reply_token, th.RICH_MENU_HOWTO_REPLY)
+        return
+    if action == "menu_help":
+        line_service.reply_text(event.reply_token, th.RICH_MENU_HELP_REPLY)
+        return
+    if action == "menu_summary":
+        business = _resolve_business(db, line_user_id)
+        line_service.reply_text(event.reply_token, _daily_summary_reply(db, business))
+        return
+
     txn_id_raw = params.get("id")
     if action not in {"confirm", "cancel", "edit"} or txn_id_raw is None or not txn_id_raw.isdigit():
         return
