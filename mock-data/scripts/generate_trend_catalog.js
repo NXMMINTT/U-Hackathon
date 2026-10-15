@@ -1,15 +1,35 @@
 // Generates mock-data/trend-catalog.json from the sample generator in NIGHT's
 // Frontend/src/pages/trend.ts (same hash, same numbers), extended with the
-// per-offer fields and price history that NIGHT's product.ts hard-coded for one item.
+// per-offer fields and price history that NIGHT's product.ts hard-coded for one item,
+// and expanded from NIGHT's original 5 platforms to the full mock-data/platforms.json
+// roster (60+) so the catalog actually shows off the "every platform" selling point.
 // Usage (from repo root): node mock-data/scripts/generate_trend_catalog.js mock-data/trend-catalog.json
 const fs = require("fs");
+const path = require("path");
 
+const TYPE_LABEL = {
+  marketplace: "มาร์เก็ตเพลส",
+  social_commerce: "โซเชียลคอมเมิร์ซ",
+  classifieds: "ตลาดประกาศซื้อขาย",
+  quick_commerce: "เดลิเวอรีด่วน",
+  b2b_marketplace: "มาร์เก็ตเพลสค้าส่ง",
+  own_store: "ร้านค้าของแบรนด์เอง",
+};
+
+const allPlatforms = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "..", "platforms.json"), "utf8"),
+);
+
+// NIGHT's 3 "always in stock, deep per-offer detail" anchors, kept for continuity
+// with the original design (Thaimart is our own B2B partner, not in platforms.json).
 const PF = [
-  { id: "shopee", name: "Shopee", intl: false, description: "มาร์เก็ตเพลสยอดนิยมในไทยและอาเซียน" },
-  { id: "lazada", name: "Lazada", intl: false, description: "มาร์เก็ตเพลสในไทยและอาเซียน มี LazMall สำหรับแบรนด์" },
   { id: "thaimart", name: "Thaimart", intl: false, description: "ตลาดค้าส่ง-ปลีกสินค้าไทย พาร์ทเนอร์ B2B ของ U-Ledger AI" },
-  { id: "ebay", name: "eBay", intl: true, description: "ตลาดออนไลน์ต่างประเทศ ทั้งของใหม่และมือสอง" },
-  { id: "amazon", name: "Amazon", intl: true, description: "ตลาดต่างประเทศ เหมาะกับสินค้าส่งออก" },
+  ...allPlatforms.map((p) => ({
+    id: p.platform_id,
+    name: p.name,
+    intl: p.region !== "Thailand",
+    description: `${TYPE_LABEL[p.type] ?? p.type}${p.region ? ` · ${p.region}` : ""}`,
+  })),
 ];
 
 const CATS = [
@@ -41,7 +61,9 @@ const h = (s) => { let x = 7; for (const ch of String(s)) x = (Math.imul(x, 31) 
 const series = (name, g, n) => Array.from({ length: n }, (_, i) => Math.round((30 + i * (g / (n - 1)) * 0.6 + (h(name + i) % 14)) * 10) / 10);
 const round = (n) => (n >= 300 ? Math.round(n / 10) * 10 : Math.round(n));
 const WEEKS = Array.from({ length: 8 }, (_, i) => `2026-W${35 + i}`);
-const SELLERS = { shopee: "Shopee Mall", lazada: "LazMall", thaimart: "ร้านทั่วไป", ebay: "ร้านต่างประเทศ", amazon: "ร้านต่างประเทศ" };
+// Platforms that are always in stock for every product (NIGHT's original "anchor" set).
+const ALWAYS_AVAILABLE = new Set(["thaimart", "shopee_th", "lazada_th"]);
+const sellerLabel = (p) => (p.intl ? "ร้านต่างประเทศ" : p.id === "thaimart" ? "ร้านทั่วไป" : p.id.endsWith("_th") ? "ร้านทางการ" : "ร้านพาร์ทเนอร์");
 
 const categories = CATS.map((c, ci) => ({ category_id: `C${String(ci + 1).padStart(2, "0")}`, name: c[0], icon_path: c[1] }));
 let n = 0;
@@ -50,7 +72,7 @@ const products = CATS.flatMap((c, ci) =>
     const growth = (h(name) % 190) - 10;
     const prices = PF.map((p) => {
       const k = h(name + p.id);
-      const available = p.id === "shopee" || p.id === "lazada" || k % 5 !== 0;
+      const available = ALWAYS_AVAILABLE.has(p.id) || k % 5 !== 0;
       const shops = 3 + (k % 120);
       const price = available ? Math.round(base * (0.82 + (k % 40) / 100 + (p.intl ? 0.25 : 0))) : null;
       return { platform_id: p.id, available, price, shops };
@@ -61,7 +83,7 @@ const products = CATS.flatMap((c, ci) =>
       const k = h(name + x.platform_id + "o");
       return {
         platform_id: x.platform_id,
-        seller: SELLERS[x.platform_id],
+        seller: sellerLabel(p),
         price: x.price,
         shipping: p.intl ? 250 + (k % 15) * 10 : k % 3 === 0 ? 40 : 0,
         discount: p.intl ? 0 : Math.min((k % 4) * Math.max(10, round(x.price * 0.05)), round(x.price * 0.15)),
@@ -99,10 +121,10 @@ const products = CATS.flatMap((c, ci) =>
 );
 
 const out = {
-  note: "ข้อมูลจำลองหน้าเทรนด์ตลาด — สร้างจาก sample generator ของ branch NIGHT (Frontend/src/pages/trend.ts, product.ts) ด้วยสคริปต์เดียวกันจึงได้ตัวเลขเดิม; search_index 10 จุด = 8 สัปดาห์ที่ผ่านมา + คาดการณ์ 2 สัปดาห์",
+  note: "ข้อมูลจำลองหน้าเทรนด์ตลาด — สร้างจาก sample generator ของ branch NIGHT (Frontend/src/pages/trend.ts, product.ts) ด้วยสคริปต์เดียวกันจึงได้ตัวเลขเดิม ขยายจาก 5 แพลตฟอร์มเดิมเป็นชุดเต็มใน mock-data/platforms.json (60+); search_index 10 จุด = 8 สัปดาห์ที่ผ่านมา + คาดการณ์ 2 สัปดาห์",
   platforms: PF,
   categories,
   products,
 };
 fs.writeFileSync(process.argv[2], JSON.stringify(out, null, 2) + "\n");
-console.log(`categories=${categories.length} products=${products.length} bytes=${fs.statSync(process.argv[2]).size}`);
+console.log(`platforms=${PF.length} categories=${categories.length} products=${products.length} bytes=${fs.statSync(process.argv[2]).size}`);
