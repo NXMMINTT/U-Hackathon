@@ -3,9 +3,10 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
-import { UBot } from "@/components/brand";
+import { UBot } from "@/components/brand/UBot";
 import { Card } from "@/components/ui/Card";
-import { type TransactionUpdate, useTransactionActions } from "@/hooks/useDashboard";
+import { useTransactionActions } from "@/hooks/dashboard/useTransactionActions";
+import type { TransactionUpdate } from "@/types/dashboard";
 
 const CATEGORIES = [
   { id: "food", label: "อาหาร", icon: "🍽️", color: "bg-[#FFF3E0]", activeColor: "bg-[#FF9800] text-white" },

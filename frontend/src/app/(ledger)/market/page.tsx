@@ -1,16 +1,14 @@
 "use client";
 
-import { Note } from "@/components/doodles";
-import { UBotLive } from "@/components/playful";
-import {
-  type CompetitorPrices,
-  useCompetitorPrices,
-  useEuArbitrage,
-  useKeywordVolume,
-  useMarketTrend,
-  useSponsors,
-  useUBotInsights,
-} from "@/hooks/useMarket";
+import { Note } from "@/components/decor/Note";
+import { UBotLive } from "@/components/brand/UBotLive";
+import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
+import { useEuArbitrage } from "@/hooks/market/useEuArbitrage";
+import { useKeywordVolume } from "@/hooks/market/useKeywordVolume";
+import { useMarketTrend } from "@/hooks/market/useMarketTrend";
+import { useSponsors } from "@/hooks/market/useSponsors";
+import { useUBotInsights } from "@/hooks/market/useUBotInsights";
+import type { CompetitorPrices } from "@/types/market";
 import { formatBaht } from "@/lib/format";
 
 const IN_STOCK = "มีสินค้า";

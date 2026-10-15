@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.data_loader import load_json
+from app.mock_data_loader import load_json
 
 router = APIRouter(prefix="/api/market", tags=["market-radar"])
 

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { UBot } from "@/components/brand";
-import { useOverview } from "@/hooks/useDashboard";
+import { UBot } from "@/components/brand/UBot";
+import { useOverview } from "@/hooks/dashboard/useOverview";
 import { formatBaht } from "@/lib/format";
 
 const TABS = [

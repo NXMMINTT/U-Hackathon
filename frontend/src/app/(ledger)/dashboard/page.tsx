@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { UBot } from "@/components/brand";
+import { UBot } from "@/components/brand/UBot";
 
 const MENU_ITEMS = [
   { href: "/transactions?mode=income", icon: "income", label: "บันทึกรายรับ", sub: "เพิ่มรายรับ\nง่ายๆเลย", color: "bg-[#FFF4E0]", iconColor: "text-[#F59E0B]" },

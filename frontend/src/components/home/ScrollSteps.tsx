@@ -9,7 +9,7 @@ const DESKTOP = "(min-width: 1024px)";
  * scroll-driven on desktop: the row stays pinned while the page scrolls past, and each stretch of
  * scrolling moves to the next step, sliding the matching screen up. On smaller screens the steps are tappable.
  */
-export function StepDemo({
+export function ScrollSteps({
   head,
   steps,
   visuals,

@@ -5,8 +5,11 @@ import { useState } from "react";
 import { PlatformBadge } from "@/components/market/PlatformBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { useCompetitorPrices } from "@/hooks/useMarket";
-import { isAvailable, productEmoji, productPhoto, toTHB } from "@/lib/market";
+import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
+import { isAvailable } from "@/lib/market/competitorAvailability";
+import { toTHB } from "@/lib/market/currency";
+import { productEmoji } from "@/lib/market/productEmoji";
+import { productPhoto } from "@/lib/market/productPhoto";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.compare;

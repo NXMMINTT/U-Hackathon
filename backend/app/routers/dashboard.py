@@ -11,7 +11,7 @@ from app.core.db import get_db
 from app.core.errors import ApiError
 from app.models import Business, Product, Transaction
 from app.models.enums import TransactionStatus
-from app.routers.deps import get_current_business
+from app.routers.dependencies import get_current_business
 from app.schemas.dashboard import (
     DailyPointOut,
     OverviewOut,

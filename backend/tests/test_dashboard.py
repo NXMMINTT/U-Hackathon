@@ -18,7 +18,7 @@ from app.models.enums import (
     TransactionSource,
     TransactionStatus,
 )
-from app.routers import deps
+from app.routers import dependencies
 from app.services import auth_service, user_service
 
 
@@ -35,8 +35,8 @@ def session() -> Session:
 
 @pytest.fixture()
 def client(session: Session, monkeypatch: pytest.MonkeyPatch) -> TestClient:
-    monkeypatch.setattr(deps.settings, "liff_id", "")
-    monkeypatch.setattr(deps.settings, "dashboard_line_user_id", "")
+    monkeypatch.setattr(dependencies.settings, "liff_id", "")
+    monkeypatch.setattr(dependencies.settings, "dashboard_line_user_id", "")
     app.dependency_overrides[get_db] = lambda: session
     yield TestClient(app)
     app.dependency_overrides.clear()
@@ -183,7 +183,7 @@ def test_dashboard_line_user_id_replaces_demo_shop_without_liff(
 ):
     _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
     _shop(session, "Ureal", "ร้านจริง")
-    monkeypatch.setattr(deps.settings, "dashboard_line_user_id", "Ureal")
+    monkeypatch.setattr(dependencies.settings, "dashboard_line_user_id", "Ureal")
 
     body = client.get("/api/v1/dashboard/overview").json()
     assert body["business_name"] == "ร้านจริง"
@@ -197,7 +197,7 @@ def test_invalid_jwt_returns_error_contract(client: TestClient, session: Session
 
 def test_liff_configured_requires_login(client: TestClient, session: Session, monkeypatch: pytest.MonkeyPatch):
     _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
-    monkeypatch.setattr(deps.settings, "liff_id", "1234567890-abcdefgh")
+    monkeypatch.setattr(dependencies.settings, "liff_id", "1234567890-abcdefgh")
 
     response = client.get("/api/v1/tax/meter")
     assert response.status_code == 401
@@ -213,7 +213,7 @@ def test_missing_demo_shop_returns_404(client: TestClient):
 def test_line_login_exchanges_id_token_for_jwt(
     client: TestClient, session: Session, monkeypatch: pytest.MonkeyPatch
 ):
-    monkeypatch.setattr(deps.settings, "liff_id", "1234567890-abcdefgh")
+    monkeypatch.setattr(dependencies.settings, "liff_id", "1234567890-abcdefgh")
     monkeypatch.setattr(
         auth_service,
         "verify_line_id_token",

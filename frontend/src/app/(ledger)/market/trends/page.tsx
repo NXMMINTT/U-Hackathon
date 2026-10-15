@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-import { CategoryThumb } from "@/components/market/CategoryIcon";
+import { CategoryThumb } from "@/components/market/CategoryThumb";
 import { Sparkline } from "@/components/market/Sparkline";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { type CatalogProduct, useTrendCatalog } from "@/hooks/useMarket";
-import { formatGrowth, loadPickedPlatforms, TREND_STATUS_TONE, trendStatus } from "@/lib/market";
+import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
+import type { CatalogProduct } from "@/types/market";
+import { loadPickedPlatforms } from "@/lib/market/pickedPlatforms";
+import { formatGrowth, TREND_STATUS_TONE, trendStatus } from "@/lib/market/trendStatus";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.trends;

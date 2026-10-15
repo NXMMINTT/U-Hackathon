@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { UBotFace } from "@/components/brand";
-import { UBotLive } from "@/components/playful";
+import { UBotFace } from "@/components/brand/UBotFace";
+import { UBotLive } from "@/components/brand/UBotLive";
 import { Card } from "@/components/ui/Card";
-import { useAskUBot, useCompetitorPrices } from "@/hooks/useMarket";
+import { useAskUBot } from "@/hooks/market/useAskUBot";
+import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { apiFetchBlob } from "@/lib/api-client";
 import th from "@/locales/th.json";
 

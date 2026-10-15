@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { UBot } from "@/components/brand";
-import { Note } from "@/components/doodles";
-import { useSubscription } from "@/hooks/useMarket";
+import { UBot } from "@/components/brand/UBot";
+import { Note } from "@/components/decor/Note";
+import { useSubscription } from "@/hooks/market/useSubscription";
 
 const SUB_NAV = [
   { href: "/market", label: "ภาพรวม" },

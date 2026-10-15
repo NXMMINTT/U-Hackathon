@@ -2,7 +2,7 @@
 
 import { StockBadge } from "@/components/StockBadge";
 import { Card } from "@/components/ui/Card";
-import { useProducts } from "@/hooks/useDashboard";
+import { useProducts } from "@/hooks/dashboard/useProducts";
 import { formatQty, formatTHB } from "@/lib/format";
 import th from "@/locales/th.json";
 

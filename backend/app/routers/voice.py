@@ -4,7 +4,7 @@ import httpx
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
 
-from app.config import ELEVENLABS_API_KEY, ELEVENLABS_MODEL_ID, ELEVENLABS_VOICE_ID, GEMINI_MODEL
+from app.core.ai_provider_settings import ELEVENLABS_API_KEY, ELEVENLABS_MODEL_ID, ELEVENLABS_VOICE_ID, GEMINI_MODEL
 from app.routers.ubot import SYSTEM_PROMPT, build_context, get_client
 
 router = APIRouter(prefix="/api/voice", tags=["voice"])

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Logo } from "@/components/brand";
+import { Logo } from "@/components/brand/Logo";
 
 // The app's two tabs (spec 2.1 / 2.2). Transactions and stock live under ร้านของฉัน.
 const TABS = [

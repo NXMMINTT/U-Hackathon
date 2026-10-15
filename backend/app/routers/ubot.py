@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from openai import OpenAI
 from pydantic import BaseModel
 
-from app.config import GEMINI_API_KEY, GEMINI_BASE_URL, GEMINI_MODEL
-from app.data_loader import load_json
+from app.core.ai_provider_settings import GEMINI_API_KEY, GEMINI_BASE_URL, GEMINI_MODEL
+from app.mock_data_loader import load_json
 
 router = APIRouter(prefix="/api/ubot", tags=["ubot"])
 

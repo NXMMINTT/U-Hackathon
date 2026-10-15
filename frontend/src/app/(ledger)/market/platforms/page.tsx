@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
-import { useTrendCatalog } from "@/hooks/useMarket";
-import { loadPickedPlatforms, platformLogo, savePickedPlatforms } from "@/lib/market";
+import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
+import { loadPickedPlatforms, savePickedPlatforms } from "@/lib/market/pickedPlatforms";
+import { platformLogo } from "@/lib/market/platformLogo";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.platforms;

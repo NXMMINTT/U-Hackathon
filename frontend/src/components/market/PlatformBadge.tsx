@@ -1,4 +1,4 @@
-import { platformLogo } from "@/lib/market";
+import { platformLogo } from "@/lib/market/platformLogo";
 
 /** Platform logo from public/logos, or a letter badge for platforms without one. */
 export function PlatformBadge({ id, name }: { id: string; name: string }) {
