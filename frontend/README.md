@@ -17,18 +17,27 @@ pnpm dev
 
 ## หน้าที่มี
 
-- `/` — **My Business**: Tax Meter (เขียว/เหลือง/แดง), รายรับ-รายจ่าย-กำไรเดือนนี้,
-  สินค้าขายดี 3 อันดับ, กราฟ 30 วัน, แจ้งเตือนเทรนด์, แพ็กเกจปัจจุบัน
+ดีไซน์โทนขาวฟ้า มี U-Bot เป็นมาสคอต (`src/components/brand.tsx`) — สีอยู่ใน `tailwind.config.ts`, ฟอนต์ Noto Sans Thai
+
+- `/` — หน้าแรก (`src/app/(site)/`) โครงแบบ parnuan.com: แชท LINE + Rich Menu, ขั้นตอน 1/3–3/3, ราคา, FAQ
+  ปุ่ม "เพิ่มเพื่อน" ใช้ `NEXT_PUBLIC_LINE_ADD_FRIEND_URL`
+- `/dashboard` — **ร้านของฉัน** (ข้อมูลจริงจาก DB): U-Bot ทักทาย + มิเตอร์ภาษี VAT, รายรับ/รายจ่าย/กำไรเดือนนี้,
+  สินค้าขายดี 3 อันดับ, รายการรอยืนยันจาก LINE
+- `/market` — **Market Radar** (mock data จาก `mock-data/` ผ่าน backend) ล็อกถ้าไม่ใช่ Premium (`market/layout.tsx`):
+  - `/market` ภาพรวม: ราคาแนะนำจาก U-Bot (Gemini), กราฟราคาคู่แข่งปักหมุดต้นทุน/ราคาเรา, ขายที่ไหนดี, คำค้นยอดฮิต, ตลาดยุโรป, B2B Sponsored
+  - `/market/trends`, `/market/products/[id]` — เทรนด์ตลาด หมวดหมู่ และหน้าสินค้าเทียบราคาทุกแพลตฟอร์ม (มาจาก branch NIGHT)
+  - `/market/compare` — เทียบราคาคู่แข่ง + คำนวณกำไรต่อชิ้น · `/market/chat` — ถาม U-Bot พร้อมฟังเสียง (ElevenLabs)
+  - `/market/platforms` — เลือกแพลตฟอร์มที่สนใจ · `/market/plans` — แพ็กเกจ Free/Premium
 - `/transactions` — รายการบันทึกล่าสุด; รายการที่รอยืนยันกด แก้ไข / ยกเลิก / ยืนยัน ได้
   (`?edit=<id>` เปิดฟอร์มแก้ไข — ปุ่ม "แก้ไข" ใน Flex card ลิงก์มาที่นี่เมื่อตั้ง LIFF แล้ว)
 - `/stock` — สต็อกสินค้าคงเหลือและต้นทุนต่อหน่วย
-- `/market` — **Market Radar** (mock data จาก `mock-data/` ผ่าน backend):
-  - `/market` ภาพรวม: Price Radar + ราคาแนะนำ/คำแนะนำจาก U-Bot (Gemini), เทรนด์ข้ามแพลตฟอร์ม, คีย์เวิร์ด, ตลาดยุโรป, B2B Sponsored
-  - `/market/trends`, `/market/products/[id]` — เทรนด์ตลาดและหน้าสินค้า (ย้ายมาจาก branch NIGHT)
-  - `/market/compare` — เทียบราคาคู่แข่ง + คำนวณกำไร
-  - `/market/chat` — แชทกับ U-Bot พร้อมปุ่มฟังเสียง (ElevenLabs)
-  - `/market/platforms`, `/market/plans` — เลือกแพลตฟอร์ม, แพ็กเกจ Free/Premium
-- `/welcome` — หน้าแรก (landing)
+
+มาสคอต **U-Fox** (ทีมออกแบบ) อยู่ที่ `public/mascot/u-fox-<ท่า>.png` — 17 ท่า ตัดจากชีตสติกเกอร์ของทีม
+ใช้ผ่าน `<UBot pose="radar" />` ใน `src/components/brand.tsx` (สี `#0B1F4D · #2563EB · #60A5FA · #E0F2FE` ตามชีตแบรนด์)
+
+`src/app/(site)` (หน้าแรก) กับ `src/app/(ledger)` (แอป) มี root layout แยกกัน ลูกเล่น (U-Bot ขยับตา/คลิกคุย,
+แถบเลื่อนมิเตอร์ภาษี, แชทพิมพ์เอง) อยู่ใน `src/components/playful.tsx` ลายมือ/สติกเกอร์/ใบเสร็จอยู่ใน `doodles.tsx`
+— ทุก animation ปิดเองเมื่อเครื่องตั้ง prefers-reduced-motion
 
 ## Generate API types จาก backend
 
@@ -45,12 +54,6 @@ pnpm gen:api
 
 ## ที่ยังไม่ได้ทำ (รอ phase ถัดไป)
 
-- **LIFF login**: สร้าง Channel + LIFF app แล้ว (Provider "U-renger" → "U-Ledger AI Web" → LIFF app
-  "U-Ledger AI Dashboard") ทดสอบแล้วว่า backend อ่านค่า `LIFF_ID` ถูกต้อง (error เปลี่ยนจาก
-  `liff_not_configured` เป็น `invalid_id_token` ตามที่ควรจะเป็นเมื่อยังไม่มี id_token จริง) —
-  **เหลือ**: deploy เว็บขึ้นจริง แล้วกลับไปแก้ **Endpoint URL** ของ LIFF app (ตอนนี้เป็น
-  placeholder `https://example.com`) ให้เป็น URL จริง ถึงจะ login ผ่านแอป LINE บนมือถือได้
-  (จนกว่าจะ deploy เสร็จ dev ใช้ `DASHBOARD_LINE_USER_ID` ใน backend/.env แทนการ login ได้ตามปกติ)
-- Dark mode (มีใน branch NIGHT แต่สีในโปรเจกต์ยังเป็นค่าตายตัว)
+- ตั้งค่า LIFF จริง (ตอนนี้ dev ใช้ `DASHBOARD_LINE_USER_ID` ใน backend/.env แทนการ login)
 - Vitest / Playwright ยังไม่ตั้งค่า
 - Dockerfile ฝั่ง frontend ยังไม่มี (ตามแผนอยู่ phase 6)

@@ -17,6 +17,7 @@ import th from "@/locales/th.json";
 const t = th.marketRadar.product;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
 type Sort = "total" | "sold" | "rating";
+const TOP_ROWS = 10;
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +25,7 @@ export default function ProductPage() {
   const [sort, setSort] = useState<Sort>("total");
   const [sell, setSell] = useState<number | null>(null);
   const [fee, setFee] = useState(10);
+  const [showAll, setShowAll] = useState(false);
 
   if (catalog.error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{catalog.error.message}</Card>;
   if (!catalog.data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
@@ -154,7 +156,7 @@ export default function ProductPage() {
               </tr>
             </thead>
             <tbody>
-              {sorted.map((o) => {
+              {(showAll ? sorted : sorted.slice(0, TOP_ROWS)).map((o) => {
                 const isBest = o.platform_id === best.platform_id;
                 return (
                   <tr key={o.platform_id} className={`border-t border-[#E6EBF2] ${isBest ? "bg-[#F0FDF4]" : ""}`}>
@@ -191,7 +193,16 @@ export default function ProductPage() {
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-ink-muted">{t.intlNote}</p>
+        {sorted.length > TOP_ROWS && (
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="min-h-[44px] self-center rounded-full border-2 border-[#C7DEFC] bg-white px-6 font-semibold text-brand hover:border-brand"
+          >
+            {showAll ? "ย่อเหลือ 10 อันดับ" : `ดูทั้งหมด ${sorted.length} ร้าน`}
+          </button>
+        )}
+        <p className="text-sm text-ink-muted">{t.intlNote}</p>
       </Card>
 
       <div className="flex flex-wrap items-start gap-[22px]">

@@ -14,6 +14,7 @@ import th from "@/locales/th.json";
 
 const t = th.marketRadar.trends;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
+const DEFAULT_CHIPS = 8;
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
@@ -21,8 +22,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`min-h-[40px] flex-none rounded-full border-[1.5px] px-4 text-sm font-medium ${
-        active ? "border-navy bg-navy text-white" : "border-[#CBD5E1] bg-white text-navy"
+      className={`min-h-[44px] flex-none rounded-full border-2 px-4 text-[15px] font-semibold ${
+        active ? "border-brand bg-brand text-white" : "border-[#C7DEFC] bg-white text-ink hover:border-brand"
       }`}
     >
       {children}
@@ -46,7 +47,8 @@ function TrendsView() {
   if (!catalog.data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
   const { categories, products } = catalog.data;
-  const platforms = catalog.data.platforms.filter((p) => !picked?.length || picked.includes(p.id));
+  // Picked on /market/platforms; until then show the first few (Thai majors) so the chip row stays short.
+  const platforms = picked?.length ? catalog.data.platforms.filter((p) => picked.includes(p.id)) : catalog.data.platforms.slice(0, DEFAULT_CHIPS);
   const catOf = (p: CatalogProduct) => categories.find((c) => c.category_id === p.category_id)!;
   const category = categories.find((c) => c.category_id === catId);
   const query = q.trim();
@@ -101,8 +103,8 @@ function TrendsView() {
       )}
 
       <div className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold md:text-2xl">{category?.name ?? t.title}</h2>
-        <p className="text-xs text-ink-muted">{t.statusLegend}</p>
+        <h2 className="m-0 text-2xl font-bold md:text-[28px]">{category?.name ?? t.title}</h2>
+        <p className="m-0 text-sm text-ink-muted">{t.statusLegend}</p>
         {!category && (
           <div className="relative">
             <input
@@ -110,7 +112,7 @@ function TrendsView() {
               onChange={(e) => setQ(e.target.value)}
               placeholder={t.searchPlaceholder}
               aria-label={t.searchPlaceholder}
-              className="min-h-[48px] w-full rounded-xl border border-line px-4 pr-24 text-base"
+              className="min-h-[54px] w-full rounded-full border-2 border-[#C7DEFC] bg-white px-6 pr-24 text-[17px] shadow-[0_10px_24px_rgba(26,111,214,.08)] focus:border-brand"
             />
             {q && (
               <button
@@ -132,6 +134,12 @@ function TrendsView() {
               {p.name}
             </Chip>
           ))}
+          <Link
+            href="/market/platforms"
+            className="inline-flex min-h-[44px] flex-none items-center rounded-full border-2 border-dashed border-sky-line px-4 font-hand text-[15px] font-bold text-brand no-underline"
+          >
+            + เลือกแพลตฟอร์มเพิ่ม
+          </Link>
         </div>
       </div>
 
@@ -168,7 +176,7 @@ function TrendsView() {
                   <Link
                     key={p.product_id}
                     href={`/market/products/${p.product_id}`}
-                    className="flex flex-col gap-2 rounded-2xl border border-line bg-white p-4 hover:border-brand"
+                    className="flex flex-col gap-2 rounded-[24px] bg-white p-5 text-ink no-underline transition-transform hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(26,111,214,.12)]"
                   >
                     <div className="flex items-center gap-3">
                       <CategoryThumb categoryId={p.category_id} path={catOf(p).icon_path} />

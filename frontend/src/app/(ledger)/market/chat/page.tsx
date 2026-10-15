@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { UBotFace } from "@/components/brand";
+import { UBotLive } from "@/components/playful";
 import { Card } from "@/components/ui/Card";
 import { useAskUBot, useCompetitorPrices } from "@/hooks/useMarket";
 import { apiFetchBlob } from "@/lib/api-client";
@@ -55,7 +57,7 @@ function SpeakButton({ text }: { text: string }) {
         onClick={play}
         disabled={state === "loading"}
         aria-label={t.listen}
-        className="inline-flex min-h-[32px] items-center gap-1.5 self-start rounded-full border border-line px-3 text-xs font-semibold text-brand disabled:opacity-50"
+        className="inline-flex min-h-[36px] items-center gap-1.5 self-start rounded-full bg-brand-soft px-3.5 text-sm font-semibold text-brand disabled:opacity-50"
       >
         <span aria-hidden="true">{state === "playing" ? "⏸" : "🔊"}</span>
         {state === "loading" ? t.voiceLoading : state === "playing" ? t.stop : t.listen}
@@ -96,39 +98,52 @@ export default function UBotChatPage() {
     <div className="flex flex-wrap items-start gap-[22px]">
       <Card className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
         <div>
-          <h2 className="text-lg font-semibold">{t.title}</h2>
-          <p className="text-sm text-ink-muted">{t.subtitle}</p>
+          <h2 className="m-0 text-xl font-bold">{t.title}</h2>
+          <p className="m-0 text-[15px] text-ink-muted">{t.subtitle}</p>
         </div>
 
-        <div className="flex min-h-[320px] flex-col gap-3 rounded-xl bg-[#F5F7FA] p-4">
+        <div className="flex min-h-[360px] flex-col gap-3 rounded-[24px] bg-[#DCEBFD] p-4 md:p-5">
           {messages.length === 0 && (
-            <div className="m-auto flex flex-col items-center gap-1 text-center">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-brand text-lg font-bold text-white">U</span>
-              <p className="font-semibold">{t.empty}</p>
+            <div className="m-auto flex flex-col items-center gap-2 text-center">
+              <UBotLive size={160} pose="line" bubbleSide="right" tips={["ถามเรื่องราคา คู่แข่ง หรือภาษีได้เลยค่ะ", "กดคำถามด้านล่างก็ได้นะ", "หนูตอบเป็นเสียงได้ด้วย!"]} />
+              <p className="m-0 font-hand text-lg font-semibold text-brand">{t.empty}</p>
             </div>
           )}
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                m.role === "user"
-                  ? "self-end bg-brand text-white"
-                  : m.role === "error"
-                    ? "self-start bg-[#FEF2F2] text-[#991B1B]"
-                    : "self-start border border-line bg-white text-navy"
-              }`}
-            >
-              {m.role === "bot" ? (
-                <>
-                  <BotText text={m.text} />
-                  <SpeakButton text={m.text} />
-                </>
-              ) : (
-                m.text
-              )}
+          {messages.map((m, i) =>
+            m.role === "user" ? (
+              <div key={i} className="max-w-[85%] animate-pop self-end whitespace-pre-wrap rounded-[20px] rounded-br-md bg-chat px-4 py-2.5 text-[#0F2A12]">
+                {m.text}
+              </div>
+            ) : (
+              <div key={i} className="flex max-w-[90%] animate-pop items-end gap-2.5 self-start">
+                <UBotFace size={34} />
+                <div
+                  className={`whitespace-pre-wrap rounded-[20px] rounded-bl-md px-4 py-2.5 leading-relaxed ${
+                    m.role === "error" ? "bg-[#FDECEC] text-expense" : "bg-white text-ink"
+                  }`}
+                >
+                  {m.role === "bot" ? (
+                    <>
+                      <BotText text={m.text} />
+                      <SpeakButton text={m.text} />
+                    </>
+                  ) : (
+                    m.text
+                  )}
+                </div>
+              </div>
+            ),
+          )}
+          {ask.isPending && (
+            <div className="flex items-end gap-2.5 self-start" aria-label={t.thinking}>
+              <UBotFace size={34} />
+              <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4">
+                {[0, 150, 300].map((d) => (
+                  <span key={d} className="h-2 w-2 animate-typing rounded-full bg-brand-light" style={{ animationDelay: `${d}ms` }} />
+                ))}
+              </span>
             </div>
-          ))}
-          {ask.isPending && <div className="self-start text-sm text-ink-muted">{t.thinking}</div>}
+          )}
           <div ref={endRef} />
         </div>
 
@@ -139,7 +154,7 @@ export default function UBotChatPage() {
               type="button"
               onClick={() => send(s)}
               disabled={ask.isPending}
-              className="inline-flex min-h-[36px] items-center rounded-full border border-line bg-white px-3.5 text-sm text-ink-body hover:border-brand hover:text-brand disabled:opacity-50"
+              className="inline-flex min-h-[44px] items-center rounded-full border-2 border-[#C7DEFC] bg-white px-4 text-[15px] font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
             >
               {s}
             </button>
@@ -158,12 +173,12 @@ export default function UBotChatPage() {
             onChange={(e) => setDraft(e.target.value)}
             placeholder={t.placeholder}
             aria-label={t.placeholder}
-            className="min-h-[46px] min-w-0 flex-1 rounded-xl border border-line px-4 text-base"
+            className="min-h-[50px] min-w-0 flex-1 rounded-full border-2 border-[#C7DEFC] px-5 text-[17px] focus:border-brand"
           />
           <button
             type="submit"
             disabled={ask.isPending || !draft.trim()}
-            className="min-h-[46px] rounded-xl bg-brand px-5 font-semibold text-white disabled:opacity-50"
+            className="min-h-[50px] rounded-full bg-brand px-6 font-bold text-white disabled:opacity-50"
           >
             {t.send}
           </button>

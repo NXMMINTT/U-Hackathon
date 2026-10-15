@@ -1,5 +1,6 @@
 "use client";
 
+import { ReceiptEdge, Sticker } from "@/components/doodles";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useSubscription } from "@/hooks/useMarket";
@@ -20,7 +21,7 @@ export default function PlansPage() {
 
   return (
     <div className="flex flex-col gap-[22px]">
-      <h2 className="text-xl font-semibold md:text-2xl">{t.title}</h2>
+      <h2 className="m-0 text-2xl font-bold md:text-[28px]">{t.title}</h2>
 
       <Card className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
         <div>
@@ -50,50 +51,58 @@ export default function PlansPage() {
         )}
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {data.plans.map((plan) => {
+      <div className="grid items-start gap-8 md:grid-cols-2">
+        {data.plans.map((plan, i) => {
           const isPremium = plan.price_thb_per_month > 0;
           const isCurrent = plan.plan_id === user.plan_id;
           return (
-            <section
-              key={plan.plan_id}
-              className={`flex flex-col gap-4 rounded-2xl p-6 ${isPremium ? "border-2 border-brand bg-brand-tint" : "border border-line bg-white"}`}
-            >
-              {isPremium && <span className="text-xs font-semibold text-brand">{t.recommended}</span>}
+            // drawn as a shop receipt (ใบเสร็จ), same as the home page pricing
+            <div key={plan.plan_id} className={`relative drop-shadow-[0_14px_24px_rgba(21,48,90,.12)] ${i % 2 ? "md:rotate-1" : "md:-rotate-1"}`}>
+              {plan.trial_days && (
+                <Sticker className="absolute -right-5 -top-7 z-[1] h-24 w-24 text-sm" tilt={14}>
+                  ลองฟรี
+                  <br />
+                  {plan.trial_days} วัน
+                </Sticker>
+              )}
+            <section className="flex flex-col gap-4 rounded-t-2xl bg-white px-7 pb-6 pt-7">
+              <div className="text-center font-hand text-sm tracking-[0.2em] text-ink-muted">— ใบเสร็จ U-LEDGER —</div>
               <div>
-                <div className="text-sm font-semibold tracking-wide text-ink-muted">{plan.name.toUpperCase()}</div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold">฿{plan.price_thb_per_month}</span>
-                  <span className="text-sm text-ink-muted">{isPremium ? t.perMonth : t.forever}</span>
-                </div>
-                {plan.trial_days && (
-                  <div className="text-sm text-brand">{t.trial.replace("{days}", String(plan.trial_days))}</div>
-                )}
+                <div className={`text-[28px] font-extrabold ${isPremium ? "text-brand" : ""}`}>{plan.name}</div>
+                {isPremium && <div className="text-[15px] text-ink-muted">{t.recommended}</div>}
               </div>
-              <ul className="flex flex-1 flex-col gap-2 text-sm">
+              <ul className="m-0 flex flex-1 list-none flex-col gap-2 border-y-2 border-dashed border-line p-0 py-4">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span aria-hidden="true" className="text-brand">
+                  <li key={f} className="flex items-start gap-2.5">
+                    <span aria-hidden="true" className="font-bold text-brand">
                       ✓
                     </span>
                     {FEATURES[f] ?? f}
                   </li>
                 ))}
               </ul>
+              <div className="flex items-baseline justify-between">
+                <span className="font-hand font-bold text-ink-muted">รวม</span>
+                <span className="text-[40px] font-extrabold leading-tight">
+                  ฿{plan.price_thb_per_month} <span className="text-[17px] font-medium text-ink-muted">{isPremium ? t.perMonth : t.forever}</span>
+                </span>
+              </div>
               <button
                 type="button"
                 disabled={isCurrent}
-                className={`min-h-[44px] rounded-full px-5 text-sm font-semibold ${
+                className={`min-h-[48px] rounded-full px-5 font-bold ${
                   isCurrent
                     ? "bg-line-subtle text-ink-muted"
                     : isPremium
                       ? "bg-brand text-white"
-                      : "border-[1.5px] border-brand text-brand"
+                      : "border-2 border-brand text-brand"
                 }`}
               >
                 {isCurrent ? t.using : t.choose}
               </button>
             </section>
+              <ReceiptEdge />
+            </div>
           );
         })}
       </div>

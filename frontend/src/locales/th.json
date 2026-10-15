@@ -197,11 +197,11 @@
       "features": {
         "my_business": "บัญชีอัตโนมัติผ่าน LINE + Tax Meter",
         "market_radar": "Market Radar ทั้งแท็บ",
-        "competitor_prices": "Competitor Price Tracking",
+        "competitor_prices": "ราคาคู่แข่งทุกแพลตฟอร์ม เทียบต้นทุนจริง",
         "market_trend": "เทรนด์ยอดขายข้ามแพลตฟอร์ม",
-        "keyword_volume": "Keyword Search Volume",
-        "eu_arbitrage": "European Market Arbitrage",
-        "ubot_insights": "U-Bot Market Analyst"
+        "keyword_volume": "คำค้นยอดฮิตที่ลูกค้าใช้",
+        "eu_arbitrage": "โอกาสส่งออกตลาดยุโรป",
+        "ubot_insights": "U-Bot แนะนำราคาขาย"
       }
     },
     "trends": {

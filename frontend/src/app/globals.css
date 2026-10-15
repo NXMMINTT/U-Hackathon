@@ -4,12 +4,32 @@
 
 body {
   background-color: #ffffff;
-  color: #13294b;
+  color: #15305a;
 }
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible {
-  outline: 3px solid #93c5fd;
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #8db8ee;
   outline-offset: 2px;
+}
+
+/* U-Bot blinks now and then */
+@keyframes ubot-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+.ubot-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ubot-blink 4.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
