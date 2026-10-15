@@ -53,7 +53,7 @@ def get_client() -> OpenAI:
     if not GEMINI_API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="GEMINI_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งาน U-Bot",
+            detail="KKU_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งาน U-Bot",
         )
     return OpenAI(base_url=GEMINI_BASE_URL, api_key=GEMINI_API_KEY)
 

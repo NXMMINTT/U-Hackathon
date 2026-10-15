@@ -4,7 +4,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging
 from app.core.settings import settings
-from app.routers import auth, b2b, dashboard, insights, knowledge, line_webhook, market_radar, ubot, voice
+from app.routers import (
+    auth,
+    b2b,
+    dashboard,
+    insights,
+    knowledge,
+    line_webhook,
+    market_radar,
+    my_business,
+    ubot,
+    voice,
+)
 
 configure_logging()
 
@@ -18,12 +29,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# MINT — LINE bot, auth, My Business dashboard (DB-backed)
+# Real data (PostgreSQL + LINE)
 app.include_router(line_webhook.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
 
-# Market Radar, U-Bot, B2B, voice, daily knowledge (mock-data backed, see ../mock-data/)
+# Mock data (reads ../mock-data/*.json)
+app.include_router(my_business.router)
 app.include_router(market_radar.router)
 app.include_router(insights.router)
 app.include_router(ubot.router)

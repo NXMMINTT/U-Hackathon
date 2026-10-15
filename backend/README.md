@@ -1,23 +1,23 @@
 # U-Ledger AI Backend (FastAPI)
 
-Setup ทั่วไป (DB, LINE webhook, auth, My Business dashboard) ดูที่ [README.md หลัก](../README.md)
+## Setup
 
-ส่วนนี้คือ endpoint ของ **Market Radar / U-Bot / B2B / เสียง / ความรู้ธุรกิจประจำวัน** ซึ่ง**ไม่ต้องมี PostgreSQL** อ่านข้อมูลจาก `../mock-data/*.json` ตรงๆ
-
-## Setup เฉพาะส่วนนี้
+ดูขั้นตอนเต็ม (PostgreSQL, migration, seed) ที่ [README หลัก](../README.md#backend)
 
 ```bash
 cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
 cp .env.example .env
 ```
 
 แก้ `.env` ใส่:
-- `UBOT_GEMINI_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat)
-- `ELEVENLABS_API_KEY` (สมัครฟรีได้ที่ elevenlabs.io มี free tier — ต้องใช้ voice ID จากแท็บ "My Voices" ของบัญชีตัวเอง ไม่ใช่ library voice) — ถ้าไม่ใส่ endpoint เสียงจะตอบ 503 แต่ endpoint อื่นใช้ได้ปกติ
+- `KKU_API_KEY` (ขอได้จาก KKU IntelSphere — gen.ai.kku.ac.th/chat) — ใช้กับ U-Bot / voice / knowledge
+- `GEMINI_API_KEY` (Google AI Studio) — ใช้กับ LINE bot แยกรายการจากข้อความ/สลิป/เสียง
+- `ELEVENLABS_API_KEY` (สมัครฟรีได้ที่ elevenlabs.io มี free tier) — ถ้าไม่ใส่ endpoint เสียงจะตอบ 503 แต่ endpoint อื่นใช้ได้ปกติ
 
 ไฟล์ `.env` ไม่ถูก commit เข้า git
-
-ติดตั้ง dependencies ตาม [README.md หลัก](../README.md) (`pip install -e ".[dev]"` ครอบคลุมทุก endpoint รวมส่วนนี้ด้วย)
 
 ## Run
 
@@ -28,6 +28,12 @@ uvicorn app.main:app --reload --port 8000
 API docs: http://localhost:8000/docs
 
 ## Endpoints
+
+### My Business
+- `GET /api/products` — รายการสินค้า
+- `GET /api/products/{product_id}` — สินค้ารายชิ้น
+- `GET /api/transactions` — รายรับ/รายจ่าย
+- `GET /api/tax-status` — Tax Meter
 
 ### Market Radar
 - `GET /api/market/platforms` — รายชื่อแพลตฟอร์มทั้งหมด (~60)
@@ -44,7 +50,7 @@ API docs: http://localhost:8000/docs
     -H "Content-Type: application/json" \
     -d '{"question":"ตอนนี้ควรปรับราคาน้ำพริกไหม","product_id":"P001"}'
   ```
-  ถ้ายังไม่ตั้งค่า `UBOT_GEMINI_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
+  ถ้ายังไม่ตั้งค่า `KKU_API_KEY` ใน `.env` จะตอบ 503 กลับมาแทน
 
 ### เสียง U-Bot (ElevenLabs)
 - `POST /api/voice/speak` — รับข้อความ คืนไฟล์เสียง MP3 ตรงๆ (`{"text": "..."}`)
@@ -63,6 +69,3 @@ API docs: http://localhost:8000/docs
 - `POST /api/b2b/sponsors/{listing_id}/click` — บันทึกคลิกโฆษณา (เก็บ in-memory ไม่เขียนทับไฟล์ mock data, รีสตาร์ท server แล้วรีเซ็ต)
 
 ข้อมูลทั้งหมดอ่านจากไฟล์ใน `../mock-data/` โดยตรง — แก้ schema ที่ไฟล์ mock data แล้ว API จะได้ตามนั้นทันที ไม่ต้อง sync ซ้ำ
-
-### My Business (DB-backed — ดู MINT)
-`/api/v1/dashboard/overview`, `/api/v1/tax/meter` ฯลฯ — ใช้ PostgreSQL จริง ดูรายละเอียดใน `app/routers/dashboard.py` และ [README.md หลัก](../README.md)
