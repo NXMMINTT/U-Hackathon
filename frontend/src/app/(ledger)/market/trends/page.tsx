@@ -1,11 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 import { CategoryThumb } from "@/components/market/CategoryThumb";
-import { Sparkline } from "@/components/market/Sparkline";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
@@ -16,7 +15,7 @@ import th from "@/locales/th.json";
 
 const t = th.marketRadar.trends;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
-const DEFAULT_CHIPS = 8;
+const DEFAULT_CHIPS = 6;
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
@@ -163,59 +162,23 @@ function TrendsView() {
         </Card>
       )}
 
-      {!category && !query && (
-        <>
-          <section className="flex flex-col gap-3">
-            <div>
-              <h2 className="text-lg font-semibold">{t.forecastTitle}</h2>
-              <p className="text-xs text-ink-muted">{t.forecastHint}</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[...products]
-                .sort((a, b) => b.search_growth_pct - a.search_growth_pct)
-                .slice(0, 6)
-                .map((p, i) => (
-                  <Link
-                    key={p.product_id}
-                    href={`/market/products/${p.product_id}`}
-                    className="flex flex-col gap-2 rounded-[24px] bg-white p-5 text-ink no-underline transition-transform hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(26,111,214,.12)]"
-                  >
-                    <div className="flex items-center gap-3">
-                      <CategoryThumb categoryId={p.category_id} path={catOf(p).icon_path} />
-                      <div className="min-w-0">
-                        <Badge tone="warning">{t.hotRank.replace("{rank}", String(i + 1))}</Badge>
-                        <div className="truncate font-semibold">{p.name}</div>
-                        <div className="truncate text-xs text-ink-muted">{catOf(p).name}</div>
-                      </div>
-                    </div>
-                    <Sparkline values={p.search_index.slice(0, 8)} />
-                    <div className="flex justify-between text-xs">
-                      <b className="text-income">{t.growthSearch.replace("{growth}", formatGrowth(p.search_growth_pct))}</b>
-                      <span className="text-ink-muted">{t.peakIn.replace("{days}", String(p.peak_in_days))}</span>
-                    </div>
-                  </Link>
-                ))}
-            </div>
-          </section>
-
-          <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">{t.categoriesTitle}</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-              {categories.map((c) => (
-                <button
-                  key={c.category_id}
-                  type="button"
-                  onClick={() => router.push(`/market/trends?cat=${c.category_id}`)}
-                  className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-white p-4 text-center text-sm font-medium hover:border-brand"
-                >
-                  <CategoryThumb categoryId={c.category_id} path={c.icon_path} size={52} />
-                  {c.name}
-                </button>
-              ))}
-            </div>
-          </section>
-        </>
-      )}
+      {!category && !query && <ForecastOverview products={products} catOf={catOf} />}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold">{t.categoriesTitle}</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {categories.map((c) => (
+            <button
+              key={c.category_id}
+              type="button"
+              onClick={() => router.push(`/market/trends?cat=${c.category_id}`)}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-white p-4 text-center text-sm font-medium hover:border-brand"
+            >
+              <CategoryThumb categoryId={c.category_id} path={c.icon_path} size={52} />
+              {c.name}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {category && (
         <Card className="flex flex-col gap-3">
@@ -281,5 +244,428 @@ export default function TrendsPage() {
     <Suspense fallback={<Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>}>
       <TrendsView />
     </Suspense>
+  );
+}
+
+/* ---------- forecast overview (top) ---------- */
+
+/* ---------- forecast overview (mock style) ---------- */
+
+/** Price series synthesized from the real price range: one point per day.
+ *  Days 0–9 rise from below the cheapest offer up past the priciest (solid line);
+ *  days 9–14 fan out into an upper/lower forecast band (dashed lines). */
+function priceSeries(p: CatalogProduct): { now: number[]; upper: number[]; lower: number[] } {
+  const ps = p.prices.filter((x) => x.available).map((x) => x.price!);
+  const min = ps.length ? Math.min(...ps) : p.base_price * 0.9;
+  const max = ps.length ? Math.max(...ps) : p.base_price * 1.1;
+  const seed = [...p.product_id].reduce((s, c) => s + c.charCodeAt(0), 0);
+  const start = min * 0.8;
+  const end = max * 1.08;
+  const now = Array.from({ length: 10 }, (_, i) => {
+    const k = i / 9;
+    const eased = 1 - (1 - k) ** 1.6; // fast at first, then flattening — like the mock
+    const wobble = i === 0 || i === 9 ? 0 : Math.sin(i * 1.9 + seed) * (max - min + 10) * 0.05;
+    return Math.round(start + (end - start) * eased + wobble);
+  });
+  const last = now[9];
+  const upper = Array.from({ length: 6 }, (_, i) => Math.round(last * (1 + 0.11 * (i / 5))));
+  const lower = Array.from({ length: 6 }, (_, i) => Math.round(last * (1 - 0.05 * Math.sin((i / 5) * Math.PI)) + last * 0.03 * (i / 5)));
+  return { now, upper, lower };
+}
+
+const CARD_TONE = {
+  rank: "bg-[#2F7CF6]",
+  badge: "bg-[#2F7CF6] text-white",
+  line: "#2F7CF6",
+  fill: "rgba(47,124,246,.16)",
+} as const;
+
+function ForecastOverview({
+  products,
+  catOf,
+}: {
+  products: CatalogProduct[];
+  catOf: (p: CatalogProduct) => { name: string; icon_path: string };
+}) {
+  const ranked = [...products].sort((a, b) => b.search_growth_pct - a.search_growth_pct);
+  const top6 = ranked.slice(0, 6);
+  const top = ranked[0];
+  const allPrices = products.flatMap((p) => p.prices.filter((x) => x.available).map((x) => x.price!));
+  const lo = allPrices.length ? Math.min(...allPrices) : 0;
+  const hi = allPrices.length ? Math.max(...allPrices) : 0;
+  const listings = allPrices.length;
+
+  const statusTone: Record<string, string> = { hot: "text-expense", rising: "text-brand", stable: "text-[#0F9D58]" };
+  void statusTone;
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* hero */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <span aria-hidden="true" className="grid h-16 w-16 flex-none place-items-center rounded-full bg-[#EAF2FC] text-brand">
+            <Icon.Flame width={28} height={28} />
+          </span>
+          <div>
+            <h2 className="m-0 text-[26px] font-bold leading-tight text-navy md:text-[30px]">{t.forecastTitle}</h2>
+            <p className="m-0 mt-1 text-[15px] text-ink-muted">{t.forecastSub}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-[20px] bg-white px-5 py-3.5 shadow-[0_4px_16px_rgba(26,111,214,.08)]">
+          <span aria-hidden="true" className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[#EAF2FC] text-brand">
+            <Icon.Calendar />
+          </span>
+          <div className="text-[15px] font-bold text-navy">
+            {t.heroPriceTitle}
+            <div className="text-[17px]">{t.heroPriceDays}</div>
+            <div className="text-[13px] font-normal text-ink-muted">{t.heroPriceNote}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4 stat cards */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          icon={<Icon.TrendUp />}
+          iconBg="bg-[#E6F7EE]"
+          iconColor="text-[#0F9D58]"
+          label={t.statBestSeller}
+          value={top?.name ?? "—"}
+          chips={
+            <>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#FDECEC] px-3 py-1 text-[14px] font-bold text-expense">
+                <Icon.Crown /> อันดับ 1
+              </span>
+              <span className="rounded-full bg-[#FDECEC] px-3 py-1 text-[14px] font-bold text-expense">
+                {formatGrowth(top?.search_growth_pct ?? 0)}
+              </span>
+            </>
+          }
+        />
+        <StatCard
+          icon={<Icon.Chart />}
+          iconBg="bg-[#E6F7EE]"
+          iconColor="text-[#0F9D58]"
+          label={t.statBestSeller}
+          value={ranked[1]?.name ?? "—"}
+          chips={<span className="rounded-full bg-[#E6F7EE] px-3 py-1 text-[14px] font-bold text-[#0F9D58]">{formatGrowth(ranked[1]?.search_growth_pct ?? 0)}</span>}
+        />
+        <StatCard
+          icon={<Icon.Star />}
+          iconBg="bg-[#EAF2FC]"
+          iconColor="text-brand"
+          label={t.statHotChance}
+          value={ranked[2]?.name ?? "—"}
+          chips={<span className="rounded-full bg-[#EAF2FC] px-3 py-1 text-[14px] font-bold text-brand">{formatGrowth(ranked[2]?.search_growth_pct ?? 0)}</span>}
+        />
+        <StatCard
+          icon={<Icon.Clock />}
+          iconBg="bg-[#EAF2FC]"
+          iconColor="text-brand"
+          label={t.statRangeLabel}
+          value={`${baht(lo)} – ${baht(hi)}`}
+          valueClass="text-[24px]"
+          chips={<span className="text-[15px] font-semibold text-ink-muted">{t.shopsInfo.replace("{shops}", String(Math.min(6, listings))).replace("{all}", String(listings))}</span>}
+        />
+      </div>
+
+      {/* 6 product cards */}
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {top6.map((p, i) => (
+          <TrendCard key={p.product_id} product={p} rank={i + 1} tone={CARD_TONE} catOf={catOf} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  icon,
+  iconBg,
+  iconColor,
+  label,
+  value,
+  valueClass = "text-[20px]",
+  chips,
+}: {
+  icon: React.ReactNode;
+  iconBg: string;
+  iconColor: string;
+  label: string;
+  value: string;
+  valueClass?: string;
+  chips: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-3.5 rounded-[20px] bg-white p-5 shadow-[0_4px_16px_rgba(26,111,214,.06)]">
+      <span aria-hidden="true" className={`grid h-11 w-11 flex-none place-items-center rounded-full ${iconBg} ${iconColor}`}>
+        {icon}
+      </span>
+      <div className="min-w-0">
+        <div className="text-[14px] text-ink-muted">{label}</div>
+        <div className={`truncate font-bold text-navy ${valueClass}`}>{value}</div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">{chips}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- line-icon set (replaces emoji) ---------- */
+
+const Icon = {
+  Flame: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M12 3c1 3 4 4.5 4 8a4 4 0 1 1-8 0c0-1.6.8-2.6 1.8-3.4C9 10 10 11.5 10 13" />
+    </svg>
+  ),
+  Calendar: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </svg>
+  ),
+  TrendUp: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M4 17l6-6 4 4 6-7" />
+      <path d="M14 8h6v6" />
+    </svg>
+  ),
+  Chart: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+    </svg>
+  ),
+  Star: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" {...p}>
+      <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.9l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8z" />
+    </svg>
+  ),
+  Clock: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  ),
+  Crown: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...p}>
+      <path d="M3 7l4 4 5-7 5 7 4-4-1.5 11h-15z" />
+    </svg>
+  ),
+  Hourglass: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M7 3h10M7 21h10M7 3c0 5 10 5 10 9S7 16 7 21M17 3c0 5-10 5-10 9" />
+    </svg>
+  ),
+};
+
+/* ---------- product trend card ---------- */
+
+function TrendCard({
+  product: p,
+  rank,
+  tone,
+  catOf,
+}: {
+  product: CatalogProduct;
+  rank: number;
+  tone: typeof CARD_TONE;
+  catOf: (p: CatalogProduct) => { name: string; icon_path: string };
+}) {
+  const status = trendStatus(p.search_growth_pct);
+  const series = priceSeries(p);
+  const ps = p.prices.filter((x) => x.available).map((x) => x.price!);
+  const min = ps.length ? Math.min(...ps) : p.base_price;
+  const max = ps.length ? Math.max(...ps) : p.base_price;
+
+  return (
+    <div className="flex flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_16px_rgba(26,111,214,.06)]">
+      {/* header: rank + status badge */}
+      <div className="flex items-center gap-2.5">
+        <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-[16px] font-bold text-white ${tone.rank}`}>{rank}</span>
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] font-bold ${tone.badge}`}>
+          {status === "hot" ? <Icon.Flame width={14} height={14} /> : <Icon.Hourglass />} {t.status[status]}
+        </span>
+      </div>
+
+      {/* product row */}
+      <div className="mt-3 flex items-start gap-3">
+        <Link href={`/market/products/${p.product_id}`} aria-label={p.name}>
+          <CategoryThumb categoryId={p.category_id} path={catOf(p).icon_path} size={72} className="!rounded-2xl" />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <Link
+            href={`/market/products/${p.product_id}`}
+            className="block text-[22px] font-bold leading-tight text-navy no-underline hover:text-brand hover:underline"
+          >
+            {p.name}
+          </Link>
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[13px] text-ink-muted">
+            <span className="truncate">{catOf(p).name}</span>
+            <span aria-hidden="true">·</span>
+            <span>
+              {t.growthCaption} <span className="font-semibold text-ink-body">↑ {formatGrowth(p.search_growth_pct)}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* price forecast — small outlined chip, not a loud bubble */}
+      <div className="mt-3 flex justify-end pr-1">
+        <span
+          className="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-0.5 text-[12px]"
+          style={{ borderColor: tone.line, color: tone.line }}
+        >
+          <span className="opacity-80">{t.forecastBadge2}</span>
+          <span className="font-semibold">
+            {baht(min)} – {baht(max)}
+          </span>
+        </span>
+      </div>
+
+      {/* chart: solid now-line + dashed forecast + y labels + x labels */}
+      <PriceChart {...series} color={tone.line} />
+
+      {/* legend */}
+      <div className="mt-1 flex items-center justify-center gap-5 text-[13px] text-ink-body">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-[3px] w-5 rounded-full" style={{ background: tone.line }} aria-hidden="true" />
+          {t.chartNow}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-[3px] w-5 rounded-full opacity-60" style={{ background: `repeating-linear-gradient(90deg, ${tone.line} 0 4px, transparent 4px 7px)` }} aria-hidden="true" />
+          {t.chartForecast}
+        </span>
+      </div>
+
+      {/* mini stats */}
+      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-[#F7FAFD] p-2.5">
+        <MiniStat label={t.miniStart} value={baht(min)} />
+        <MiniStat label={t.miniRange} value={`${baht(min)} – ${baht(max)}`} />
+        <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-[#E6F7EE] px-2 py-2 text-center">
+          <span className="truncate text-[12px] leading-tight text-[#0F6B42]">แนวโน้ม</span>
+          <b className="whitespace-nowrap text-[15px] leading-tight text-[#0F9D58]">
+            {status === "hot" ? "⤴ เพิ่มขึ้น" : status === "rising" ? "↑ เพิ่มขึ้น" : "→ ทรงตัว"}
+          </b>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white px-2 py-2 text-center">
+      <span className="truncate text-[12px] leading-tight text-ink-muted">{label}</span>
+      <b className="whitespace-nowrap text-[15px] leading-tight text-navy">{value}</b>
+    </div>
+  );
+}
+
+/** Line chart with y/x axis labels, dots on the now-line and a dashed forecast continuation. */
+function PriceChart({
+  now,
+  upper,
+  lower,
+  color,
+}: {
+  now: number[];
+  upper: number[];
+  lower: number[];
+  color: string;
+}) {
+  const w = 320;
+  const h = 135;
+  const padL = 38;
+  const allValues = [...now, ...upper, ...lower];
+  const minVal = Math.min(...allValues);
+  const maxVal = Math.max(...allValues);
+  const lo = Math.floor(minVal / 10) * 10;
+  const hi = Math.ceil(maxVal / 10) * 10;
+  const span = hi - lo || 1;
+
+  const totalPoints = now.length + upper.length - 1;
+  const x = (i: number) => padL + ((w - padL - 10) * i) / (totalPoints - 1);
+  const y = (v: number) => h - 22 - ((h - 38) * (v - lo)) / span;
+
+  const nowPts = now.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  const fcStart = now.length - 1;
+
+  const upperPts = upper.map((v, i) => `${x(fcStart + i).toFixed(1)},${y(v).toFixed(1)}`);
+  const lowerPts = lower.map((v, i) => `${x(fcStart + i).toFixed(1)},${y(v).toFixed(1)}`);
+
+  // Forecast band polygon (shaded between upper and lower forecast)
+  const bandPolygon = [
+    ...upperPts,
+    ...[...lowerPts].reverse(),
+  ].join(" ");
+
+  // Y axis ticks (3-4 ticks max to keep uncluttered and compact)
+  const step = Math.max(10, Math.ceil((hi - lo) / 3 / 10) * 10);
+  const yTicks: number[] = [];
+  for (let v = lo; v <= hi; v += step) yTicks.push(v);
+  if (!yTicks.includes(hi) && hi - yTicks[yTicks.length - 1] > step * 0.4) {
+    yTicks.push(hi);
+  }
+
+  const xTicks = [
+    { i: 0, label: "วันนี้" },
+    { i: Math.round((now.length - 1) * 0.7), label: "7 วัน" },
+    { i: totalPoints - 1, label: "14 วัน" },
+  ];
+  const gid = `pc-${color.replace("#", "")}`;
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="mt-1 w-full" aria-hidden="true">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.01" />
+        </linearGradient>
+      </defs>
+
+      {/* horizontal subtle gridlines */}
+      {yTicks.map((v) => (
+        <line key={v} x1={padL} x2={w - 6} y1={y(v)} y2={y(v)} stroke="#F0F4F8" strokeWidth="1" />
+      ))}
+
+      {/* Y axis labels */}
+      {yTicks.map((v) => (
+        <text key={v} x={2} y={y(v) + 3.5} fontSize="10" fill="#9AA5B5">
+          ฿{Math.round(v)}
+        </text>
+      ))}
+
+      {/* Shaded area under solid line */}
+      <polygon
+        points={`${x(0).toFixed(1)},${h - 22} ${nowPts.join(" ")} ${x(fcStart).toFixed(1)},${h - 22}`}
+        fill={`url(#${gid})`}
+      />
+
+      {/* Forecast fan shading */}
+      <polygon points={bandPolygon} fill={color} opacity="0.10" />
+
+      {/* Solid now-line */}
+      <polyline points={nowPts.join(" ")} fill="none" stroke={color} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+
+      {/* Dashed forecast lines (upper and lower bounds) */}
+      <polyline points={upperPts.join(" ")} fill="none" stroke={color} strokeWidth="1.8" strokeDasharray="4 3" opacity="0.8" strokeLinejoin="round" />
+      <polyline points={lowerPts.join(" ")} fill="none" stroke={color} strokeWidth="1.8" strokeDasharray="4 3" opacity="0.8" strokeLinejoin="round" />
+
+      {/* End dots on forecast */}
+      <circle cx={x(totalPoints - 1)} cy={y(upper[upper.length - 1])} r="3" fill={color} />
+      <circle cx={x(totalPoints - 1)} cy={y(lower[lower.length - 1])} r="3" fill={color} />
+
+      {/* Dots on now line */}
+      {now.map((v, i) => (
+        <circle key={i} cx={x(i)} cy={y(v)} r="2.2" fill={color} />
+      ))}
+
+      {/* X axis labels */}
+      {xTicks.map((tk) => (
+        <text key={tk.label} x={x(tk.i)} y={h - 6} fontSize="10" fill="#9AA5B5" textAnchor={tk.i === 0 ? "start" : tk.i === totalPoints - 1 ? "end" : "middle"}>
+          {tk.label}
+        </text>
+      ))}
+    </svg>
   );
 }
