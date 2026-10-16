@@ -1,6 +1,9 @@
 import liff from "@line/liff";
 
 const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID?.trim();
+// Canonical app origin registered as the LINE Login Callback URL + backend CORS origin.
+// Pinning login redirects here means preview deployments (different origins) still work.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 let initPromise: Promise<void> | null = null;
 
@@ -23,10 +26,11 @@ export async function ensureLoggedIn(): Promise<void> {
   await initLiff();
   if (!LIFF_ID) return;
   // redirectUri must exactly match a Callback URL registered on the LINE Login channel.
-  // Only the site origin is registered, so use it (not the full path) to avoid
-  // "invalid url" 400. liff.state deep links still route after login via LiffStateHandler.
+  // Use the canonical site origin so login works from preview URLs too, and never a
+  // sub-path (which triggers an "invalid url" 400). liff.state deep links still route
+  // after login via LiffStateHandler.
   if (!liff.isLoggedIn()) {
-    liff.login({ redirectUri: window.location.origin });
+    liff.login({ redirectUri: SITE_URL || window.location.origin });
   }
 }
 
