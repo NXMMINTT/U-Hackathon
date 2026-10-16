@@ -31,10 +31,21 @@ def test_alt_text_mentions_count():
     assert "1" in message.alt_text
 
 
+def _all_texts(box) -> list[str]:
+    """Collect every FlexText string in a box, recursing into nested FlexBoxes."""
+    texts: list[str] = []
+    for c in getattr(box, "contents", []):
+        if hasattr(c, "text"):
+            texts.append(c.text)
+        elif hasattr(c, "contents"):
+            texts.extend(_all_texts(c))
+    return texts
+
+
 def test_low_confidence_adds_warning_text():
     message = build_transaction_confirmation_message([_txn(1, "3500", "0.5")])
     bubble = message.contents.contents[0]
-    texts = [c.text for c in bubble.body.contents if hasattr(c, "text")]
+    texts = _all_texts(bubble.body)
     assert any("โปรดตรวจสอบอีกครั้ง" in t for t in texts)
 
 
