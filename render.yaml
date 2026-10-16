@@ -40,5 +40,13 @@ services:
         sync: false
       - key: MACRO_DATA_MODE
         value: mock
+      - key: ENABLE_VOICE_REPLY
+        value: "true"
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_ID
+        sync: false
+      - key: ELEVENLABS_MODEL_ID
+        sync: false
       - key: PYTHON_VERSION
         value: "3.12.0"
