@@ -8,7 +8,7 @@ import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
 import { loadPickedPlatforms, savePickedPlatforms } from "@/lib/market/pickedPlatforms";
 import { platformLogo } from "@/lib/market/platformLogo";
 import type { CatalogPlatform } from "@/types/market";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
 const CATEGORIES = [
   { id: "all", label: "ทั้งหมด" },
@@ -42,6 +42,7 @@ function matchesQuery(p: CatalogPlatform, q: string): boolean {
 const POPULAR_IDS = ["shopee_th", "lazada_th", "tiktok_shop_th", "central_online", "kaidee"];
 
 export default function PlatformsPage() {
+  const th = useLocale();
   const catalog = useTrendCatalog();
   const [saved, setSaved] = useState<string[] | null>(null);
   const [query, setQuery] = useState("");

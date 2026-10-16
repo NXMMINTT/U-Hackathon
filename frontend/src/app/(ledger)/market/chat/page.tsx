@@ -9,9 +9,7 @@ import { LineIcon } from "@/components/ui/LineIcon";
 import { useAskUBot } from "@/hooks/market/useAskUBot";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { apiFetchBlob } from "@/lib/api-client";
-import th from "@/locales/th.json";
-
-const t = th.marketRadar.chat;
+import { useLocale } from "@/lib/i18n";
 type Message = { role: "user" | "bot" | "error"; text: string };
 
 /** U-Bot answers use Markdown **bold** for the key recommendation; render just that. */
@@ -23,6 +21,8 @@ function BotText({ text }: { text: string }) {
 
 /** Plays a U-Bot answer through ElevenLabs (/api/voice/speak); audio is fetched once and reused. */
 function SpeakButton({ text }: { text: string }) {
+  const th = useLocale();
+  const t = th.marketRadar.chat;
   const [state, setState] = useState<"idle" | "loading" | "playing" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -70,6 +70,8 @@ function SpeakButton({ text }: { text: string }) {
 }
 
 export default function UBotChatPage() {
+  const th = useLocale();
+  const t = th.marketRadar.chat;
   const prices = useCompetitorPrices();
   const ask = useAskUBot();
   const [messages, setMessages] = useState<Message[]>([]);

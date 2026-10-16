@@ -7,13 +7,13 @@ import { Card } from "@/components/ui/Card";
 import { useChoosePlan } from "@/hooks/market/useChoosePlan";
 import { useSubscription } from "@/hooks/market/useSubscription";
 import { formatThaiDate } from "@/lib/format";
-import th from "@/locales/th.json";
-
-const t = th.marketRadar.plans;
-const FEATURES = t.features as Record<string, string>;
-const STATUS = t.statusLabel as Record<string, string>;
+import { useLocale } from "@/lib/i18n";
 
 export default function PlansPage() {
+  const th = useLocale();
+  const t = th.marketRadar.plans;
+  const FEATURES = t.features as Record<string, string>;
+  const STATUS = t.statusLabel as Record<string, string>;
   const { data, error, isLoading } = useSubscription();
   const choose = useChoosePlan();
 

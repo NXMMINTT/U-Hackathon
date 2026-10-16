@@ -11,9 +11,8 @@ import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
 import type { CatalogProduct } from "@/types/market";
 import { loadPickedPlatforms } from "@/lib/market/pickedPlatforms";
 import { formatGrowth, TREND_STATUS_TONE, type TrendStatus, trendStatus } from "@/lib/market/trendStatus";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
-const t = th.marketRadar.trends;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
 const DEFAULT_CHIPS = 6;
 const VISIBLE_CHIPS = 5;
@@ -34,6 +33,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 function TrendsView() {
+  const th = useLocale();
+  const t = th.marketRadar.trends;
   const router = useRouter();
   const params = useSearchParams();
   const catalog = useTrendCatalog();
@@ -270,10 +271,14 @@ function TrendsView() {
   );
 }
 
+function LoadingFallback() {
+  const th = useLocale();
+  return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
+}
+
 export default function TrendsPage() {
-  // useSearchParams needs a Suspense boundary for static rendering.
   return (
-    <Suspense fallback={<Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>}>
+    <Suspense fallback={<LoadingFallback />}>
       <TrendsView />
     </Suspense>
   );
@@ -319,6 +324,8 @@ function ForecastOverview({
   products: CatalogProduct[];
   catOf: (p: CatalogProduct) => { name: string; icon_path: string };
 }) {
+  const th = useLocale();
+  const t = th.marketRadar.trends;
   const ranked = [...products].sort((a, b) => b.search_growth_pct - a.search_growth_pct);
   const top6 = ranked.slice(0, 6);
   const countWith = (status: TrendStatus) => products.filter((p) => trendStatus(p.search_growth_pct) === status).length;
@@ -389,6 +396,7 @@ function TrendCard({
   tone: typeof CARD_TONE;
   catOf: (p: CatalogProduct) => { name: string; icon_path: string };
 }) {
+  const t = useLocale().marketRadar.trends;
   const status = trendStatus(p.search_growth_pct);
   const series = priceSeries(p);
   const ps = p.prices.filter((x) => x.available).map((x) => x.price!);

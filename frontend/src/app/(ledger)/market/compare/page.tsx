@@ -13,9 +13,8 @@ import { useUBotInsights } from "@/hooks/market/useUBotInsights";
 import { isAvailable } from "@/lib/market/competitorAvailability";
 import { toTHB } from "@/lib/market/currency";
 import { productPhoto } from "@/lib/market/productPhoto";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
-const t = th.marketRadar.compare;
 type Sort = "cheapest" | "priciest" | "platform";
 
 function Toggle({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -50,16 +49,27 @@ function NumberField({ label, value, onChange }: { label: string; value: string;
   );
 }
 
+const MOCK_PRODUCTS = [
+  { id: "P001", name: "น้ำพริกเผา" },
+  { id: "P002", name: "ชาไทยผง" },
+  { id: "P003", name: "ผ้าขาวม้าทอมือ" },
+  { id: "P004", name: "กล้วยตาก" },
+  { id: "P005", name: "สบู่สมุนไพร" },
+];
+
 export default function ComparePage() {
+  const th = useLocale();
+  const t = th.marketRadar.compare;
   const products = useProducts();
+  const [selectedProductId, setSelectedProductId] = useState("P001");
   const [stockProductId, setStockProductId] = useState("");
   const stockProduct = products.data?.find((sp) => String(sp.id) === stockProductId);
-  // The picked shop product drives which product's competitor prices the whole page compares.
-  const { data, error, isLoading } = useCompetitorPrices({ name: stockProduct?.name });
+  const { data, error, isLoading } = useCompetitorPrices(
+    stockProduct ? { name: stockProduct.name } : { productId: selectedProductId },
+  );
   const ubot = useUBotInsights(data?.product_id);
   const [sort, setSort] = useState<Sort>("cheapest");
   const [thaiOnly, setThaiOnly] = useState(true);
-  // null = not edited yet, so the selected product's figures from the data are shown
   const [cost, setCost] = useState<string | null>(null);
   const [sellPrice, setSellPrice] = useState<string | null>(null);
   const [feePct, setFeePct] = useState("10");
@@ -106,29 +116,49 @@ export default function ComparePage() {
         {t.title} · {data.product_name}
       </h2>
 
-      <Card className="flex flex-col gap-1.5">
+      <Card className="flex flex-col gap-3">
         <label className="flex flex-col gap-1.5 text-sm">
-          <span className="font-semibold text-ink-body">เลือกสินค้าของร้านที่จะวิเคราะห์</span>
-          <select
-            value={stockProductId}
-            onChange={(e) => {
-              setStockProductId(e.target.value);
-              const picked = products.data?.find((sp) => String(sp.id) === e.target.value);
-              setCost(picked?.unit_cost ? String(Number(picked.unit_cost)) : null);
-              setSellPrice(null);
-            }}
-            className="min-h-[44px] rounded-[10px] border border-line bg-white px-3 text-base text-navy"
-          >
-            <option value="">— เลือกสินค้าของร้าน —</option>
-            {(products.data ?? []).map((sp) => (
-              <option key={sp.id} value={sp.id}>
-                {sp.name}
-                {sp.unit_cost ? ` · ต้นทุน ฿${Number(sp.unit_cost)}` : " · ยังไม่มีต้นทุน"}
-              </option>
+          <span className="font-semibold text-ink-body">{t.title}</span>
+          <div className="-mx-1 flex flex-wrap gap-2 px-1">
+            {MOCK_PRODUCTS.map((mp) => (
+              <button
+                key={mp.id}
+                type="button"
+                onClick={() => { setSelectedProductId(mp.id); setStockProductId(""); setCost(null); setSellPrice(null); }}
+                className={`min-h-[40px] rounded-full px-4 text-sm font-semibold transition-colors ${
+                  selectedProductId === mp.id && !stockProductId
+                    ? "bg-brand text-white"
+                    : "border border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                }`}
+              >
+                {mp.name}
+              </button>
             ))}
-          </select>
-          <span className="text-xs text-ink-muted">หน้านี้จะเทียบราคาคู่แข่งของสินค้าที่เลือก และดึงต้นทุนจากหน้าสต็อกมาคำนวณกำไรให้</span>
+          </div>
         </label>
+        {(products.data ?? []).length > 0 && (
+          <label className="flex flex-col gap-1.5 text-sm">
+            <span className="text-ink-muted">หรือเลือกจากสินค้าในสต็อกของร้าน</span>
+            <select
+              value={stockProductId}
+              onChange={(e) => {
+                setStockProductId(e.target.value);
+                const picked = products.data?.find((sp) => String(sp.id) === e.target.value);
+                setCost(picked?.unit_cost ? String(Number(picked.unit_cost)) : null);
+                setSellPrice(null);
+              }}
+              className="min-h-[44px] rounded-[10px] border border-line bg-white px-3 text-base text-navy"
+            >
+              <option value="">— เลือกสินค้าของร้าน —</option>
+              {(products.data ?? []).map((sp) => (
+                <option key={sp.id} value={sp.id}>
+                  {sp.name}
+                  {sp.unit_cost ? ` · ต้นทุน ฿${Number(sp.unit_cost)}` : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {stockProduct && !stockProduct.unit_cost && (
           <span className="text-xs text-sun-ink">สินค้านี้ยังไม่มีต้นทุน ใส่เองในช่องต้นทุนด้านล่าง หรือตั้งได้ที่หน้าสต็อก (แก้ไข → ต้นทุน/หน่วย)</span>
         )}

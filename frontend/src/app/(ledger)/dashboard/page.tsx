@@ -4,22 +4,7 @@ import Link from "next/link";
 
 import { type FoxPose, UBot } from "@/components/brand/UBot";
 import { ShopOverview } from "@/components/dashboard/ShopOverview";
-
-const MENU_ITEMS: { href: string; fox: FoxPose; label: string; sub: string; badge?: string }[] = [
-  { href: "/transactions?mode=income", fox: "cheer", label: "บันทึกรายรับ", sub: "เพิ่มรายรับ\nง่ายๆเลย" },
-  { href: "/transactions?mode=expense", fox: "ledger", label: "บันทึกรายจ่าย", sub: "จดรายจ่าย\nได้ทันที" },
-  { href: "/dashboard/summary", fox: "idea", label: "สรุปภาพรวม", sub: "ดูรายรับ-รายจ่าย\nรายเดือน" },
-  { href: "/stock", fox: "commerce", label: "จัดการสินค้า", sub: "เช็ครายการสินค้า\nและสต็อก" },
-  { href: "/market", fox: "radar", label: "ดูตลาดคู่แข่ง", sub: "ส่งสินค้า / เทรนด์\nต่างประเทศ", badge: "ใหม่" },
-  { href: "/knowledge", fox: "idea", label: "ความรู้/ข่าวสาร", sub: "เกร็ดภาษี-การตลาด\nสำหรับร้าน", badge: "ใหม่" },
-  { href: "/market/plans", fox: "proud", label: "อัปเกรดแพ็คเกจ", sub: "ฟีเจอร์เพิ่มเติม\nเพื่อธุรกิจของคุณ" },
-];
-
-const BOTTOM_LINKS = [
-  { href: "/settings", icon: "settings", label: "ตั้งค่าร้าน" },
-  { href: "/help", icon: "help", label: "วิธีใช้งาน" },
-  { href: "/chat", icon: "chat", label: "คุยกับ U-Fox" },
-];
+import { useLocale } from "@/lib/i18n";
 
 function MenuIcon({ type, className = "" }: { type: string; className?: string }) {
   const c = `w-8 h-8 ${className}`;
@@ -93,11 +78,29 @@ function MenuIcon({ type, className = "" }: { type: string; className?: string }
 }
 
 export default function HomePage() {
+  const th = useLocale();
+  const h = th.home;
+
+  const MENU_ITEMS: { href: string; fox: FoxPose; label: string; sub: string; badge?: string }[] = [
+    { href: "/transactions?mode=income", fox: "cheer", label: h.recordIncome, sub: h.recordIncomeSub },
+    { href: "/transactions?mode=expense", fox: "ledger", label: h.recordExpense, sub: h.recordExpenseSub },
+    { href: "/dashboard/summary", fox: "idea", label: h.summaryOverview, sub: h.summaryOverviewSub },
+    { href: "/stock", fox: "commerce", label: h.manageProducts, sub: h.manageProductsSub },
+    { href: "/market", fox: "radar", label: h.viewMarket, sub: h.viewMarketSub, badge: h.new },
+    { href: "/knowledge", fox: "idea", label: h.knowledge, sub: h.knowledgeSub, badge: h.new },
+    { href: "/market/plans", fox: "proud", label: h.upgradePlan, sub: h.upgradePlanSub },
+  ];
+
+  const BOTTOM_LINKS = [
+    { href: "/settings", icon: "settings", label: h.shopSettings },
+    { href: "/help", icon: "help", label: h.howToUse },
+    { href: "/chat", icon: "chat", label: h.chatWithUFox },
+  ];
+
   return (
     <div className="flex flex-col gap-5 pb-4">
       <ShopOverview />
 
-      {/* Menu grid */}
       <section className="grid grid-cols-3 gap-3">
         {MENU_ITEMS.map((item) => (
           <Link
@@ -117,7 +120,6 @@ export default function HomePage() {
         ))}
       </section>
 
-      {/* Bottom links */}
       <section className="flex justify-center gap-6 py-2">
         {BOTTOM_LINKS.map((item) => (
           <Link

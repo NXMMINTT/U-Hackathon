@@ -12,14 +12,15 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
 import { formatGrowth, TREND_STATUS_TONE, trendStatus } from "@/lib/market/trendStatus";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
-const t = th.marketRadar.product;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
 type Sort = "total" | "sold" | "rating";
 const TOP_ROWS = 10;
 
 export default function ProductPage() {
+  const th = useLocale();
+  const t = th.marketRadar.product;
   const { id } = useParams<{ id: string }>();
   const catalog = useTrendCatalog();
   const [sort, setSort] = useState<Sort>("total");

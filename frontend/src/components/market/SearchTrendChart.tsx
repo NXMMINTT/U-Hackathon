@@ -2,13 +2,14 @@
 
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
-const t = th.marketRadar.product;
 const ACTUAL_WEEKS = 8;
 
 /** Search interest: 8 actual weeks (solid) + 2 forecast weeks (dashed), one series. */
 export function SearchTrendChart({ values }: { values: number[] }) {
+  const th = useLocale();
+  const t = th.marketRadar.product;
   const rows = values.map((v, i) => ({
     week: i < ACTUAL_WEEKS ? `-${ACTUAL_WEEKS - 1 - i}` : `+${i - ACTUAL_WEEKS + 1}`,
     actual: i < ACTUAL_WEEKS ? v : null,

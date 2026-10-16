@@ -9,7 +9,7 @@ import { LOW_STOCK_QTY } from "@/components/StockBadge";
 import { Card } from "@/components/ui/Card";
 import { useProducts } from "@/hooks/dashboard/useProducts";
 import { formatTHB } from "@/lib/format";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
 function Summary({ label, value, tone = "text-ink" }: { label: string; value: string; tone?: string }) {
   return (
@@ -21,6 +21,7 @@ function Summary({ label, value, tone = "text-ink" }: { label: string; value: st
 }
 
 export default function StockPage() {
+  const th = useLocale();
   const { data, isLoading, error } = useProducts();
   const [adding, setAdding] = useState(false);
   const [search, setSearch] = useState("");

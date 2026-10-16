@@ -4,15 +4,16 @@ import { useState } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { useTransactionActions } from "@/hooks/dashboard/useTransactionActions";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 import type { TransactionItem } from "@/types/dashboard";
 
-const f = th.transactions.form;
-const a = th.transactions.actions;
 const inputClass = "min-h-[44px] rounded-[10px] border border-line px-3 text-base";
 
 /** Edit form for a pending transaction — opened from the LINE card's "แก้ไข" (LIFF) via ?edit=<id>. */
 export function TransactionEditForm({ txn, onClose }: { txn: TransactionItem; onClose: () => void }) {
+  const th = useLocale();
+  const f = th.transactions.form;
+  const a = th.transactions.actions;
   const { update, confirm } = useTransactionActions();
   const [type, setType] = useState(txn.type);
   const [amount, setAmount] = useState(String(Number(txn.amount)));

@@ -9,13 +9,14 @@ import { Card } from "@/components/ui/Card";
 import { useTransactionActions } from "@/hooks/dashboard/useTransactionActions";
 import { useTransactions } from "@/hooks/dashboard/useTransactions";
 import { formatQty, formatTHB, formatThaiDate } from "@/lib/format";
-import th from "@/locales/th.json";
+import { useLocale } from "@/lib/i18n";
 
 const STATUS_TONE = { pending: "warning", confirmed: "success", cancelled: "neutral" } as const;
-const a = th.transactions.actions;
 
 /** Latest entries; pending ones can be edited (?edit=<id>, also the LINE card's "แก้ไข"), confirmed or cancelled. */
 export function TransactionList() {
+  const th = useLocale();
+  const a = th.transactions.actions;
   const router = useRouter();
   const params = useSearchParams();
   const { data, isLoading, error } = useTransactions();

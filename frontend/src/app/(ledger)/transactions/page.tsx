@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { TransactionEntryForm } from "@/components/transactions/TransactionEntryForm";
 import { TransactionList } from "@/components/transactions/TransactionList";
 import { Card } from "@/components/ui/Card";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * /transactions                 → latest entries (pending ones can be confirmed/cancelled)
@@ -19,10 +20,14 @@ function TransactionsView() {
   return <TransactionList />;
 }
 
+function TransactionsLoading() {
+  const th = useLocale();
+  return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
+}
+
 export default function TransactionsPage() {
-  // useSearchParams needs a Suspense boundary for static rendering.
   return (
-    <Suspense fallback={<Card className="text-center text-sm text-ink-muted">กำลังโหลด…</Card>}>
+    <Suspense fallback={<TransactionsLoading />}>
       <TransactionsView />
     </Suspense>
   );
