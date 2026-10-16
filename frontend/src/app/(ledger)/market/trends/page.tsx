@@ -10,12 +10,13 @@ import { Card } from "@/components/ui/Card";
 import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
 import type { CatalogProduct } from "@/types/market";
 import { loadPickedPlatforms } from "@/lib/market/pickedPlatforms";
-import { formatGrowth, TREND_STATUS_TONE, trendStatus } from "@/lib/market/trendStatus";
+import { formatGrowth, TREND_STATUS_TONE, type TrendStatus, trendStatus } from "@/lib/market/trendStatus";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.trends;
 const baht = (n: number) => `฿${Math.round(n).toLocaleString("en-US")}`;
 const DEFAULT_CHIPS = 6;
+const VISIBLE_CHIPS = 5;
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
@@ -50,10 +51,11 @@ function TrendsView() {
   const { categories, products } = catalog.data;
   // Picked on /market/platforms; until then show the first few (Thai majors) so the chip row stays short.
   const platforms = picked?.length ? catalog.data.platforms.filter((p) => picked.includes(p.id)) : catalog.data.platforms.slice(0, DEFAULT_CHIPS);
-  // However many are picked, only the first few get a chip; the rest sit in one "อื่น ๆ" dropdown.
-  const chipPlatforms = platforms.slice(0, DEFAULT_CHIPS);
-  const morePlatforms = platforms.slice(DEFAULT_CHIPS);
-  const moreActive = morePlatforms.some((p) => p.id === pf);
+  // However many are picked, only the first few get a chip so the row stays on one line; the rest sit in
+  // one "อื่น ๆ" dropdown (not worth it for a single leftover platform).
+  const chipPlatforms = platforms.length > VISIBLE_CHIPS + 1 ? platforms.slice(0, VISIBLE_CHIPS) : platforms;
+  const morePlatforms = platforms.slice(chipPlatforms.length);
+  const moreActive = morePlatforms.find((p) => p.id === pf);
   const catOf = (p: CatalogProduct) => categories.find((c) => c.category_id === p.category_id)!;
   const category = categories.find((c) => c.category_id === catId);
   const query = q.trim();
@@ -141,21 +143,31 @@ function TrendsView() {
               </Chip>
             ))}
             {morePlatforms.length > 0 && (
-              <select
-                aria-label="แพลตฟอร์มอื่น"
-                value={moreActive ? pf : ""}
-                onChange={(e) => e.target.value && setPf(e.target.value)}
-                className={`min-h-[40px] flex-none rounded-full border px-4 text-[15px] [&>option]:bg-white [&>option]:text-ink ${
-                  moreActive ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body"
+              // A chip-shaped label with an invisible native <select> over it: sized to its text (a bare
+              // <select> is as wide as its longest option) and still opens the native picker.
+              <label
+                className={`relative inline-flex min-h-[40px] flex-none items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[15px] ${
+                  moreActive ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body hover:border-brand hover:text-brand"
                 }`}
               >
-                <option value="">อื่น ๆ (+{morePlatforms.length})</option>
-                {morePlatforms.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+                <span className="max-w-[180px] truncate">{moreActive ? moreActive.name : `อื่น ๆ (+${morePlatforms.length})`}</span>
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+                <select
+                  aria-label="แพลตฟอร์มอื่น"
+                  value={moreActive ? pf : ""}
+                  onChange={(e) => e.target.value && setPf(e.target.value)}
+                  className="absolute inset-0 cursor-pointer appearance-none opacity-0"
+                >
+                  <option value="">อื่น ๆ</option>
+                  {morePlatforms.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             )}
           </div>
           <Link href="/market/platforms" className="flex-none text-sm font-semibold text-brand no-underline hover:underline">
@@ -309,11 +321,12 @@ function ForecastOverview({
 }) {
   const ranked = [...products].sort((a, b) => b.search_growth_pct - a.search_growth_pct);
   const top6 = ranked.slice(0, 6);
-  const top = ranked[0];
-  const allPrices = products.flatMap((p) => p.prices.filter((x) => x.available).map((x) => x.price!));
-  const lo = allPrices.length ? Math.min(...allPrices) : 0;
-  const hi = allPrices.length ? Math.max(...allPrices) : 0;
-  const listings = allPrices.length;
+  const countWith = (status: TrendStatus) => products.filter((p) => trendStatus(p.search_growth_pct) === status).length;
+  const summary = [
+    { label: `🔥 ${t.status.hot}`, value: countWith("hot") },
+    { label: t.status.rising, value: countWith("rising") },
+    { label: t.summaryTotal, value: products.length },
+  ];
 
   const statusTone: Record<string, string> = { hot: "text-expense", rising: "text-brand", stable: "text-[#0F9D58]" };
   void statusTone;
@@ -321,73 +334,27 @@ function ForecastOverview({
   return (
     <div className="flex flex-col gap-5">
       {/* hero */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <span aria-hidden="true" className="grid h-16 w-16 flex-none place-items-center rounded-full bg-[#EAF2FC] text-brand">
-            <Icon.Flame width={28} height={28} />
-          </span>
-          <div>
-            <h2 className="m-0 text-[26px] font-bold leading-tight text-navy md:text-[30px]">{t.forecastTitle}</h2>
-            <p className="m-0 mt-1 text-[15px] text-ink-muted">{t.forecastSub}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 rounded-[20px] bg-white px-5 py-3.5 shadow-[0_4px_16px_rgba(26,111,214,.08)]">
-          <span aria-hidden="true" className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[#EAF2FC] text-brand">
-            <Icon.Calendar />
-          </span>
-          <div className="text-[15px] font-bold text-navy">
-            {t.heroPriceTitle}
-            <div className="text-[17px]">{t.heroPriceDays}</div>
-            <div className="text-[13px] font-normal text-ink-muted">{t.heroPriceNote}</div>
-          </div>
+      <div className="flex items-center gap-4">
+        <span aria-hidden="true" className="grid h-14 w-14 flex-none place-items-center rounded-full bg-[#FFF1E6] text-[28px] leading-none">
+          🔥
+        </span>
+        <div>
+          <h2 className="m-0 text-2xl font-bold leading-tight text-navy md:text-[28px]">{t.forecastTitle}</h2>
+          <p className="m-0 mt-1 text-[15px] text-ink-muted">{t.forecastSub}</p>
         </div>
       </div>
 
-      {/* 4 stat cards */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          icon={<Icon.TrendUp />}
-          iconBg="bg-[#E6F7EE]"
-          iconColor="text-[#0F9D58]"
-          label={t.statBestSeller}
-          value={top?.name ?? "—"}
-          chips={
-            <>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#FDECEC] px-3 py-1 text-[14px] font-bold text-expense">
-                <Icon.Crown /> อันดับ 1
-              </span>
-              <span className="rounded-full bg-[#FDECEC] px-3 py-1 text-[14px] font-bold text-expense">
-                {formatGrowth(top?.search_growth_pct ?? 0)}
-              </span>
-            </>
-          }
-        />
-        <StatCard
-          icon={<Icon.Chart />}
-          iconBg="bg-[#E6F7EE]"
-          iconColor="text-[#0F9D58]"
-          label={t.statBestSeller}
-          value={ranked[1]?.name ?? "—"}
-          chips={<span className="rounded-full bg-[#E6F7EE] px-3 py-1 text-[14px] font-bold text-[#0F9D58]">{formatGrowth(ranked[1]?.search_growth_pct ?? 0)}</span>}
-        />
-        <StatCard
-          icon={<Icon.Star />}
-          iconBg="bg-[#EAF2FC]"
-          iconColor="text-brand"
-          label={t.statHotChance}
-          value={ranked[2]?.name ?? "—"}
-          chips={<span className="rounded-full bg-[#EAF2FC] px-3 py-1 text-[14px] font-bold text-brand">{formatGrowth(ranked[2]?.search_growth_pct ?? 0)}</span>}
-        />
-        <StatCard
-          icon={<Icon.Clock />}
-          iconBg="bg-[#EAF2FC]"
-          iconColor="text-brand"
-          label={t.statRangeLabel}
-          value={`${baht(lo)} – ${baht(hi)}`}
-          valueClass="text-[24px]"
-          chips={<span className="text-[15px] font-semibold text-ink-muted">{t.shopsInfo.replace("{shops}", String(Math.min(6, listings))).replace("{all}", String(listings))}</span>}
-        />
-      </div>
+      {/* how many products sit in each trend bucket */}
+      <dl className="m-0 grid grid-cols-3 gap-3">
+        {summary.map((s) => (
+          <div key={s.label} className="rounded-[20px] bg-white px-4 py-4 shadow-[0_4px_16px_rgba(26,111,214,.06)] md:px-5">
+            <dt className="text-[15px] text-ink-muted">{s.label}</dt>
+            <dd className="m-0 text-[26px] font-bold leading-tight text-navy">
+              {s.value.toLocaleString("en-US")} <span className="text-[15px] font-normal text-ink-muted">{t.productsUnit}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
 
       {/* 6 product cards */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -399,78 +366,9 @@ function ForecastOverview({
   );
 }
 
-function StatCard({
-  icon,
-  iconBg,
-  iconColor,
-  label,
-  value,
-  valueClass = "text-[20px]",
-  chips,
-}: {
-  icon: React.ReactNode;
-  iconBg: string;
-  iconColor: string;
-  label: string;
-  value: string;
-  valueClass?: string;
-  chips: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-start gap-3.5 rounded-[20px] bg-white p-5 shadow-[0_4px_16px_rgba(26,111,214,.06)]">
-      <span aria-hidden="true" className={`grid h-11 w-11 flex-none place-items-center rounded-full ${iconBg} ${iconColor}`}>
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <div className="text-[14px] text-ink-muted">{label}</div>
-        <div className={`truncate font-bold text-navy ${valueClass}`}>{value}</div>
-        <div className="mt-1.5 flex flex-wrap items-center gap-2">{chips}</div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------- line-icon set (replaces emoji) ---------- */
+/* ---------- line-icon set ---------- */
 
 const Icon = {
-  Flame: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M12 3c1 3 4 4.5 4 8a4 4 0 1 1-8 0c0-1.6.8-2.6 1.8-3.4C9 10 10 11.5 10 13" />
-    </svg>
-  ),
-  Calendar: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <rect x="3.5" y="5" width="17" height="15" rx="2" />
-      <path d="M3.5 10h17M8 3v4M16 3v4" />
-    </svg>
-  ),
-  TrendUp: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M4 17l6-6 4 4 6-7" />
-      <path d="M14 8h6v6" />
-    </svg>
-  ),
-  Chart: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
-    </svg>
-  ),
-  Star: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" {...p}>
-      <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.9l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8z" />
-    </svg>
-  ),
-  Clock: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7.5V12l3 2" />
-    </svg>
-  ),
-  Crown: (p: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...p}>
-      <path d="M3 7l4 4 5-7 5 7 4-4-1.5 11h-15z" />
-    </svg>
-  ),
   Hourglass: (p: React.SVGProps<SVGSVGElement>) => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}>
       <path d="M7 3h10M7 21h10M7 3c0 5 10 5 10 9S7 16 7 21M17 3c0 5-10 5-10 9" />
@@ -503,7 +401,7 @@ function TrendCard({
       <div className="flex items-center gap-2.5">
         <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-[16px] font-bold text-white ${tone.rank}`}>{rank}</span>
         <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] font-bold ${tone.badge}`}>
-          {status === "hot" ? <Icon.Flame width={14} height={14} /> : <Icon.Hourglass />} {t.status[status]}
+          {status === "hot" ? <span aria-hidden="true">🔥</span> : <Icon.Hourglass />} {t.status[status]}
         </span>
       </div>
 
