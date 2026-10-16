@@ -13,7 +13,7 @@ import { TypingChat } from "@/components/home/TypingChat";
 
 // Public home page. Structure follows parnuan.com: a mascot + real LINE chat hero, numbered
 // feature steps next to a visual, sections joined by chat bubbles, then pricing, FAQ and a final CTA.
-// Kept clean on purpose (no tilts or doodles); U-Bot and the LINE chat carry the personality.
+// Kept clean on purpose (no tilts or doodles); U-Fox and the LINE chat carry the personality.
 const THINGS_PEOPLE_TYPE = [
   "ขายน้ำพริก 20 กระปุก 1780",
   "ค่าส่ง Kerry 245",

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { Ring } from "@/components/ui/Ring";
 
 const THRESHOLD = 1_800_000;
@@ -14,7 +14,7 @@ const ZONES = [
   { upTo: Infinity, mood: "shocked", color: "#F26B5B", chip: "bg-[#FDECEC] text-expense", label: "เกินเพดาน", say: "เกินแล้ว ต้องจด VAT ภายใน 30 วันนับจากวันที่เกินนะคะ" },
 ] as const;
 
-/** Drag your yearly sales and watch the tax meter (and U-Bot's face) react. */
+/** Drag your yearly sales and watch the tax meter (and U-Fox's face) react. */
 export function TaxPlayground() {
   const [sales, setSales] = useState(1_250_000);
   const ratio = sales / THRESHOLD;
@@ -24,7 +24,7 @@ export function TaxPlayground() {
     <div className="relative flex w-[340px] max-w-full flex-col items-center gap-4 rounded-[30px] bg-white p-7 shadow-[0_24px_50px_rgba(21,48,90,.14)]">
       <span className="absolute -top-3.5 left-6 rounded-full bg-sun px-3 py-1 text-sm font-bold text-[#4A3500]">ลองเลื่อนดู</span>
       <div className="flex items-center gap-3">
-        <UBot size={96} mood={zone.mood} />
+        <UFox size={96} mood={zone.mood} />
         <p className="m-0 min-h-[3.2em] max-w-[200px] text-[15px] font-semibold leading-snug" aria-live="polite">
           {zone.say}
         </p>

@@ -1,5 +1,5 @@
 import { LineAddFriendButton } from "@/components/brand/LineAddFriendButton";
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { Twinkle } from "@/components/decor/Twinkle";
 import { PlanReceipt } from "@/components/home/PlanReceipt";
 
@@ -8,7 +8,7 @@ export function PricingSection() {
     <section id="pricing" aria-labelledby="pricing-title" className="scroll-mt-20 px-6 pb-24">
       <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-9">
         <div className="relative text-center">
-          <UBot pose="love" size={120} className="absolute -left-36 -top-6 max-lg:hidden" />
+          <UFox pose="love" size={120} className="absolute -left-36 -top-6 max-lg:hidden" />
           <Twinkle className="-right-14 -top-2 h-7 w-7 max-lg:hidden" />
           <Twinkle className="-right-6 top-8 h-3.5 w-3.5 max-lg:hidden" color="#2563EB" />
           <h2 id="pricing-title" className="m-0 text-[40px] font-extrabold">
@@ -29,7 +29,7 @@ export function PricingSection() {
             subtitle="ทุกอย่างใน Free + Market Radar"
             price="฿199"
             per="/ เดือน"
-            lines={["ราคาคู่แข่งทุกแพลตฟอร์ม เทียบต้นทุนจริง", "U-Bot แนะนำราคาขาย", "คำค้นยอดฮิต และเทรนด์ข้ามแพลตฟอร์ม", "โอกาสส่งออกตลาดยุโรป"]}
+            lines={["ราคาคู่แข่งทุกแพลตฟอร์ม เทียบต้นทุนจริง", "U-Fox แนะนำราคาขาย", "คำค้นยอดฮิต และเทรนด์ข้ามแพลตฟอร์ม", "โอกาสส่งออกตลาดยุโรป"]}
           />
         </div>
         <LineAddFriendButton />

@@ -6,7 +6,7 @@ export function PriceRadarScreen() {
     <div className="flex h-full flex-col gap-2.5 bg-white px-3.5 py-[18px]">
       <b className="text-sm">น้ำพริกตาแดงโบราณ</b>
       <div className="rounded-[14px] bg-sky-deep p-2.5">
-        <b className="text-brand">U-Bot แนะนำ</b>
+        <b className="text-brand">U-Fox แนะนำ</b>
         <div>
           ตั้งราคา <b>฿85</b> แล้วเปิดขายบน Lazada ร้านคู่แข่งที่นั่นของหมด
         </div>

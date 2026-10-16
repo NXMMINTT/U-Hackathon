@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import liff from "@line/liff";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { ensureSession, getStoredJwt } from "@/lib/api-client";
 import { ensureLoggedIn, initLiff, isLiffConfigured } from "@/lib/liff";
 
@@ -82,7 +82,7 @@ export function LiffAuthGate({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-tint px-6">
       <div className="flex max-w-sm flex-col items-center gap-5 rounded-[28px] bg-white p-8 text-center shadow-lg">
-        <UBot size={110} />
+        <UFox size={110} />
         <div>
           <h1 className="m-0 text-2xl font-bold text-navy">ยินดีต้อนรับสู่ U-Ledger</h1>
           <p className="m-0 mt-2 text-ink-body">เข้าสู่ระบบด้วยบัญชี LINE ของคุณเพื่อเริ่มใช้งานครับ</p>

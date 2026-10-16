@@ -1,6 +1,6 @@
 "use client";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { LineIcon } from "@/components/ui/LineIcon";
 import { useOverview } from "@/hooks/dashboard/useOverview";
 import { formatBaht } from "@/lib/format";
@@ -34,7 +34,7 @@ export function MonthSummaryCards({ month, previousMonth }: { month: string; pre
     <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
       <div className="mb-5 flex items-center gap-2">
         <h2 className="m-0 text-[18px] font-bold text-navy">สรุปภาพรวมเดือนนี้</h2>
-        <UBot size={70} pose="commerce" className="-mr-2 -mt-4 ml-auto" />
+        <UFox size={70} pose="commerce" className="-mr-2 -mt-4 ml-auto" />
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3">

@@ -27,7 +27,7 @@ export function WhereToSellScreen() {
         ))}
       </div>
       <div className="mt-auto rounded-[14px] bg-sky-deep p-2.5">
-        <b className="text-brand">U-Bot แนะนำ</b>
+        <b className="text-brand">U-Fox แนะนำ</b>
         <div>เปิดร้านบน Lazada ตอนนี้ คู่แข่งของหมด ได้ลูกค้าก่อนใคร</div>
       </div>
     </div>

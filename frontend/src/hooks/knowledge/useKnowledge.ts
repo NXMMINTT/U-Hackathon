@@ -14,7 +14,7 @@ export function useKnowledgeTopics() {
   });
 }
 
-/** On-demand: U-Bot writes a short briefing for one topic (Gemini, cached on the server). */
+/** On-demand: U-Fox writes a short briefing for one topic (Gemini, cached on the server). */
 export function useTopicScript() {
   return useMutation({
     mutationFn: (topicId: string) => apiFetch<TopicScript>(`/api/knowledge/topics/${topicId}/script`),

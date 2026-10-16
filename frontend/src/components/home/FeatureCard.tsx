@@ -1,4 +1,4 @@
-import { type FoxPose, UBot } from "@/components/brand/UBot";
+import { type FoxPose, UFox } from "@/components/brand/UFox";
 
 export function FeatureCard({
   title,
@@ -21,7 +21,7 @@ export function FeatureCard({
       <p className="m-0 text-[15px] text-ink-muted">{body}</p>
       <div className="relative mt-4 h-[210px]" aria-hidden="true">
         {children}
-        {fox && <UBot pose={fox} size={118} className={`absolute bottom-0 ${tagLeft ? "right-0" : "left-0"}`} />}
+        {fox && <UFox pose={fox} size={118} className={`absolute bottom-0 ${tagLeft ? "right-0" : "left-0"}`} />}
         {tag && (
           <span
             className={`absolute top-4 rounded-2xl px-3.5 py-2 text-[15px] font-semibold shadow-[0_6px_16px_rgba(0,0,0,.08)] ${

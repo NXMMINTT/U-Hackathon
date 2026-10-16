@@ -1,5 +1,5 @@
 import { LineAddFriendButton } from "@/components/brand/LineAddFriendButton";
-import { UBotLive } from "@/components/brand/UBotLive";
+import { UFoxLive } from "@/components/brand/UFoxLive";
 import { Twinkle } from "@/components/decor/Twinkle";
 import { Phone } from "@/components/home/phone/Phone";
 import { HeroChatScreen } from "@/components/home/screens/HeroChatScreen";
@@ -18,15 +18,15 @@ export function HeroSection() {
         </span>
         <div className="relative flex min-w-0 flex-[1_1_480px] flex-col gap-5">
           <span className="self-start rounded-full bg-brand-soft px-3.5 py-1 text-[15px] font-semibold text-brand">
-            U-Bot ผู้ช่วยบัญชีประจำร้านใน LINE
+            U-Fox ผู้ช่วยบัญชีประจำร้านใน LINE
           </span>
           <h1 className="m-0 text-[38px] font-extrabold leading-[1.25] tracking-tight md:text-[48px]">
             ขายของอย่างเดียว
             <br />
-            เรื่องบัญชีให้ <span className="text-brand">U-Bot จัดการ</span>
+            เรื่องบัญชีให้ <span className="text-brand">U-Fox จัดการ</span>
           </h1>
           <p className="m-0 max-w-[520px] text-lg text-ink-body">
-            ส่งสลิป พิมพ์ หรืออัดเสียงในแชท U-Bot จดบัญชี ตัดสต็อก เฝ้าเพดานภาษี แล้วยังแอบไปส่องราคาคู่แข่งมาให้ด้วย
+            ส่งสลิป พิมพ์ หรืออัดเสียงในแชท U-Fox จดบัญชี ตัดสต็อก เฝ้าเพดานภาษี แล้วยังแอบไปส่องราคาคู่แข่งมาให้ด้วย
           </p>
           <div className="flex flex-wrap items-end gap-x-12 gap-y-6">
             <div>
@@ -41,7 +41,7 @@ export function HeroSection() {
             </div>
           </div>
           <div className="flex flex-col items-start gap-1.5">
-            <LineAddFriendButton label="เพิ่มเพื่อน U-Bot ฟรี" />
+            <LineAddFriendButton label="เพิ่มเพื่อน U-Fox ฟรี" />
             <span className="text-[15px] text-ink-muted">จดบัญชีฟรีตลอด · Market Radar ลองฟรี 7 วัน</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ export function HeroSection() {
                 <HeroChatScreen />
               </Phone>
             </div>
-            <UBotLive size={180} wave className="!absolute -bottom-4 -right-[140px] max-md:-right-10 max-md:[&_img]:!h-[150px] max-md:[&_img]:!w-[150px]" />
+            <UFoxLive size={180} wave className="!absolute -bottom-4 -right-[140px] max-md:-right-10 max-md:[&_img]:!h-[150px] max-md:[&_img]:!w-[150px]" />
             <Sprinkles />
           </div>
         </div>

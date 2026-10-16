@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { type FoxPose, UBot, type UBotMood } from "@/components/brand/UBot";
+import { type FoxPose, UFox, type UFoxMood } from "@/components/brand/UFox";
 import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 const DEFAULT_TIPS = [
@@ -14,8 +14,8 @@ const DEFAULT_TIPS = [
   "อย่าลืมกินข้าวนะคะ ร้านจะได้ไปต่อ",
 ];
 
-/** U-Bot (U-Fox) that leans toward the pointer; clicking makes it cheer and say a tip. */
-export function UBotLive({
+/** U-Fox (U-Fox) that leans toward the pointer; clicking makes it cheer and say a tip. */
+export function UFoxLive({
   size = 140,
   mood = "happy",
   pose,
@@ -25,7 +25,7 @@ export function UBotLive({
   bubbleSide = "left",
 }: {
   size?: number;
-  mood?: UBotMood;
+  mood?: UFoxMood;
   pose?: FoxPose;
   wave?: boolean;
   tips?: readonly string[];
@@ -73,10 +73,10 @@ export function UBotLive({
         ref={ref}
         type="button"
         onClick={say}
-        aria-label="กดคุยกับ U-Bot"
+        aria-label="กดคุยกับ U-Fox"
         className="block cursor-pointer rounded-full border-0 bg-transparent p-0 transition-transform hover:-rotate-6 active:scale-95"
       >
-        <UBot size={size} mood={mood} pose={wink ? "cheer" : pose} wave={wave} look={look} />
+        <UFox size={size} mood={mood} pose={wink ? "cheer" : pose} wave={wave} look={look} />
       </button>
       <span aria-live="polite" className={`pointer-events-none absolute -top-4 z-[2] w-max max-w-[220px] ${bubbleSide === "left" ? "right-[85%]" : "left-[85%]"}`}>
         {tip && (

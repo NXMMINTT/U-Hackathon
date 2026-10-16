@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { UBotFace } from "@/components/brand/UBotFace";
+import { UFoxFace } from "@/components/brand/UFoxFace";
 import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
-/** U-Bot asks, the seller answers — typed out when scrolled into view (instant without JS or with reduced motion). */
+/** U-Fox asks, the seller answers — typed out when scrolled into view (instant without JS or with reduced motion). */
 export function TypingChat({ bot, user }: { bot: string; user: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(3); // 0 hidden, 1 typing, 2 bot, 3 bot + user
@@ -34,9 +34,9 @@ export function TypingChat({ bot, user }: { bot: string; user: string }) {
   return (
     <div ref={ref} className="flex min-h-[124px] flex-col items-center gap-2.5 px-6 pb-14">
       <div className={`flex items-end gap-2.5 ${step === 0 ? "invisible" : ""}`}>
-        <UBotFace />
+        <UFoxFace />
         {step === 1 ? (
-          <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4 shadow-[0_4px_14px_rgba(26,111,214,.08)]" aria-label="U-Bot กำลังพิมพ์">
+          <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4 shadow-[0_4px_14px_rgba(26,111,214,.08)]" aria-label="U-Fox กำลังพิมพ์">
             {[0, 150, 300].map((d) => (
               <span key={d} className="h-2 w-2 animate-typing rounded-full bg-brand-light" style={{ animationDelay: `${d}ms` }} />
             ))}

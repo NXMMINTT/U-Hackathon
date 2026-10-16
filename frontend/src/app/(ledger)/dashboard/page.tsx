@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { type FoxPose, UBot } from "@/components/brand/UBot";
+import { type FoxPose, UFox } from "@/components/brand/UFox";
 import { ShopOverview } from "@/components/dashboard/ShopOverview";
 import { useLocale } from "@/lib/i18n";
 
@@ -113,7 +113,7 @@ export default function HomePage() {
                 {item.badge}
               </span>
             )}
-            <UBot pose={item.fox} size={72} />
+            <UFox pose={item.fox} size={72} />
             <span className="text-[13px] font-bold text-navy leading-tight">{item.label}</span>
             <span className="text-[11px] text-ink-muted leading-tight whitespace-pre-line">{item.sub}</span>
           </Link>

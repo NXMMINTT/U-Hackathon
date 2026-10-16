@@ -1,5 +1,5 @@
 import { LineAddFriendButton } from "@/components/brand/LineAddFriendButton";
-import { UBotLive } from "@/components/brand/UBotLive";
+import { UFoxLive } from "@/components/brand/UFoxLive";
 import { Curl } from "@/components/decor/Curl";
 import { Paw } from "@/components/decor/Paw";
 import { Twinkle } from "@/components/decor/Twinkle";
@@ -14,12 +14,12 @@ export function StartSection() {
         <Twinkle className="right-[14%] top-16 h-5 w-5" color="#2563EB" />
         <Curl className="bottom-16 right-[13%] h-9 w-9 max-sm:hidden" />
         <h2 className="m-0 text-[40px] font-bold leading-tight">
-          เริ่มจดกับ U-Bot
+          เริ่มจดกับ U-Fox
           <br />
           แล้วรู้ว่าร้าน<span className="text-brand">ควรขายเท่าไหร่</span>
         </h2>
-        <p className="m-0 text-ink-muted">เพิ่มเพื่อน U-Bot บน LINE แล้วส่งรายการแรกได้เลยวันนี้</p>
-        <UBotLive size={200} wave bubbleSide="right" />
+        <p className="m-0 text-ink-muted">เพิ่มเพื่อน U-Fox บน LINE แล้วส่งรายการแรกได้เลยวันนี้</p>
+        <UFoxLive size={200} wave bubbleSide="right" />
         <LineAddFriendButton />
       </div>
     </section>

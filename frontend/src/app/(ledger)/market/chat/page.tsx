@@ -2,24 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { UBotFace } from "@/components/brand/UBotFace";
-import { UBotLive } from "@/components/brand/UBotLive";
+import { UFoxFace } from "@/components/brand/UFoxFace";
+import { UFoxLive } from "@/components/brand/UFoxLive";
 import { Card } from "@/components/ui/Card";
 import { LineIcon } from "@/components/ui/LineIcon";
-import { useAskUBot } from "@/hooks/market/useAskUBot";
+import { useAskUFox } from "@/hooks/market/useAskUFox";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { apiFetchBlob } from "@/lib/api-client";
 import { useLocale } from "@/lib/i18n";
 type Message = { role: "user" | "bot" | "error"; text: string };
 
-/** U-Bot answers use Markdown **bold** for the key recommendation; render just that. */
+/** U-Fox answers use Markdown **bold** for the key recommendation; render just that. */
 function BotText({ text }: { text: string }) {
   return text
     .split(/(\*\*[^*]+\*\*)/g)
     .map((part, i) => (part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part));
 }
 
-/** Plays a U-Bot answer through ElevenLabs (/api/voice/speak); audio is fetched once and reused. */
+/** Plays a U-Fox answer through ElevenLabs (/api/voice/speak); audio is fetched once and reused. */
 function SpeakButton({ text }: { text: string }) {
   const th = useLocale();
   const t = th.marketRadar.chat;
@@ -69,11 +69,11 @@ function SpeakButton({ text }: { text: string }) {
   );
 }
 
-export default function UBotChatPage() {
+export default function UFoxChatPage() {
   const th = useLocale();
   const t = th.marketRadar.chat;
   const prices = useCompetitorPrices();
-  const ask = useAskUBot();
+  const ask = useAskUFox();
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,7 @@ export default function UBotChatPage() {
         <div className="flex min-h-[360px] flex-col gap-3 rounded-[24px] bg-[#DCEBFD] p-4 md:p-5">
           {messages.length === 0 && (
             <div className="m-auto flex flex-col items-center gap-2 text-center">
-              <UBotLive size={160} pose="line" bubbleSide="right" tips={["ถามเรื่องราคา คู่แข่ง หรือภาษีได้เลยค่ะ", "กดคำถามด้านล่างก็ได้นะ", "หนูตอบเป็นเสียงได้ด้วย!"]} />
+              <UFoxLive size={160} pose="line" bubbleSide="right" tips={["ถามเรื่องราคา คู่แข่ง หรือภาษีได้เลยค่ะ", "กดคำถามด้านล่างก็ได้นะ", "หนูตอบเป็นเสียงได้ด้วย!"]} />
               <p className="m-0 font-hand text-lg font-semibold text-brand">{t.empty}</p>
             </div>
           )}
@@ -120,7 +120,7 @@ export default function UBotChatPage() {
               </div>
             ) : (
               <div key={i} className="flex max-w-[90%] animate-pop items-end gap-2.5 self-start">
-                <UBotFace size={34} />
+                <UFoxFace size={34} />
                 <div
                   className={`whitespace-pre-wrap rounded-[20px] rounded-bl-md px-4 py-2.5 leading-relaxed ${
                     m.role === "error" ? "bg-[#FDECEC] text-expense" : "bg-white text-ink"
@@ -140,7 +140,7 @@ export default function UBotChatPage() {
           )}
           {ask.isPending && (
             <div className="flex items-end gap-2.5 self-start" aria-label={t.thinking}>
-              <UBotFace size={34} />
+              <UFoxFace size={34} />
               <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4">
                 {[0, 150, 300].map((d) => (
                   <span key={d} className="h-2 w-2 animate-typing rounded-full bg-brand-light" style={{ animationDelay: `${d}ms` }} />

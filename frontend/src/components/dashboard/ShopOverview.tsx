@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { UBotLive } from "@/components/brand/UBotLive";
+import { UFoxLive } from "@/components/brand/UFoxLive";
 import { PendingCard } from "@/components/dashboard/PendingCard";
 import { ProductThumb } from "@/components/dashboard/ProductThumb";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -49,11 +49,11 @@ export function ShopOverview() {
 
   return (
     <div className="flex flex-col gap-6">
-      <section aria-label="U-Bot" className="flex flex-wrap items-center gap-x-10 gap-y-7 rounded-[32px] bg-sky-deep p-6 md:p-9">
+      <section aria-label="U-Fox" className="flex flex-wrap items-center gap-x-10 gap-y-7 rounded-[32px] bg-sky-deep p-6 md:p-9">
         <div className="flex min-w-0 flex-[1_1_480px] items-end gap-4">
-          <UBotLive size={140} wave mood={style.mood} tips={t.tips} bubbleSide="right" className="shrink-0 max-sm:hidden" />
+          <UFoxLive size={140} wave mood={style.mood} tips={t.tips} bubbleSide="right" className="shrink-0 max-sm:hidden" />
           <div className="min-w-0 flex-1 rounded-3xl rounded-bl-md bg-white px-6 py-5 shadow-[0_10px_30px_rgba(26,111,214,.12)]">
-            <div className="text-[15px] font-semibold text-brand">U-Bot</div>
+            <div className="text-[15px] font-semibold text-brand">U-Fox</div>
             <p className="m-0 text-xl leading-normal md:text-[22px]">
               {t.hello} {o.business_name} {profit >= 0 ? t.profitThisMonth : t.lossThisMonth}{" "}
               <b className={profit >= 0 ? "text-brand" : "text-expense"}>{formatBaht(Math.abs(profit))}</b> {zone.say}

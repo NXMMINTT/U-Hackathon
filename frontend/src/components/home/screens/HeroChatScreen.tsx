@@ -29,7 +29,7 @@ export function HeroChatScreen() {
         <div className="grid place-items-center rounded-[10px] bg-brand-soft">สรุป</div>
         <div className="grid place-items-center rounded-[10px] bg-sun-soft text-[#5C3E00]">ภาษี</div>
         <div className="grid place-items-center rounded-[10px] bg-brand-soft text-center leading-tight">ราคา<br />คู่แข่ง</div>
-        <div className="grid place-items-center rounded-[10px] bg-brand-soft">ถาม U-Bot</div>
+        <div className="grid place-items-center rounded-[10px] bg-brand-soft">ถาม U-Fox</div>
       </div>
     </>
   );

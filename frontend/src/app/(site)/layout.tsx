@@ -7,7 +7,7 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   title: "U-Ledger AI — จดบัญชีร้านแค่แชท LINE",
-  description: "จดบัญชีร้านผ่าน LINE กับ U-Bot รู้ทันภาษี VAT และรู้ราคาคู่แข่งทุกแพลตฟอร์ม",
+  description: "จดบัญชีร้านผ่าน LINE กับ U-Fox รู้ทันภาษี VAT และรู้ราคาคู่แข่งทุกแพลตฟอร์ม",
 };
 
 /** Root layout for the public home page. */

@@ -1,4 +1,4 @@
-/** Endless strip of things people actually type to U-Bot. */
+/** Endless strip of things people actually type to U-Fox. */
 export function ChatMarquee({ items }: { items: readonly string[] }) {
   const row = [...items, ...items];
   return (

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { LineAddFriendButton } from "@/components/brand/LineAddFriendButton";
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { useBusiness } from "@/hooks/dashboard/useBusiness";
 import { useUpdateBusiness } from "@/hooks/dashboard/useUpdateBusiness";
 import { useSubscription } from "@/hooks/market/useSubscription";
@@ -75,7 +75,7 @@ export default function SettingsPage() {
             <h1 className="m-0 text-[22px] font-bold text-navy">{tr("settings.title")}</h1>
             <p className="m-0 mt-1 text-[14px] text-ink-muted">{tr("settings.subtitle")}</p>
           </div>
-          <UBot size={80} pose="proud" className="shrink-0" />
+          <UFox size={80} pose="proud" className="shrink-0" />
         </div>
       </section>
 

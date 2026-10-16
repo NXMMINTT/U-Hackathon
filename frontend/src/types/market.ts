@@ -43,7 +43,7 @@ export type EuArbitrage = {
 };
 
 /** /api/ubot/insights — Gemini recommendations + Dynamic Pricing, with a rule-based fallback. */
-export type UBotInsights = {
+export type UFoxInsights = {
   product_id: string;
   rule_price: number;
   suggested_price: number;

@@ -11,7 +11,7 @@ export function OtherFeaturesSection() {
       <div className="mx-auto flex max-w-[1100px] flex-col gap-10">
         <div className="flex flex-col items-center gap-4 rounded-[32px] bg-white p-9 text-center">
           <h2 className="m-0 text-[28px] font-bold">
-            จดกับ U-Bot วันนี้ แล้วรู้ว่าร้าน<span className="text-brand">กำไรจริง</span>เท่าไหร่
+            จดกับ U-Fox วันนี้ แล้วรู้ว่าร้าน<span className="text-brand">กำไรจริง</span>เท่าไหร่
           </h2>
           <LineAddFriendButton />
         </div>
@@ -20,7 +20,7 @@ export function OtherFeaturesSection() {
           <Twinkle className="left-16 top-16 h-3.5 w-3.5 max-md:hidden" color="#BBD8FB" />
           <Paw className="right-10 top-9 h-7 w-7 rotate-12 opacity-80 max-md:hidden" />
           <h2 className="m-0 text-center text-[38px] font-bold leading-tight">
-            นอกจากนี้ U-Bot <span className="text-brand">ทำได้อีกเยอะ</span>
+            นอกจากนี้ U-Fox <span className="text-brand">ทำได้อีกเยอะ</span>
           </h2>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-6">
             <FeatureCard fox="commerce" title="ตัดสต็อกอัตโนมัติ" body="ยืนยันการขายแล้วสต็อกลดเอง ซื้อของเข้าก็บันทึกต้นทุนให้" tag="ขายไป 20 · เหลือ 120">
@@ -31,7 +31,7 @@ export function OtherFeaturesSection() {
                 <InfoRow k="สบู่มะกรูด" v="300" />
               </MiniPhone>
             </FeatureCard>
-            <FeatureCard fox="idea" title="สรุปยอดทุกวัน" body="พิมพ์ “สรุป” U-Bot ตอบยอดขาย รายจ่าย และกำไรของวันนี้ทันที" tag="พิมพ์คำเดียว" tagLeft>
+            <FeatureCard fox="idea" title="สรุปยอดทุกวัน" body="พิมพ์ “สรุป” U-Fox ตอบยอดขาย รายจ่าย และกำไรของวันนี้ทันที" tag="พิมพ์คำเดียว" tagLeft>
               <MiniPhone chat>
                 <span className="self-end rounded-xl bg-chat px-2.5 py-1">สรุป</span>
                 <div className="rounded-xl bg-white px-2.5 py-2">
@@ -42,7 +42,7 @@ export function OtherFeaturesSection() {
                 </div>
               </MiniPhone>
             </FeatureCard>
-            <FeatureCard fox="line" title="U-Bot ตอบเป็นเสียง" body="ถามเรื่องกำไร ภาษี หรือราคา แล้วฟังคำตอบได้ ไม่ต้องอ่าน" tag="เดือนนี้กำไรเท่าไหร่?">
+            <FeatureCard fox="line" title="U-Fox ตอบเป็นเสียง" body="ถามเรื่องกำไร ภาษี หรือราคา แล้วฟังคำตอบได้ ไม่ต้องอ่าน" tag="เดือนนี้กำไรเท่าไหร่?">
               <div className="grid h-full place-items-center">
                 <div className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-[0_10px_24px_rgba(26,111,214,.12)]">
                   <span className="grid h-11 w-11 place-items-center rounded-full bg-brand text-white">

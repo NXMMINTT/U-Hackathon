@@ -1,6 +1,6 @@
 import { InfoRow } from "@/components/home/phone/InfoRow";
 
-/** Confirmation card U-Bot sends back after reading an entry. */
+/** Confirmation card U-Fox sends back after reading an entry. */
 export function ConfirmCard({ title, rows }: { title: string; rows: [string, React.ReactNode][] }) {
   return (
     <div className="w-[200px] self-start overflow-hidden rounded-[14px] bg-white">

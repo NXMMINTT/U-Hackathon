@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { UBotLive } from "@/components/brand/UBotLive";
+import { UFoxLive } from "@/components/brand/UFoxLive";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { useEuArbitrage } from "@/hooks/market/useEuArbitrage";
 import { useKeywordVolume } from "@/hooks/market/useKeywordVolume";
@@ -11,7 +11,7 @@ import { useMarketProducts } from "@/hooks/market/useMarketProducts";
 import { useMarketTrend } from "@/hooks/market/useMarketTrend";
 import { useRecordSponsorClick } from "@/hooks/market/useRecordSponsorClick";
 import { useSponsors } from "@/hooks/market/useSponsors";
-import { useUBotInsights } from "@/hooks/market/useUBotInsights";
+import { useUFoxInsights } from "@/hooks/market/useUFoxInsights";
 import type { CompetitorPrices } from "@/types/market";
 import { formatBaht } from "@/lib/format";
 import { platformLogo } from "@/lib/market/platformLogo";
@@ -26,7 +26,7 @@ export default function MarketRadarPage() {
   const products = useMarketProducts();
   const prices = useCompetitorPrices({ productId: picked });
   const productId = prices.data?.product_id;
-  const ubot = useUBotInsights(productId);
+  const ubot = useUFoxInsights(productId);
   const trend = useMarketTrend(productId);
   const keywords = useKeywordVolume(productId);
   const eu = useEuArbitrage();
@@ -73,11 +73,11 @@ export default function MarketRadarPage() {
       </div>
 
       <section
-        aria-label="U-Bot แนะนำราคา"
+        aria-label="U-Fox แนะนำราคา"
         aria-busy={prices.isPlaceholderData}
         className={`flex flex-wrap items-center gap-x-8 gap-y-5 rounded-[28px] bg-sky-deep p-6 md:p-8 ${prices.isPlaceholderData ? "opacity-60" : ""}`}
       >
-        <UBotLive
+        <UFoxLive
           pose="radar"
           size={96}
           bubbleSide="right"
@@ -85,7 +85,7 @@ export default function MarketRadarPage() {
           className="shrink-0 max-sm:hidden"
         />
         <div className="min-w-0 flex-[1_1_400px]">
-          <div className="text-[15px] font-semibold text-brand">U-Bot แนะนำวันนี้</div>
+          <div className="text-[15px] font-semibold text-brand">U-Fox แนะนำวันนี้</div>
           {ubot.data ? (
             <>
               <p className="m-0 text-lg leading-relaxed md:text-xl">{ubot.data.reason}</p>
@@ -98,7 +98,7 @@ export default function MarketRadarPage() {
               )}
             </>
           ) : (
-            <p className="m-0 text-lg text-ink-muted">{ubot.error ? `U-Bot ยังตอบไม่ได้: ${ubot.error.message}` : "U-Bot กำลังวิเคราะห์ราคาคู่แข่ง…"}</p>
+            <p className="m-0 text-lg text-ink-muted">{ubot.error ? `U-Fox ยังตอบไม่ได้: ${ubot.error.message}` : "U-Fox กำลังวิเคราะห์ราคาคู่แข่ง…"}</p>
           )}
         </div>
         {suggested !== undefined && (

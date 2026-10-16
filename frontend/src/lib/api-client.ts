@@ -51,7 +51,7 @@ async function request<T>(path: string, init?: RequestInit, as: "json" | "blob" 
   if (!response.ok) {
     if (response.status === 401) clearStoredJwt();
     const body = await response.json().catch(() => null);
-    // Mock-data routes (Market Radar, U-Bot) use FastAPI's default `{ detail }` shape.
+    // Mock-data routes (Market Radar, U-Fox) use FastAPI's default `{ detail }` shape.
     const detail = typeof body?.detail === "string" ? body.detail : undefined;
     const message = body?.error?.message_th ?? detail ?? `คำขอล้มเหลว (${response.status})`;
     throw new Error(message);

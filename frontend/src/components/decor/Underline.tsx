@@ -1,4 +1,4 @@
-/** Wavy underline drawn under a word. Wrap the word: <Underline>U-Bot</Underline> */
+/** Wavy underline drawn under a word. Wrap the word: <Underline>U-Fox</Underline> */
 export function Underline({ children, color = "#FFC83D" }: { children: React.ReactNode; color?: string }) {
   return (
     <span className="relative inline-block whitespace-nowrap">

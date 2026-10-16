@@ -32,14 +32,14 @@
   },
   "stock": {
     "title": "商品库存",
-    "empty": "暂无商品 — 在 LINE 告诉 U-Bot，例如“买辣椒酱 20 罐 1,200 泰铢”",
+    "empty": "暂无商品 — 在 LINE 告诉 U-Fox，例如“买辣椒酱 20 罐 1,200 泰铢”",
     "outOfStock": "缺货",
     "low": "库存不足",
     "unitCost": "单位成本"
   },
   "transactions": {
     "title": "记录列表",
-    "empty": "暂无记录 — 试着在 LINE 上向 U-Bot 发送文字、转账截图或语音吧",
+    "empty": "暂无记录 — 试着在 LINE 上向 U-Fox 发送文字、转账截图或语音吧",
     "status": {
       "pending": "待确认",
       "confirmed": "已确认",
@@ -97,7 +97,7 @@
       "position": "你的价格与市场对比",
       "above": "高于中位价 {pct}%",
       "below": "低于中位价 {pct}%",
-      "insightsTitle": "U-Bot 建议",
+      "insightsTitle": "U-Fox 建议",
       "radarTitle": "竞品价格雷达",
       "radarHint": "每个点代表一家竞品店铺 · 蓝色区间 = 泰国市场中间 50% 的价格范围",
       "thaiMarket": "泰国市场",
@@ -122,10 +122,10 @@
       "visit": "查看商品",
       "platformsTitle": "追踪的平台",
       "platformsCount": "覆盖全球 {count} 个平台",
-      "askUBot": "就此询问 U-Bot",
+      "askUFox": "就此询问 U-Fox",
       "byGemini": "由 Gemini 生成",
       "byRules": "备用建议",
-      "thinking": "U-Bot 正在分析…",
+      "thinking": "U-Fox 正在分析…",
       "suggestedPrice": "建议价格（动态定价）",
       "vsYours": "你当前的价格 ฿{price}",
       "reanalyze": "重新分析"
@@ -156,21 +156,21 @@
       "vsMarket": "比 {total} 家有货的泰国竞品中的 {count} 家更便宜"
     },
     "chat": {
-      "title": "AI 助手 — U-Bot",
+      "title": "AI 助手 — U-Fox",
       "subtitle": "可询问价格、竞品、利润、税务或值得销售的商品",
       "empty": "今天想让我帮你做什么？",
       "placeholder": "输入问题",
       "send": "发送",
-      "thinking": "U-Bot 正在思考…",
-      "disclaimer": "U-Bot 基于模拟市场数据提供初步信息，税务数字在正式申报前应请会计师核对",
-      "contextTitle": "U-Bot 用于回答的数据",
+      "thinking": "U-Fox 正在思考…",
+      "disclaimer": "U-Fox 基于模拟市场数据提供初步信息，税务数字在正式申报前应请会计师核对",
+      "contextTitle": "U-Fox 用于回答的数据",
       "suggestions": [
         "辣椒酱需要调价吗",
         "哪些竞品卖得比我们便宜",
         "应该主攻哪个平台",
         "适合出口到欧洲吗"
       ],
-      "listen": "收听 U-Bot 语音",
+      "listen": "收听 U-Fox 语音",
       "stop": "停止",
       "voiceLoading": "正在生成语音…"
     },
@@ -201,7 +201,7 @@
         "market_trend": "跨平台销量趋势",
         "keyword_volume": "顾客常用热门搜索词",
         "eu_arbitrage": "欧洲市场出口机会",
-        "ubot_insights": "U-Bot 售价建议"
+        "ubot_insights": "U-Fox 售价建议"
       }
     },
     "trends": {
@@ -383,13 +383,13 @@
     "title": "U-Ledger AI 使用方法",
     "subtitle": "通过 LINE 记账只需5步",
     "steps": [
-      { "title": "在 LINE 上添加 U-Bot 好友", "body": "点击下方按钮即可开始聊天，无需额外安装应用。" },
-      { "title": "像和朋友聊天一样输入记录", "body": "U-Bot 自动分类收入、支出、商品和数量。", "example": "卖辣酱 20 罐 1780" },
-      { "title": "或发送收据照片/语音", "body": "U-Bot 从照片或语音中读取金额，并发送卡片供您审核。", "example": "买干辣椒 2 袋 900" },
+      { "title": "在 LINE 上添加 U-Fox 好友", "body": "点击下方按钮即可开始聊天，无需额外安装应用。" },
+      { "title": "像和朋友聊天一样输入记录", "body": "U-Fox 自动分类收入、支出、商品和数量。", "example": "卖辣酱 20 罐 1780" },
+      { "title": "或发送收据照片/语音", "body": "U-Fox 从照片或语音中读取金额，并发送卡片供您审核。", "example": "买干辣椒 2 袋 900" },
       { "title": "在卡片中确认", "body": "确认的记录将计入总额并调整库存。如有错误，确认前可点击\"编辑\"。" },
       { "title": "在网页上查看汇总", "body": "我的店铺显示利润、VAT 仪表盘、畅销商品和待确认记录。" }
     ],
-    "commandsTitle": "可以问 U-Bot 的指令",
+    "commandsTitle": "可以问 U-Fox 的指令",
     "commands": [
       { "say": "汇总", "does": "今天的销售额、支出和利润" },
       { "say": "今年快要注册 VAT 了吗？", "does": "年度销售额与 180 万泰铢门槛的对比" }
@@ -398,7 +398,7 @@
     "webEntryBody": "不方便聊天？在这里直接记录收支，记录会立即计入总额。",
     "recordIncome": "记录收入",
     "recordExpense": "记录支出",
-    "addFriend": "在 LINE 上添加 U-Bot"
+    "addFriend": "在 LINE 上添加 U-Fox"
   },
   "shopOverview": {
     "loadError": "加载店铺数据失败",
@@ -430,7 +430,7 @@
     "sold": "已售",
     "remaining": "剩余",
     "competitorCta": "竞争对手卖同类商品多少钱？",
-    "competitorSub": "让 U-Bot 帮您找到最佳售价和利润。",
+    "competitorSub": "让 U-Fox 帮您找到最佳售价和利润。",
     "tryFree": "免费试用7天"
   },
   "monthTransaction": {
@@ -481,7 +481,7 @@
     "themeDark": "深色",
     "themeSystem": "跟随系统",
     "line": "LINE",
-    "lineDesc": "连接 LINE 以使用 U-Bot",
+    "lineDesc": "连接 LINE 以使用 U-Fox",
     "openLineChat": "打开 LINE 聊天",
     "save": "保存",
     "saving": "保存中…",
@@ -571,7 +571,7 @@
       [
         "FREE",
         "通过 LINE 自动记账",
-        "发送转账截图或语音指令，U-Bot 为你汇总数据并提醒税务，无需安装额外应用",
+        "发送转账截图或语音指令，U-Fox 为你汇总数据并提醒税务，无需安装额外应用",
         "查看店铺账目",
         "/"
       ],
@@ -600,7 +600,7 @@
       ],
       [
         "发送转账截图或语音",
-        "U-Bot 识别并为你记录收支"
+        "U-Fox 识别并为你记录收支"
       ],
       [
         "查看利润和税务",
@@ -608,7 +608,7 @@
       ]
     ],
     "chat": {
-      "bot": "U-Bot LINE 官方账号",
+      "bot": "U-Fox LINE 官方账号",
       "slip": "[转账截图]",
       "saved": "已记录支出 ฿450.00，本月累计 ฿248,400",
       "ask": "这个月需要准备多少税款？",

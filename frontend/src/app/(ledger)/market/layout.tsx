@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { Note } from "@/components/decor/Note";
 import { useSubscription } from "@/hooks/market/useSubscription";
 
@@ -11,7 +11,7 @@ const SUB_NAV = [
   { href: "/market", label: "ภาพรวม" },
   { href: "/market/trends", label: "เทรนด์ตลาด", also: "/market/products/" },
   { href: "/market/compare", label: "เทียบราคา" },
-  { href: "/market/chat", label: "ถาม U-Bot" },
+  { href: "/market/chat", label: "ถาม U-Fox" },
   { href: "/market/sponsors", label: "ผู้สนับสนุน" },
   { href: "/market/platforms", label: "เลือกแพลตฟอร์ม" },
   { href: "/market/plans", label: "แพ็กเกจ" },
@@ -61,9 +61,9 @@ export default function MarketLayout({ children }: { children: React.ReactNode }
 
       {locked ? (
         <section className="flex flex-col items-center gap-4 rounded-[32px] bg-white p-10 text-center">
-          <UBot size={110} wave mood="wink" />
+          <UFox size={110} wave mood="wink" />
           <h2 className="m-0 text-3xl font-bold">Market Radar สำหรับสมาชิก Premium</h2>
-          <p className="m-0 max-w-xl text-ink-body">ดูราคาคู่แข่งทุกแพลตฟอร์มเทียบกับต้นทุนจริงของร้าน และให้ U-Bot แนะนำราคาขาย</p>
+          <p className="m-0 max-w-xl text-ink-body">ดูราคาคู่แข่งทุกแพลตฟอร์มเทียบกับต้นทุนจริงของร้าน และให้ U-Fox แนะนำราคาขาย</p>
           <Link href="/market/plans" className="inline-flex min-h-[50px] items-center rounded-full bg-sun px-7 font-bold text-[#4A3500] no-underline">
             ทดลองฟรี 7 วัน
           </Link>

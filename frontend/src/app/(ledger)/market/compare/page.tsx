@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { LineIcon } from "@/components/ui/LineIcon";
 import { useProducts } from "@/hooks/dashboard/useProducts";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
-import { useUBotInsights } from "@/hooks/market/useUBotInsights";
+import { useUFoxInsights } from "@/hooks/market/useUFoxInsights";
 import { isAvailable } from "@/lib/market/competitorAvailability";
 import { toTHB } from "@/lib/market/currency";
 import { productPhoto } from "@/lib/market/productPhoto";
@@ -67,7 +67,7 @@ export default function ComparePage() {
   const { data, error, isLoading } = useCompetitorPrices(
     stockProduct ? { name: stockProduct.name } : { productId: selectedProductId },
   );
-  const ubot = useUBotInsights(data?.product_id);
+  const ubot = useUFoxInsights(data?.product_id);
   const [sort, setSort] = useState<Sort>("cheapest");
   const [thaiOnly, setThaiOnly] = useState(true);
   const [cost, setCost] = useState<string | null>(null);
@@ -203,10 +203,10 @@ export default function ComparePage() {
         <PricePositionBar competitorPrices={thaiAvailable.map((c) => c.price!)} myPrice={price} suggestedPrice={suggested} />
         {ubot.data && (
           <p className="m-0 rounded-xl bg-brand-tint px-4 py-3 text-sm text-ink-body">
-            <b className="text-brand">U-Bot แนะนำ ฿{ubot.data.suggested_price}:</b> {ubot.data.reason}
+            <b className="text-brand">U-Fox แนะนำ ฿{ubot.data.suggested_price}:</b> {ubot.data.reason}
           </p>
         )}
-        {ubot.isLoading && <p className="m-0 text-sm text-ink-muted">U-Bot กำลังคิดราคาแนะนำ…</p>}
+        {ubot.isLoading && <p className="m-0 text-sm text-ink-muted">U-Fox กำลังคิดราคาแนะนำ…</p>}
       </Card>
 
       <Card className="flex flex-col gap-3.5">

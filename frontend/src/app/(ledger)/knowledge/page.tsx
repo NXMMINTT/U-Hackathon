@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { useKnowledgeTopics, useTopicAudio, useTopicScript } from "@/hooks/knowledge/useKnowledge";
 import { useI18n } from "@/lib/i18n";
 import type { KnowledgeTopic } from "@/types/knowledge";
@@ -177,7 +177,7 @@ export default function KnowledgePage() {
             <p className="m-0 text-[22px] font-bold leading-tight text-navy">{tr("knowledge.title")}</p>
             <p className="m-0 mt-1 text-[15px] text-ink-body">{tr("knowledge.subtitle")}</p>
           </div>
-          <UBot size={90} pose="idea" className="shrink-0" />
+          <UFox size={90} pose="idea" className="shrink-0" />
         </div>
       </section>
 

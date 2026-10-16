@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { CategoryLineIcon } from "@/components/transactions/CategoryLineIcon";
 import { EntryTypeIcon } from "@/components/transactions/EntryTypeIcon";
 import { useCategories } from "@/hooks/dashboard/useCategories";
@@ -78,7 +78,7 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
               เลือกหมวดหมู่ แล้วใส่จำนวนเงิน<br />ได้เลยครับ
             </p>
           </div>
-          <UBot size={90} pose="ledger" className="-mr-2 shrink-0" />
+          <UFox size={90} pose="ledger" className="-mr-2 shrink-0" />
         </div>
       </section>
 

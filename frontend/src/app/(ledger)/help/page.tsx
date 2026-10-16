@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { LineAddFriendButton } from "@/components/brand/LineAddFriendButton";
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { useLocale } from "@/lib/i18n";
 
 export default function HelpPage() {
@@ -18,7 +18,7 @@ export default function HelpPage() {
             <h1 className="m-0 text-[22px] font-bold text-navy">{h.title}</h1>
             <p className="m-0 mt-1 text-[14px] text-ink-muted">{h.subtitle}</p>
           </div>
-          <UBot size={80} pose="idea" className="shrink-0" />
+          <UFox size={80} pose="idea" className="shrink-0" />
         </div>
       </section>
 

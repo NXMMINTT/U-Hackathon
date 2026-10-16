@@ -1,4 +1,4 @@
-/** Where the shop's price sits among competitors' prices (cheapest → priciest), with U-Bot's suggestion marked. */
+/** Where the shop's price sits among competitors' prices (cheapest → priciest), with U-Fox's suggestion marked. */
 export function PricePositionBar({
   competitorPrices,
   myPrice,

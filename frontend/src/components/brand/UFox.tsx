@@ -3,13 +3,13 @@ export type FoxPose =
   | "wave" | "happy" | "cheer" | "love" | "question" | "shocked" | "sleep" | "proud"
   | "ledger" | "radar" | "global" | "commerce" | "idea" | "line" | "icon-round" | "icon-app" | "logo";
 
-export type UBotMood = "happy" | "worried" | "shocked" | "wink";
+export type UFoxMood = "happy" | "worried" | "shocked" | "wink";
 
-const MOOD_POSE: Record<UBotMood, FoxPose> = { happy: "happy", wink: "cheer", worried: "question", shocked: "shocked" };
+const MOOD_POSE: Record<UFoxMood, FoxPose> = { happy: "happy", wink: "cheer", worried: "question", shocked: "shocked" };
 
-/** U-Bot as U-Fox, the project mascot. Pick a `pose`, or a `mood` (happy / wink / worried / shocked);
+/** U-Fox as U-Fox, the project mascot. Pick a `pose`, or a `mood` (happy / wink / worried / shocked);
  * `wave` uses the waving pose; `look` (-1..1) tilts the fox toward the pointer. Decorative — callers label the context. */
-export function UBot({
+export function UFox({
   size = 120,
   wave = false,
   mood = "happy",
@@ -19,7 +19,7 @@ export function UBot({
 }: {
   size?: number;
   wave?: boolean;
-  mood?: UBotMood;
+  mood?: UFoxMood;
   pose?: FoxPose;
   look?: { x: number; y: number };
   className?: string;

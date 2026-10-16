@@ -2,7 +2,7 @@ import { ChatShell } from "@/components/home/phone/ChatShell";
 import { InfoRow } from "@/components/home/phone/InfoRow";
 import { UserBubble } from "@/components/home/phone/UserBubble";
 
-/** Tax step 2: U-Bot pushes a heads-up when sales cross into the next zone. */
+/** Tax step 2: U-Fox pushes a heads-up when sales cross into the next zone. */
 export function TaxAlertScreen() {
   return (
     <ChatShell>

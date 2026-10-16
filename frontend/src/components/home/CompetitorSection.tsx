@@ -1,4 +1,4 @@
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 import { FeatureSection } from "@/components/home/FeatureSection";
 import { Phone } from "@/components/home/phone/Phone";
 import { KeywordScreen } from "@/components/home/screens/KeywordScreen";
@@ -12,7 +12,7 @@ export function CompetitorSection() {
       id="radar"
       premium
       title={<>ส่องราคาคู่แข่ง<br /><span className="text-brand">แบบเนียนๆ</span></>}
-      intro="Market Radar เทียบราคาคู่แข่งทุกแพลตฟอร์มกับต้นทุนจริงที่คุณจดไว้ แล้ว U-Bot บอกว่าควรตั้งราคาเท่าไหร่"
+      intro="Market Radar เทียบราคาคู่แข่งทุกแพลตฟอร์มกับต้นทุนจริงที่คุณจดไว้ แล้ว U-Fox บอกว่าควรตั้งราคาเท่าไหร่"
       steps={[
         ["ราคาที่ขายออกและยังกำไร", "ปักหมุดต้นทุนของร้านบนกราฟราคาคู่แข่ง เห็นช่องว่างทันที"],
         ["ควรไปขายที่ไหน", "ยอดขายสินค้าแบบเดียวกันบน Shopee, Lazada, TikTok Shop, Amazon และอื่นๆ"],
@@ -23,7 +23,7 @@ export function CompetitorSection() {
       ))}
       decor={
         <>
-          <UBot pose="radar" size={150} className="absolute -bottom-6 -left-24 z-[1] max-sm:-left-6" />
+          <UFox pose="radar" size={150} className="absolute -bottom-6 -left-24 z-[1] max-sm:-left-6" />
           <Sprinkles />
         </>
       }
