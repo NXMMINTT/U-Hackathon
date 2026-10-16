@@ -1,4 +1,10 @@
-// สร้าง LINE Flex Message สรุปผลประจำวัน (ธีมน้ำเงิน)
+cd ~/Desktop/U-Hackathon-git
+git pull
+SRC=~/Desktop/U-Hackathon-MINT/backend/app/line_messages/assets
+cp $SRC/banner-* $SRC/icon-* $SRC/flex_*.json $SRC/*.js backend/app/line_messages/assets/
+git add backend/app/line_messages/assets
+git commit -m "Add Flex card banners, icons and reference JSON"
+git push origin main// สร้าง LINE Flex Message สรุปผลประจำวัน (ธีมน้ำเงิน)
 // ใช้:
 // const msg = buildDaySummary({
 //   date: new Date(),          // หรือ '2569-10-16'
