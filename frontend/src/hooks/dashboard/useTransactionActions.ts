@@ -10,7 +10,7 @@ export function useTransactionActions() {
   const queryClient = useQueryClient();
   const onSuccess = () =>
     Promise.all(
-      ["transactions", "overview", "tax-meter", "products"].map((key) => queryClient.invalidateQueries({ queryKey: [key] })),
+      ["transactions", "overview", "tax-meter", "products", "category-totals"].map((key) => queryClient.invalidateQueries({ queryKey: [key] })),
     );
   const post = (action: "confirm" | "cancel") => (id: number) =>
     apiFetch<TransactionItem>(`/api/v1/transactions/${id}/${action}`, { method: "POST" });

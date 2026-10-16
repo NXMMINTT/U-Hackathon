@@ -73,6 +73,45 @@ def create_pending_transactions(
     return created
 
 
+def create_manual_transaction(
+    db: Session,
+    business_id: int,
+    *,
+    type_: IncomeExpenseType,
+    amount: Decimal,
+    description: str | None,
+    txn_date: date,
+    category_name: str | None,
+    product_name: str | None,
+    quantity: Decimal | None,
+) -> Transaction:
+    """A transaction the owner typed on the web. There's no AI reading to double-check,
+    so it is confirmed (and moves stock) right away instead of waiting as pending."""
+    category = _get_or_create_category(db, business_id, category_name, type_) if category_name else None
+    product = (
+        inventory_service.get_or_create_product(db, business_id, product_name)
+        if product_name and quantity is not None
+        else None
+    )
+    txn = Transaction(
+        business_id=business_id,
+        type=type_,
+        amount=amount,
+        category_id=category.id if category else None,
+        description=description,
+        txn_date=txn_date,
+        product_id=product.id if product else None,
+        quantity=quantity if product else None,
+        source=TransactionSource.WEB,
+        status=TransactionStatus.CONFIRMED,
+    )
+    db.add(txn)
+    db.flush()
+    inventory_service.apply_stock_movement(db, txn)
+    db.refresh(txn)
+    return txn
+
+
 def confirm_transaction(db: Session, transaction_id: int, business_id: int) -> Transaction:
     txn = get_owned_transaction(db, transaction_id, business_id)
     txn.status = TransactionStatus.CONFIRMED

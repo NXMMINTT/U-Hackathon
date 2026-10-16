@@ -2,7 +2,7 @@ import th from "@/locales/th.json";
 
 import { Badge } from "./ui/Badge";
 
-const LOW_STOCK_QTY = 10;
+export const LOW_STOCK_QTY = 10;
 
 export function StockBadge({ stockQty }: { stockQty: string }) {
   const qty = Number(stockQty);

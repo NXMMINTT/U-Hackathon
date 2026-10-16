@@ -19,7 +19,7 @@ from app.models.enums import (
     TransactionStatus,
 )
 from app.routers import dependencies
-from app.services import auth_service, user_service
+from app.services import auth_service, product_image_service, user_service
 
 
 @pytest.fixture()
@@ -274,3 +274,118 @@ def test_other_shops_transaction_is_not_found(client: TestClient, session: Sessi
 
     response = client.post(f"/api/v1/transactions/{txn_id}/confirm")
     assert response.status_code == 404
+
+
+def test_web_entry_is_confirmed_counts_and_moves_stock(client: TestClient, session: Session):
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    today = date.today().isoformat()
+
+    bought = client.post(
+        "/api/v1/transactions",
+        json={"type": "expense", "amount": "900", "description": "ซื้อพริกแห้ง", "txn_date": today,
+              "category": "ค่าซื้อสินค้า", "product_name": "พริกแห้ง", "quantity": "2"},
+    )
+    assert bought.status_code == 201
+    assert bought.json()["status"] == "confirmed"
+    assert bought.json()["source"] == "web"
+    assert bought.json()["category"] == "ค่าซื้อสินค้า"
+    client.post("/api/v1/transactions", json={"type": "income", "amount": "1780", "txn_date": today})
+
+    overview = client.get("/api/v1/dashboard/overview").json()
+    assert Decimal(overview["income"]) == Decimal("1780")
+    assert Decimal(overview["expense"]) == Decimal("900")
+    assert Decimal(client.get("/api/v1/products").json()[0]["stock_qty"]) == Decimal("2")
+    assert [c["name"] for c in client.get("/api/v1/categories?type=expense").json()] == ["ค่าซื้อสินค้า"]
+
+
+def test_month_filters_overview_transactions_and_category_totals(client: TestClient, session: Session):
+    biz = _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    last_month_day = date.today().replace(day=1) - timedelta(days=1)
+    last_month = last_month_day.strftime("%Y-%m")
+    _txn(session, biz, IncomeExpenseType.INCOME, "500", last_month_day)
+    _txn(session, biz, IncomeExpenseType.EXPENSE, "120", last_month_day)
+    _txn(session, biz, IncomeExpenseType.EXPENSE, "80", date.today())
+
+    overview = client.get(f"/api/v1/dashboard/overview?month={last_month}").json()
+    assert Decimal(overview["income"]) == Decimal("500")
+    assert overview["period_end"] == last_month_day.isoformat()
+    listed = client.get(f"/api/v1/transactions?month={last_month}&type=expense").json()
+    assert [Decimal(t["amount"]) for t in listed] == [Decimal("120")]
+    totals = client.get(f"/api/v1/dashboard/categories?month={last_month}&type=expense").json()
+    assert totals == [{"category": business_overview.UNCATEGORIZED, "total": "120.00"}]
+    assert client.get("/api/v1/dashboard/overview?month=2026-13").status_code == 422
+
+
+def test_shop_settings_can_be_renamed(client: TestClient, session: Session):
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    assert client.get("/api/v1/business").json()["name"] == "ร้านสาธิต"
+
+    updated = client.patch("/api/v1/business", json={"name": " ร้านใหม่ ", "business_type": "อาหาร"})
+    assert updated.json() == {"name": "ร้านใหม่", "business_type": "อาหาร", "vat_registered": False}
+    assert client.get("/api/v1/dashboard/overview").json()["business_name"] == "ร้านใหม่"
+
+
+def test_products_can_be_added_edited_adjusted_and_deleted(client: TestClient, session: Session):
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+
+    created = client.post("/api/v1/products", json={"name": "น้ำพริกเผา", "unit": "กระปุก", "unit_cost": "30", "stock_qty": "10"})
+    assert created.status_code == 201
+    product_id = created.json()["id"]
+    assert client.post("/api/v1/products", json={"name": " น้ำพริกเผา "}).json()["error"]["code"] == "product_name_taken"
+
+    edited = client.patch(f"/api/v1/products/{product_id}", json={"name": "น้ำพริกเผาสูตรเด็ด", "unit": "ขวด", "unit_cost": "32"})
+    assert edited.json()["name"] == "น้ำพริกเผาสูตรเด็ด"
+    assert edited.json()["unit"] == "ขวด"
+
+    removed = client.post(f"/api/v1/products/{product_id}/stock", json={"change": "-3"}).json()
+    assert Decimal(removed["stock_qty"]) == Decimal("7")
+    counted = client.post(f"/api/v1/products/{product_id}/stock", json={"set_to": "25"}).json()
+    assert Decimal(counted["stock_qty"]) == Decimal("25")
+    assert client.post(f"/api/v1/products/{product_id}/stock", json={"change": "1", "set_to": "2"}).status_code == 422
+
+    assert client.delete(f"/api/v1/products/{product_id}").status_code == 204
+    assert client.get("/api/v1/products").json() == []
+
+
+def test_product_with_transactions_cannot_be_deleted(client: TestClient, session: Session):
+    biz = _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    chili = Product(business_id=biz.id, name="น้ำพริกเผา", unit="กระปุก", stock_qty=Decimal("5"))
+    session.add(chili)
+    session.flush()
+    _txn(session, biz, IncomeExpenseType.INCOME, "100", date.today(), chili, "1")
+
+    response = client.delete(f"/api/v1/products/{chili.id}")
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "product_in_use"
+    other = _shop(session, "Uother", "ร้านอื่น")
+    foreign = Product(business_id=other.id, name="สบู่", unit="ก้อน", stock_qty=Decimal("1"))
+    session.add(foreign)
+    session.flush()
+    assert client.post(f"/api/v1/products/{foreign.id}/stock", json={"set_to": "0"}).status_code == 404
+
+
+PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 32
+
+
+def test_product_photo_upload_serve_replace_and_delete(
+    client: TestClient, session: Session, tmp_path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setattr(product_image_service.settings, "upload_dir", tmp_path)
+    _shop(session, user_service.DEMO_LINE_USER_ID, "ร้านสาธิต")
+    product_id = client.post("/api/v1/products", json={"name": "สบู่", "unit": "ก้อน"}).json()["id"]
+    assert client.get("/api/v1/products").json()[0]["image_url"] is None
+
+    uploaded = client.put(f"/api/v1/products/{product_id}/image", content=PNG_BYTES, headers={"Content-Type": "image/png"})
+    assert uploaded.status_code == 200
+    url = uploaded.json()["image_url"]
+    assert url.startswith(f"/api/v1/products/{product_id}/image?v=")
+    served = client.get(url)
+    assert served.status_code == 200
+    assert served.headers["content-type"] == "image/png"
+    assert served.content == PNG_BYTES
+
+    not_image = client.put(f"/api/v1/products/{product_id}/image", content=b"hello", headers={"Content-Type": "image/png"})
+    assert not_image.json()["error"]["code"] == "invalid_image"
+
+    assert client.delete(f"/api/v1/products/{product_id}/image").json()["image_url"] is None
+    assert client.get(f"/api/v1/products/{product_id}/image").status_code == 404

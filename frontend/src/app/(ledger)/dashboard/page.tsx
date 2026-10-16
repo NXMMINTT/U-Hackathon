@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 
-import { UBot } from "@/components/brand/UBot";
+import { type FoxPose, UBot } from "@/components/brand/UBot";
+import { ShopOverview } from "@/components/dashboard/ShopOverview";
 
-const MENU_ITEMS = [
-  { href: "/transactions?mode=income", icon: "income", label: "บันทึกรายรับ", sub: "เพิ่มรายรับ\nง่ายๆเลย", color: "bg-[#FFF4E0]", iconColor: "text-[#F59E0B]" },
-  { href: "/transactions?mode=expense", icon: "expense", label: "บันทึกรายจ่าย", sub: "จดรายจ่าย\nได้ทันที", color: "bg-[#E8F5E9]", iconColor: "text-[#12804F]" },
-  { href: "/dashboard/summary", icon: "summary", label: "สรุปภาพรวม", sub: "ดูรายรับ-รายจ่าย\nรายเดือน", color: "bg-[#E3F2FD]", iconColor: "text-[#2563EB]" },
-  { href: "/stock", icon: "stock", label: "จัดการสินค้า", sub: "เช็ครายการสินค้า\nและสต็อก", color: "bg-[#FFF3E0]", iconColor: "text-[#E65100]" },
-  { href: "/market", icon: "market", label: "ดูตลาดคู่แข่ง", sub: "ส่งสินค้า / เทรนด์\nต่างประเทศ", color: "bg-[#E8EAF6]", iconColor: "text-[#3F51B5]", badge: "ใหม่" },
-  { href: "/market/plans", icon: "premium", label: "อัปเกรดแพ็คเกจ", sub: "ฟีเจอร์เพิ่มเติม\nเพื่อธุรกิจของคุณ", color: "bg-[#FFF8E1]", iconColor: "text-[#F59E0B]" },
+const MENU_ITEMS: { href: string; fox: FoxPose; label: string; sub: string; badge?: string }[] = [
+  { href: "/transactions?mode=income", fox: "cheer", label: "บันทึกรายรับ", sub: "เพิ่มรายรับ\nง่ายๆเลย" },
+  { href: "/transactions?mode=expense", fox: "ledger", label: "บันทึกรายจ่าย", sub: "จดรายจ่าย\nได้ทันที" },
+  { href: "/dashboard/summary", fox: "idea", label: "สรุปภาพรวม", sub: "ดูรายรับ-รายจ่าย\nรายเดือน" },
+  { href: "/stock", fox: "commerce", label: "จัดการสินค้า", sub: "เช็ครายการสินค้า\nและสต็อก" },
+  { href: "/market", fox: "radar", label: "ดูตลาดคู่แข่ง", sub: "ส่งสินค้า / เทรนด์\nต่างประเทศ", badge: "ใหม่" },
+  { href: "/market/plans", fox: "proud", label: "อัปเกรดแพ็คเกจ", sub: "ฟีเจอร์เพิ่มเติม\nเพื่อธุรกิจของคุณ" },
 ];
 
 const BOTTOM_LINKS = [
@@ -93,28 +94,7 @@ function MenuIcon({ type, className = "" }: { type: string; className?: string }
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-5 pb-4">
-      {/* Hero greeting */}
-      <section className="relative rounded-[28px] bg-gradient-to-br from-[#E0F2FE] to-[#F0F7FF] px-6 py-7 overflow-hidden">
-        <div className="flex items-start gap-4">
-          <div className="flex-1 min-w-0">
-            <p className="text-[22px] font-bold text-navy leading-tight mb-1">
-              สวัสดีครับ! 👋
-            </p>
-            <p className="text-[28px] font-extrabold text-brand leading-tight">
-              ผม U-Fox
-            </p>
-            <p className="text-[17px] text-ink-body mt-1 leading-snug">
-              ผู้ช่วยจัดการการเงิน<br />ของคุณครับ
-            </p>
-          </div>
-          <UBot size={120} pose="ledger" className="shrink-0 -mr-2 -mt-2" />
-        </div>
-        <div className="mt-4 rounded-2xl bg-white/80 backdrop-blur-sm px-5 py-3.5 shadow-sm">
-          <p className="text-[15px] text-ink-body m-0">
-            วันนี้อยากให้ผมช่วยเรื่องอะไรดีครับ?
-          </p>
-        </div>
-      </section>
+      <ShopOverview />
 
       {/* Menu grid */}
       <section className="grid grid-cols-3 gap-3">
@@ -129,9 +109,7 @@ export default function HomePage() {
                 {item.badge}
               </span>
             )}
-            <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color} ${item.iconColor}`}>
-              <MenuIcon type={item.icon} />
-            </span>
+            <UBot pose={item.fox} size={72} />
             <span className="text-[13px] font-bold text-navy leading-tight">{item.label}</span>
             <span className="text-[11px] text-ink-muted leading-tight whitespace-pre-line">{item.sub}</span>
           </Link>

@@ -9,7 +9,7 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import Product, Transaction
+from app.models import Category, Product, Transaction
 from app.models.enums import IncomeExpenseType, TransactionStatus
 from app.tax_engine import vat
 from app.tax_engine.rules_loader import load_tax_rules
@@ -101,6 +101,31 @@ def top_products(db: Session, business_id: int, start: date, end: date, limit: i
         TopProduct(product=product, quantity_sold=Decimal(qty or 0), revenue=Decimal(total))
         for product, qty, total in rows
     ]
+
+
+@dataclass
+class CategoryTotal:
+    category: str
+    total: Decimal
+
+
+UNCATEGORIZED = "ไม่ระบุหมวด"
+
+
+def category_totals(
+    db: Session, business_id: int, start: date, end: date, type_: IncomeExpenseType
+) -> list[CategoryTotal]:
+    """Totals per category in start..end inclusive, largest first."""
+    total = func.sum(Transaction.amount)
+    rows = db.execute(
+        select(Category.name_th, total)
+        .select_from(Transaction)
+        .outerjoin(Category, Transaction.category_id == Category.id)
+        .where(*_shop_filter(business_id, start, end), Transaction.type == type_)
+        .group_by(Category.name_th)
+        .order_by(total.desc())
+    ).all()
+    return [CategoryTotal(category=name or UNCATEGORIZED, total=Decimal(amount)) for name, amount in rows]
 
 
 def tax_meter(annual_income: Decimal, year: int) -> TaxMeter:

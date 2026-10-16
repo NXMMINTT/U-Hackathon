@@ -47,7 +47,7 @@ export interface paths {
         };
         /**
          * Get Overview
-         * @description Month-to-date income/expense/profit and best sellers, plus a 30-day daily trend.
+         * @description A month's income/expense/profit and best sellers (default: month to date), plus a 30-day daily trend.
          */
         get: operations["get_overview_api_v1_dashboard_overview_get"];
         put?: never;
@@ -78,6 +78,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dashboard/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Category Totals
+         * @description Confirmed income or expense of a month per category, largest first.
+         */
+        get: operations["get_category_totals_api_v1_dashboard_categories_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/transactions": {
         parameters: {
             query?: never;
@@ -88,11 +108,53 @@ export interface paths {
         /** List Transactions */
         get: operations["list_transactions_api_v1_transactions_get"];
         put?: never;
+        /**
+         * Create Transaction
+         * @description Record income/expense typed on the web; it counts (and moves stock) immediately.
+         */
+        post: operations["create_transaction_api_v1_transactions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Categories
+         * @description The shop's own categories plus shared ones, for the entry form.
+         */
+        get: operations["list_categories_api_v1_categories_get"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/business": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Business */
+        get: operations["get_business_api_v1_business_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Business */
+        patch: operations["update_business_api_v1_business_patch"];
         trace?: never;
     };
     "/api/v1/transactions/{transaction_id}": {
@@ -156,8 +218,68 @@ export interface paths {
         /** List Products */
         get: operations["list_products_api_v1_products_get"];
         put?: never;
-        post?: never;
+        /** Create Product */
+        post: operations["create_product_api_v1_products_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/products/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Product */
+        delete: operations["delete_product_api_v1_products__product_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Product */
+        patch: operations["update_product_api_v1_products__product_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/products/{product_id}/stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Adjust Stock
+         * @description Correct the count by hand (recount, damaged or lost goods) — sales and purchases still move it on their own.
+         */
+        post: operations["adjust_stock_api_v1_products__product_id__stock_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/products/{product_id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Upload Product Image
+         * @description Raw image bytes in the body (JPG/PNG/WebP, max 5 MB) — no multipart, so no extra dependency.
+         */
+        put: operations["upload_product_image_api_v1_products__product_id__image_put"];
+        post?: never;
+        /** Delete Product Image */
+        delete: operations["delete_product_image_api_v1_products__product_id__image_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -367,6 +489,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/ubot/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Insights */
+        get: operations["get_insights_api_ubot_insights_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/b2b/sponsors": {
         parameters: {
             query?: never;
@@ -472,6 +611,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/premium/subscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Subscribe
+         * @description Switch the current shop to a plan (demo: no payment, kept in memory).
+         */
+        post: operations["subscribe_api_premium_subscribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/premium/users": {
         parameters: {
             query?: never;
@@ -503,6 +662,40 @@ export interface paths {
         get: operations["billing_history_api_premium_billing_history_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/onboarding/platforms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Connectable Platforms */
+        get: operations["connectable_platforms_api_onboarding_platforms_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/onboarding/connect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Connect Platform */
+        post: operations["connect_platform_api_onboarding_connect_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -663,6 +856,42 @@ export interface components {
              */
             audio_mime: string;
         };
+        /** BusinessOut */
+        BusinessOut: {
+            /** Name */
+            name: string;
+            /** Business Type */
+            business_type: string;
+            /** Vat Registered */
+            vat_registered: boolean;
+        };
+        /** BusinessUpdateIn */
+        BusinessUpdateIn: {
+            /** Name */
+            name: string;
+            /** Business Type */
+            business_type: string;
+        };
+        /** CategoryOut */
+        CategoryOut: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            type: components["schemas"]["IncomeExpenseType"];
+        };
+        /** CategoryTotalOut */
+        CategoryTotalOut: {
+            /** Category */
+            category: string;
+            /** Total */
+            total: string;
+        };
+        /** ConnectPlatformRequest */
+        ConnectPlatformRequest: {
+            /** Platform Id */
+            platform_id: string;
+        };
         /** DailyPointOut */
         DailyPointOut: {
             /**
@@ -685,6 +914,21 @@ export interface components {
          * @enum {string}
          */
         IncomeExpenseType: "income" | "expense";
+        /** InsightsOut */
+        InsightsOut: {
+            /** Product Id */
+            product_id: string;
+            /** Rule Price */
+            rule_price: number;
+            /** Suggested Price */
+            suggested_price: number;
+            /** Reason */
+            reason: string;
+            /** Insights */
+            insights: string[];
+            /** Generated By */
+            generated_by: string;
+        };
         /** LineLoginRequest */
         LineLoginRequest: {
             /** Id Token */
@@ -715,6 +959,23 @@ export interface components {
             /** Top Products */
             top_products: components["schemas"]["TopProductOut"][];
         };
+        /** ProductCreateIn */
+        ProductCreateIn: {
+            /** Name */
+            name: string;
+            /**
+             * Unit
+             * @default ชิ้น
+             */
+            unit: string;
+            /** Unit Cost */
+            unit_cost?: number | string | null;
+            /**
+             * Stock Qty
+             * @default 0
+             */
+            stock_qty: number | string;
+        };
         /** ProductOut */
         ProductOut: {
             /** Id */
@@ -727,11 +988,37 @@ export interface components {
             unit_cost: string | null;
             /** Stock Qty */
             stock_qty: string;
+            /** Image Url */
+            image_url?: string | null;
+        };
+        /** ProductUpdateIn */
+        ProductUpdateIn: {
+            /** Name */
+            name: string;
+            /** Unit */
+            unit: string;
+            /** Unit Cost */
+            unit_cost?: number | string | null;
         };
         /** SpeakRequest */
         SpeakRequest: {
             /** Text */
             text: string;
+        };
+        /**
+         * StockAdjustIn
+         * @description Exactly one of: `change` (+ add / − remove) or `set_to` (the counted quantity).
+         */
+        StockAdjustIn: {
+            /** Change */
+            change?: number | string | null;
+            /** Set To */
+            set_to?: number | string | null;
+        };
+        /** SubscribeIn */
+        SubscribeIn: {
+            /** Plan Id */
+            plan_id: string;
         };
         /** TaxMeterOut */
         TaxMeterOut: {
@@ -770,6 +1057,8 @@ export interface components {
             revenue: string;
             /** Stock Qty */
             stock_qty: string;
+            /** Image Url */
+            image_url?: string | null;
         };
         /** TopicAudioResponse */
         TopicAudioResponse: {
@@ -788,6 +1077,25 @@ export interface components {
              * @default audio/mpeg
              */
             audio_mime: string;
+        };
+        /** TransactionCreateIn */
+        TransactionCreateIn: {
+            type: components["schemas"]["IncomeExpenseType"];
+            /** Amount */
+            amount: number | string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Txn Date
+             * Format: date
+             */
+            txn_date: string;
+            /** Category */
+            category?: string | null;
+            /** Product Name */
+            product_name?: string | null;
+            /** Quantity */
+            quantity?: number | string | null;
         };
         /** TransactionOut */
         TransactionOut: {
@@ -929,7 +1237,9 @@ export interface operations {
     };
     get_overview_api_v1_dashboard_overview_get: {
         parameters: {
-            query?: never;
+            query?: {
+                month?: string | null;
+            };
             header?: {
                 authorization?: string | null;
             };
@@ -989,10 +1299,46 @@ export interface operations {
             };
         };
     };
+    get_category_totals_api_v1_dashboard_categories_get: {
+        parameters: {
+            query?: {
+                type?: components["schemas"]["IncomeExpenseType"];
+                month?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryTotalOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_transactions_api_v1_transactions_get: {
         parameters: {
             query?: {
                 limit?: number;
+                month?: string | null;
+                type?: components["schemas"]["IncomeExpenseType"] | null;
             };
             header?: {
                 authorization?: string | null;
@@ -1009,6 +1355,140 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TransactionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_transaction_api_v1_transactions_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransactionCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_categories_api_v1_categories_get: {
+        parameters: {
+            query?: {
+                type?: components["schemas"]["IncomeExpenseType"] | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_business_api_v1_business_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BusinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_business_api_v1_business_patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BusinessUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BusinessOut"];
                 };
             };
             /** @description Validation Error */
@@ -1143,6 +1623,212 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_product_api_v1_products_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_product_api_v1_products__product_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_product_api_v1_products__product_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    adjust_stock_api_v1_products__product_id__stock_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StockAdjustIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_product_image_api_v1_products__product_id__image_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_product_image_api_v1_products__product_id__image_delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                product_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
                 };
             };
             /** @description Validation Error */
@@ -1432,6 +2118,38 @@ export interface operations {
             };
         };
     };
+    get_insights_api_ubot_insights_get: {
+        parameters: {
+            query?: {
+                product_id?: string;
+                refresh?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsightsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_sponsors_api_b2b_sponsors_get: {
         parameters: {
             query?: never;
@@ -1586,6 +2304,39 @@ export interface operations {
             };
         };
     };
+    subscribe_api_premium_subscribe_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubscribeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_users_api_premium_users_get: {
         parameters: {
             query?: never;
@@ -1616,6 +2367,59 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    connectable_platforms_api_onboarding_platforms_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    connect_platform_api_onboarding_connect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectPlatformRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

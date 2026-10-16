@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { UBotFace } from "@/components/brand/UBotFace";
 import { UBotLive } from "@/components/brand/UBotLive";
 import { Card } from "@/components/ui/Card";
+import { LineIcon } from "@/components/ui/LineIcon";
 import { useAskUBot } from "@/hooks/market/useAskUBot";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { apiFetchBlob } from "@/lib/api-client";
@@ -60,7 +61,7 @@ function SpeakButton({ text }: { text: string }) {
         aria-label={t.listen}
         className="inline-flex min-h-[36px] items-center gap-1.5 self-start rounded-full bg-brand-soft px-3.5 text-sm font-semibold text-brand disabled:opacity-50"
       >
-        <span aria-hidden="true">{state === "playing" ? "⏸" : "🔊"}</span>
+        <LineIcon name={state === "playing" ? "pause" : "speaker"} size={16} />
         {state === "loading" ? t.voiceLoading : state === "playing" ? t.stop : t.listen}
       </button>
       {state === "error" && <span className="text-xs text-[#991B1B]">{error}</span>}
