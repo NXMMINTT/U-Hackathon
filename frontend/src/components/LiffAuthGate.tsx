@@ -88,8 +88,6 @@ export function LiffAuthGate({ children }: { children: React.ReactNode }) {
           <p className="m-0 mt-2 text-ink-body">เข้าสู่ระบบด้วยบัญชี LINE ของคุณเพื่อเริ่มใช้งานครับ</p>
         </div>
 
-        {error && <p className="m-0 w-full rounded-xl bg-[#FDECEC] px-4 py-2 text-sm text-expense">{error}</p>}
-
         <button
           type="button"
           onClick={signIn}
