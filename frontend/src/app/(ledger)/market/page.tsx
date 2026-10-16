@@ -12,9 +12,9 @@ import {
   useUBotInsights,
 } from "@/hooks/useMarket";
 import { formatBaht } from "@/lib/format";
+import { platformLogo } from "@/lib/market";
 
 const IN_STOCK = "มีสินค้า";
-const MIN_MARGIN = 1.3; // same floor as backend/app/routers/ubot_insights.py
 const EUR_TO_THB = 39; // approximate demo rate, not live — the UI says "ประมาณ"
 
 /** Market Radar overview (premium lock and trial badge live in layout.tsx). */
@@ -159,103 +159,298 @@ function quantile(sorted: number[], q: number) {
   return sorted[lo] + (sorted[Math.ceil(i)] - sorted[lo]) * (i - lo);
 }
 
-/** Competitor price strip (spec 2.2): Thai competitors as dots, the shop's real cost and price pinned on the same axis. */
+/** Competitor price section (spec 2.2): summary cards, a per-platform bar chart and two comparison tables. */
 function PriceStrip({ prices: p, suggested }: { prices: CompetitorPrices; suggested: number | undefined }) {
   const thai = p.competitors.filter((c) => c.currency === "THB" && c.price !== null) as (CompetitorPrices["competitors"][number] & { price: number })[];
+  const sorted = [...thai].sort((a, b) => a.price - b.price);
   const inStock = thai.filter((c) => c.stock === IN_STOCK).map((c) => c.price).sort((a, b) => a - b);
-  const values = [...thai.map((c) => c.price), p.my_cost_price, p.my_selling_price, ...(suggested ? [suggested] : [])];
-  const lo = Math.floor((Math.min(...values) - 5) / 10) * 10;
-  const hi = Math.ceil((Math.max(...values) + 5) / 10) * 10;
-  const x = (v: number) => ((v - lo) / (hi - lo)) * 100;
-  const zone = inStock.length >= 2 ? [Math.max(quantile(inStock, 0.25), p.my_cost_price * MIN_MARGIN), quantile(inStock, 0.75)] : null;
-  const median = inStock.length ? quantile(inStock, 0.5) : null;
-
-  // stack dots that would overlap
-  const placed: { x: number; lane: number }[] = [];
-  const dots = [...thai]
-    .sort((a, b) => a.price - b.price)
-    .map((c) => {
-      const cx = x(c.price);
-      const lane = placed.filter((d) => Math.abs(d.x - cx) < 2.5).length;
-      placed.push({ x: cx, lane });
-      return { ...c, cx, lane };
-    });
-  const ticks = Array.from({ length: Math.floor((hi - lo) / 20) + 1 }, (_, i) => lo + i * 20);
+  const median = inStock.length ? quantile(inStock, 0.5) : p.price_distribution_thb.median;
+  const diffFromMine = sorted.map((c) => ({ ...c, diff: Math.round(c.price - p.my_selling_price) }));
+  const cheaper = diffFromMine.filter((c) => c.diff < 0);
+  const pricier = diffFromMine.filter((c) => c.diff >= 0).sort((a, b) => b.price - a.price);
 
   return (
-    <section aria-label="ราคาคู่แข่ง" className="flex flex-col gap-4 rounded-[28px] bg-white p-6 md:p-8">
+    <section aria-label="ราคาคู่แข่ง" className="flex flex-col gap-5 rounded-[28px] bg-white p-6 md:p-8">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="m-0 text-[22px] font-semibold">คู่แข่งขายเท่าไหร่</h2>
         <span className="text-[15px] text-ink-muted">
-          {thai.length} ร้านในไทย{median !== null && ` · ราคากลาง ${formatBaht(median)}`}
+          {thai.length} ร้านในไทย · ราคากลาง {formatBaht(median)}
         </span>
       </div>
 
-      <div className="relative mx-2 h-[180px]" aria-hidden="true">
-        {zone && <div className="absolute bottom-10 top-7 rounded-2xl bg-[#E3F0FF]" style={{ left: `${x(zone[0])}%`, width: `${x(zone[1]) - x(zone[0])}%` }} />}
-        <div className="absolute bottom-10 left-0 right-0 h-1 rounded-full bg-brand-soft" />
-        <Pin at={x(p.my_cost_price)} label={`ต้นทุน ${formatBaht(p.my_cost_price)}`} className="bg-[#FFE9E3] text-[#9A3412]" line="bg-[#F2A48E]" />
-        {suggested !== undefined && <Pin at={x(suggested)} label={`แนะนำ ${formatBaht(suggested)}`} className="bg-brand text-white" line="bg-brand" />}
-        {dots.map((d) => (
-          <span
-            key={`${d.platform}-${d.seller}`}
-            title={`${d.platform} · ${d.seller} ${formatBaht(d.price)}${d.stock === IN_STOCK ? "" : " (ของหมด)"}`}
-            className={`absolute h-[22px] w-[22px] -translate-x-1/2 rounded-full ${d.stock === IN_STOCK ? "bg-brand-light" : "border-[3px] border-dashed border-brand-light bg-white"}`}
-            style={{ left: `${d.cx}%`, bottom: 50 + d.lane * 26 }}
-          />
-        ))}
-        <span
-          className="absolute h-[26px] w-[26px] -translate-x-1/2 rounded-full border-[3px] border-white bg-navy shadow-[0_0_0_2px_#0B1F4D]"
-          style={{ left: `${x(p.my_selling_price)}%`, bottom: 48 }}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,210px),1fr))] gap-4">
+        <SummaryCard icon={<TargetIcon />} label="ราคาที่แนะนำ" value={suggested !== undefined ? formatBaht(suggested) : "—"} />
+        <SummaryCard icon={<CoinIcon />} label="ต้นทุนสินค้า" value={formatBaht(p.my_cost_price)} />
+        <SummaryCard icon={<ChartIcon />} label="ราคากลางตลาด" value={formatBaht(median)} />
+        <SummaryCard
+          icon={<TrendIcon />}
+          label="ราคาของร้านคุณ"
+          value={formatBaht(p.my_selling_price)}
+          sub={`ส่วนต่างจากราคากลาง ${p.my_selling_price - median >= 0 ? "+" : ""}${formatBaht(p.my_selling_price - median)}`}
+          accent
         />
-        {ticks.map((t) => (
-          <span key={t} className="absolute bottom-2 -translate-x-1/2 text-sm text-ink-muted" style={{ left: `${x(t)}%` }}>
-            ฿{t}
-          </span>
-        ))}
       </div>
 
-      <div className="flex flex-wrap gap-x-5 gap-y-2 text-[15px] text-ink-body">
-        <Legend dot="bg-brand-light">คู่แข่ง</Legend>
-        <Legend dot="border-2 border-dashed border-brand-light">ของหมด</Legend>
-        <Legend dot="bg-navy">ร้านคุณ {formatBaht(p.my_selling_price)}</Legend>
-        {zone && <Legend dot="w-[22px] rounded-md bg-[#E3F0FF]">ช่วงราคากลางที่ยังกำไรเกิน 30%</Legend>}
-      </div>
+      <PriceBarChart
+        competitors={sorted}
+        myPrice={p.my_selling_price}
+        suggested={suggested}
+        costPrice={p.my_cost_price}
+      />
 
-      <details className="rounded-2xl bg-brand-tint px-5 py-3">
-        <summary className="cursor-pointer font-semibold">ดูรายชื่อร้านคู่แข่ง</summary>
-        <ul className="mb-1 mt-3 flex list-none flex-col gap-1.5 p-0">
-          {dots.map((d) => (
-            <li key={`${d.platform}-${d.seller}`} className="flex justify-between gap-3">
-              <span>
-                {d.platform} · {d.seller}
-                {d.stock !== IN_STOCK && <span className="text-expense"> · ของหมด</span>}
-              </span>
-              <b>{formatBaht(d.price)}</b>
-            </li>
-          ))}
-        </ul>
-      </details>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-5 rounded-[22px] bg-brand-tint/60 p-5">
+        <CompareTable title="ราคาถูก/แพลตฟอร์ม" rows={cheaper} mySellingPrice={p.my_selling_price} />
+        <CompareTable title="ราคาสูง/แพลตฟอร์ม" rows={pricier} mySellingPrice={p.my_selling_price} />
+      </div>
     </section>
   );
 }
 
-function Pin({ at, label, className, line }: { at: number; label: string; className: string; line: string }) {
+function SummaryCard({ icon, label, value, sub, accent }: { icon: React.ReactNode; label: string; value: string; sub?: string; accent?: boolean }) {
   return (
-    <>
-      <span className={`absolute top-0 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-0.5 text-sm font-bold ${className}`} style={{ left: `${at}%` }}>
-        {label}
+    <div className="flex items-center gap-3 rounded-[20px] bg-brand-soft/60 px-4 py-4">
+      <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white text-brand">
+        {icon}
       </span>
-      <span className={`absolute bottom-10 top-8 w-[3px] -translate-x-1/2 rounded ${line}`} style={{ left: `${at}%` }} />
-    </>
+      <div className="min-w-0">
+        <div className="text-[15px] text-ink-muted">{label}</div>
+        <div className={`text-[24px] font-bold leading-tight ${accent ? "text-brand" : "text-navy"}`}>{value}</div>
+        {sub && <div className={`text-sm font-semibold ${sub.startsWith("-") ? "text-expense" : "text-[#0F6B42]"}`}>{sub}</div>}
+      </div>
+    </div>
   );
 }
 
-function Legend({ dot, children }: { dot: string; children: React.ReactNode }) {
+function Icon({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className={`h-3.5 w-3.5 rounded-full ${dot}`} />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       {children}
+    </svg>
+  );
+}
+
+function TargetIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
+function CoinIcon() {
+  return (
+    <Icon>
+      <circle cx="9" cy="9" r="6" />
+      <path d="M14.2 5.2a6 6 0 1 1-8.99 8.9" />
+      <path d="M9 6v6M7 7.5h4M7 10.5h4" strokeWidth="1.4" />
+    </Icon>
+  );
+}
+
+function ChartIcon() {
+  return (
+    <Icon>
+      <path d="M4 20h16" />
+      <rect x="5" y="11" width="3.5" height="6" rx="1" />
+      <rect x="10.25" y="7" width="3.5" height="10" rx="1" />
+      <rect x="15.5" y="4" width="3.5" height="13" rx="1" />
+    </Icon>
+  );
+}
+
+function TrendIcon() {
+  return (
+    <Icon>
+      <path d="M3 17l6-6 4 4 7-8" />
+      <path d="M15 7h5v5" />
+    </Icon>
+  );
+}
+
+const CHEAPEST = 0;
+
+function barColor(i: number, total: number, stock: string, isMine: boolean) {
+  if (isMine) return "bg-navy";
+  if (stock !== IN_STOCK) return "bg-[#D3D9E3]";
+  if (i === CHEAPEST) return "bg-[#22B862]";
+  if (i === total - 1) return "bg-[#F05461]";
+  return "bg-[#79AEF3]";
+}
+
+/** Bar chart of every competitor's price, with the cost line and the suggested-price band overlaid. */
+function PriceBarChart({
+  competitors,
+  myPrice,
+  suggested,
+  costPrice,
+}: {
+  competitors: (CompetitorPrices["competitors"][number] & { price: number })[];
+  myPrice: number;
+  suggested: number | undefined;
+  costPrice: number;
+}) {
+  const total = competitors.length + 1;
+  const chartH = 260;
+  const max = Math.max(myPrice, costPrice, ...(suggested ? [suggested + 5] : []), ...competitors.map((c) => c.price));
+  const top = Math.ceil((max + 5) / 20) * 20;
+  const h = (v: number) => (v / top) * (chartH - 40);
+  const ticks = Array.from({ length: Math.floor(top / 20) + 1 }, (_, i) => i * 20);
+  const band = suggested !== undefined ? { lo: h(suggested - 4), hi: h(suggested + 4) } : null;
+
+  const Item = ({
+    label,
+    price,
+    mine,
+    index,
+    stock,
+  }: {
+    label: string;
+    price: number;
+    mine?: boolean;
+    index: number;
+    stock: string;
+  }) => (
+    <div className="flex min-w-0 flex-1 flex-col items-center gap-2" title={`${label} ${formatBaht(price)}${stock === IN_STOCK ? "" : " (ของหมด)"}`}>
+      <span className={`text-[15px] font-bold ${mine ? "text-navy" : stock === IN_STOCK ? "text-ink-body" : "text-ink-muted"}`}>{formatBaht(price)}</span>
+      <div className="flex w-full items-end justify-center" style={{ height: chartH - 30 }}>
+        <div
+          className={`w-full max-w-[58px] rounded-t-xl transition-[height] ${barColor(index, total, stock, !!mine)} ${mine ? "ring-2 ring-brand ring-offset-2 ring-offset-white" : ""}`}
+          style={{ height: Math.max(h(price), 6) }}
+        />
+      </div>
+      {/* fixed-height caption block so every bar starts from the same baseline */}
+      <div className="flex h-[64px] w-[86px] flex-col items-center gap-0.5">
+        <PlatformLogo id={label.split("\n")[0]} name={label.split("\n")[0]} seller={label.split("\n")[1]} mine={mine} />
+        {stock !== IN_STOCK && <span className="text-[12px] text-ink-muted">ของหมด</span>}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="relative rounded-[22px] bg-white px-2 pt-2">
+      {/* suggested price band */}
+      {band && (
+        <>
+          <div className="absolute inset-x-10 rounded-lg bg-[#DCEBFF]/70" style={{ bottom: 92 + band.lo, height: band.hi - band.lo }} />
+          <span className="absolute right-0 z-10 -translate-y-1/2 rounded-full bg-[#DCEBFF] px-2.5 py-0.5 text-[13px] font-bold text-brand" style={{ bottom: 92 + band.hi }}>
+            ราคาแนะนำ {formatBaht(suggested!)}
+          </span>
+        </>
+      )}
+      {/* cost dashed line */}
+      <div className="absolute left-8 right-0 border-t-2 border-dashed border-[#F5A54B]" style={{ bottom: 92 + h(costPrice) }} />
+      <span
+        className="absolute z-10 -translate-y-1/2 rounded-full bg-[#FFE7C7] px-2.5 py-0.5 text-[13px] font-bold text-[#9A5B12]"
+        style={{ bottom: 92 + h(costPrice), right: 0 }}
+      >
+        ต้นทุน {formatBaht(costPrice)}
+      </span>
+
+      <div className="flex gap-3">
+        {/* Y axis */}
+        <div className="relative w-12 shrink-0 text-right" style={{ height: chartH - 30 }}>
+          {ticks.map((t) => (
+            <span key={t} className="absolute right-0 -translate-y-1/2 text-[13px] text-ink-muted" style={{ bottom: h(t) }}>
+              ฿{t}
+            </span>
+          ))}
+        </div>
+        <div className="flex flex-1 items-end gap-1.5 border-l border-line pl-1">
+          {competitors.map((c, i) => (
+            <Item key={`${c.platform}-${c.seller}`} label={`${c.platform}\n${c.seller}`} price={c.price} index={i} stock={c.stock} />
+          ))}
+          <Item label="ร้านคุณ" price={myPrice} mine index={total - 1} stock={IN_STOCK} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompareTable({
+  title,
+  rows,
+  mySellingPrice,
+}: {
+  title: string;
+  rows: (CompetitorPrices["competitors"][number] & { price: number; diff: number })[];
+  mySellingPrice: number;
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <div className="rounded-[18px] bg-white p-4">
+      <div className="mb-2 grid grid-cols-[minmax(0,1fr)_72px_168px] gap-x-4 text-[15px] font-semibold text-ink-muted">
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true" className="h-8 w-8 shrink-0" />
+          {title}
+        </span>
+        <span className="text-right">ราคา</span>
+        <span className="text-center">ส่วนต่างจากร้านคุณ</span>
+      </div>
+      <ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
+        {rows.map((c) => (
+          <li key={`${c.platform}-${c.seller}`} className="grid grid-cols-[minmax(0,1fr)_72px_168px] items-center gap-x-4 py-2.5">
+            <span className="flex min-w-0 items-center gap-3 truncate font-medium">
+              <PlatformLogo id={c.platform_id} name={c.platform} compact />
+              {c.seller}
+              {c.stock !== IN_STOCK && <span className="text-[13px] text-ink-muted">ของหมด</span>}
+            </span>
+            <b className="text-right tabular-nums">{formatBaht(c.price)}</b>
+            <b className={`text-center tabular-nums ${c.diff < 0 ? "text-expense" : "text-[#0F6B42]"}`}>{c.diff > 0 ? `+${c.diff}` : c.diff}</b>
+          </li>
+        ))}
+        <li className="grid grid-cols-[minmax(0,1fr)_72px_168px] items-center gap-x-4 bg-brand-soft/50 py-2.5 pl-2">
+          <span className="flex items-center gap-3 font-bold text-navy">
+            <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-navy text-[13px] font-bold text-white">คุณ</span>
+            ร้านคุณ
+          </span>
+          <b className="text-right tabular-nums">{formatBaht(mySellingPrice)}</b>
+          <b className="text-center tabular-nums">0</b>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+/** Platform badge (fixed 32px square, white tile style so every logo renders the same size)
+ *  with the platform/seller caption; falls back to a letter badge when there's no asset. */
+function PlatformLogo({
+  id,
+  name,
+  seller,
+  mine,
+  compact,
+}: {
+  id: string;
+  name: string;
+  seller?: string;
+  mine?: boolean;
+  /** Table rows: hide the text caption, show only the square badge. */
+  compact?: boolean;
+}) {
+  const badge = (() => {
+    if (mine)
+      return (
+        <span aria-hidden="true" className="grid h-8 w-8 flex-none place-items-center rounded-[10px] bg-navy text-[13px] font-bold text-white">คุณ</span>
+      );
+    const src = platformLogo(id) ?? platformLogo(name);
+    return src ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt="" aria-hidden="true" className="h-8 w-8 flex-none rounded-[10px] border border-line bg-white object-contain p-1" />
+    ) : (
+      <span aria-hidden="true" className="grid h-8 w-8 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-sm font-bold text-brand">
+        {name.charAt(0).toUpperCase()}
+      </span>
+    );
+  })();
+
+  if (compact) return badge;
+  return (
+    <span className="flex max-w-[86px] flex-col items-center gap-0.5">
+      {badge}
+      {!mine && <span className="w-[86px] truncate text-center text-[12px] leading-4 text-ink-body">{name}</span>}
+      {!mine && seller && <span className="w-[86px] truncate text-center text-[12px] leading-4 text-ink-muted">{seller}</span>}
     </span>
   );
 }
