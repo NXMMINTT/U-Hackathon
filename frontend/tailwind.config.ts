@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 
 // U-Fox brand palette (team brand sheet): #0B1F4D · #2563EB · #60A5FA · #E0F2FE · #FFFFFF
 const config: Config = {
+  darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {

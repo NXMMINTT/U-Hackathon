@@ -5,7 +5,39 @@
 body {
   background-color: #ffffff;
   color: #15305a;
+  transition: background-color 0.2s, color 0.2s;
 }
+
+html.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+html.dark .bg-white { background-color: #1e293b !important; }
+html.dark .bg-brand-tint { background-color: #0f172a !important; }
+html.dark .bg-brand-soft { background-color: #1e3a5f !important; }
+html.dark .text-navy { color: #e2e8f0 !important; }
+html.dark .text-ink-body { color: #cbd5e1 !important; }
+html.dark .text-ink-muted { color: #94a3b8 !important; }
+html.dark .text-ink { color: #e2e8f0 !important; }
+html.dark .border-line { border-color: #334155 !important; }
+html.dark .bg-line-subtle { background-color: #334155 !important; }
+
+html.dark [class*="shadow-[0_2px"] { box-shadow: 0 2px 14px rgba(0,0,0,0.3) !important; }
+
+html.dark .from-\[\#E0F2FE\] { --tw-gradient-from: #1e3a5f !important; }
+html.dark .to-\[\#F0F7FF\] { --tw-gradient-to: #0f172a !important; }
+html.dark .bg-\[\#FFF4E0\] { background-color: #422006 !important; }
+html.dark .bg-\[\#E3F2FD\] { background-color: #172554 !important; }
+html.dark .bg-\[\#EDE9FE\] { background-color: #2e1065 !important; }
+html.dark .bg-\[\#E8F5E9\] { background-color: #14532d !important; }
+html.dark .text-\[\#B45309\] { color: #fbbf24 !important; }
+html.dark .text-\[\#1D4ED8\] { color: #60a5fa !important; }
+html.dark .text-\[\#6D28D9\] { color: #a78bfa !important; }
+html.dark .text-\[\#15803D\] { color: #4ade80 !important; }
+html.dark .bg-\[\#FDECEC\] { background-color: #450a0a !important; }
+html.dark .bg-\[\#FEF2F2\] { background-color: #450a0a !important; }
+html.dark .border-\[\#C7DEFC\] { border-color: #334155 !important; }
 
 a:focus-visible,
 button:focus-visible,

@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/brand/Logo";
 import { LineProfileBadge } from "@/components/LineProfileBadge";
+import { useI18n } from "@/lib/i18n";
 
-// The app's two tabs (spec 2.1 / 2.2). Transactions and stock live under ร้านของฉัน.
 const TABS = [
-  { href: "/dashboard", label: "ร้านของฉัน", matches: ["/dashboard", "/transactions", "/stock"], premium: false },
-  { href: "/market", label: "Market Radar", matches: ["/market"], premium: true },
+  { href: "/dashboard", labelKey: "nav.myShop", matches: ["/dashboard", "/transactions", "/stock"], premium: false },
+  { href: "/market", labelKey: "nav.marketRadar", matches: ["/market"], premium: true },
 ];
 
 function useActiveTab() {
@@ -17,15 +17,15 @@ function useActiveTab() {
   return (tab: (typeof TABS)[number]) => tab.matches.some((m) => pathname === m || pathname.startsWith(`${m}/`));
 }
 
-/** Top bar: logo + the two tabs as a pill switch (desktop); mobile uses the bottom NavTabs. */
 export function SiteHeader() {
   const isActive = useActiveTab();
+  const { tr } = useI18n();
 
   return (
     <header className="sticky top-0 z-10 bg-white shadow-[0_2px_12px_rgba(26,111,214,.06)]">
       <div className="mx-auto flex max-w-[1160px] items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Logo href="/dashboard" />
-        <nav aria-label="แท็บหลัก" className="hidden gap-1.5 rounded-full bg-brand-soft p-1.5 md:flex">
+        <nav aria-label="main tabs" className="hidden gap-1.5 rounded-full bg-brand-soft p-1.5 md:flex">
           {TABS.map((tab) => {
             const active = isActive(tab);
             return (
@@ -37,7 +37,7 @@ export function SiteHeader() {
                   active ? "bg-brand text-white" : "text-ink-body hover:text-brand"
                 }`}
               >
-                {tab.label}
+                {tr(tab.labelKey)}
                 {tab.premium && <span className="rounded-full bg-sun px-2 py-0.5 text-xs font-bold text-[#4A3500]">Premium</span>}
               </Link>
             );
@@ -46,7 +46,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-4">
           <LineProfileBadge />
           <Link href="/" className="text-[15px] font-medium text-ink-muted no-underline hover:text-brand">
-            หน้าแรก
+            {tr("nav.home")}
           </Link>
         </div>
       </div>
@@ -54,12 +54,12 @@ export function SiteHeader() {
   );
 }
 
-/** Bottom tab bar, mobile only. */
 export function NavTabs() {
   const isActive = useActiveTab();
+  const { tr } = useI18n();
 
   return (
-    <nav aria-label="แท็บหลัก" className="fixed bottom-0 left-0 right-0 z-10 flex gap-2 border-t border-line bg-white p-2 md:hidden">
+    <nav aria-label="main tabs" className="fixed bottom-0 left-0 right-0 z-10 flex gap-2 border-t border-line bg-white p-2 md:hidden">
       {TABS.map((tab) => {
         const active = isActive(tab);
         return (
@@ -71,7 +71,7 @@ export function NavTabs() {
               active ? "bg-brand text-white" : "text-ink-body"
             }`}
           >
-            {tab.label}
+            {tr(tab.labelKey)}
           </Link>
         );
       })}

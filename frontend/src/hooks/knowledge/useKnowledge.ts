@@ -26,6 +26,7 @@ export type TopicAudio = TopicScript & { audio_base64: string; audio_mime: strin
 /** On-demand: the briefing read aloud (Gemini + ElevenLabs). Needs voice keys on the server. */
 export function useTopicAudio() {
   return useMutation({
-    mutationFn: (topicId: string) => apiFetch<TopicAudio>(`/api/knowledge/topics/${topicId}/audio`),
+    mutationFn: ({ topicId, lang = "th" }: { topicId: string; lang?: string }) =>
+      apiFetch<TopicAudio>(`/api/knowledge/topics/${topicId}/audio?lang=${lang}`),
   });
 }
