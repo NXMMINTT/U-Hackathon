@@ -369,7 +369,20 @@
       "expense": "Expenses",
       "products": "Products"
     },
-    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "bestSellers": "Best sellers this month",
@@ -383,16 +396,39 @@
     "title": "How to use U-Ledger AI",
     "subtitle": "Do bookkeeping via LINE in 5 steps",
     "steps": [
-      { "title": "Add U-Fox as a friend on LINE", "body": "Press the button below and start chatting. No extra app needed." },
-      { "title": "Type entries like chatting with a friend", "body": "U-Fox automatically separates income, expenses, products, and quantities.", "example": "Sold chili paste 20 jars 1780" },
-      { "title": "Or send a receipt photo / voice note", "body": "U-Fox reads amounts from photos or voice and sends a card to review.", "example": "Bought dried chilies 2 bags 900" },
-      { "title": "Confirm in the card", "body": "Confirmed entries count toward totals and adjust stock. Press \"Edit\" before confirming if incorrect." },
-      { "title": "View summary on the website", "body": "My Business shows profit, VAT meter, best sellers, and pending entries." }
+      {
+        "title": "Add U-Fox as a friend on LINE",
+        "body": "Press the button below and start chatting. No extra app needed."
+      },
+      {
+        "title": "Type entries like chatting with a friend",
+        "body": "U-Fox automatically separates income, expenses, products, and quantities.",
+        "example": "Sold chili paste 20 jars 1780"
+      },
+      {
+        "title": "Or send a receipt photo / voice note",
+        "body": "U-Fox reads amounts from photos or voice and sends a card to review.",
+        "example": "Bought dried chilies 2 bags 900"
+      },
+      {
+        "title": "Confirm in the card",
+        "body": "Confirmed entries count toward totals and adjust stock. Press \"Edit\" before confirming if incorrect."
+      },
+      {
+        "title": "View summary on the website",
+        "body": "My Business shows profit, VAT meter, best sellers, and pending entries."
+      }
     ],
     "commandsTitle": "Commands you can ask U-Fox",
     "commands": [
-      { "say": "Summary", "does": "Today's sales, expenses, and profit" },
-      { "say": "Am I close to VAT this year?", "does": "Annual sales compared to 1.8M baht threshold" }
+      {
+        "say": "Summary",
+        "does": "Today's sales, expenses, and profit"
+      },
+      {
+        "say": "Am I close to VAT this year?",
+        "does": "Annual sales compared to 1.8M baht threshold"
+      }
     ],
     "webEntryTitle": "You can also record from the website",
     "webEntryBody": "Not convenient to chat? Record income and expenses right here. Entries count toward totals immediately.",
@@ -404,9 +440,21 @@
     "loadError": "Failed to load shop data",
     "loading": "Loading shop data…",
     "zone": {
-      "green": { "label": "Green zone · Far from threshold", "note": "Still safe~", "say": "Sales are still far from the VAT threshold." },
-      "yellow": { "label": "Yellow zone · Start planning", "note": "Getting close!", "say": "But sales are approaching the VAT threshold." },
-      "red": { "label": "Red zone · Near VAT registration", "note": "Be careful!", "say": "Sales are very close to the VAT threshold. Prepare to register." }
+      "green": {
+        "label": "Green zone · Far from threshold",
+        "note": "Still safe~",
+        "say": "Sales are still far from the VAT threshold."
+      },
+      "yellow": {
+        "label": "Yellow zone · Start planning",
+        "note": "Getting close!",
+        "say": "But sales are approaching the VAT threshold."
+      },
+      "red": {
+        "label": "Red zone · Near VAT registration",
+        "note": "Be careful!",
+        "say": "Sales are very close to the VAT threshold. Prepare to register."
+      }
     },
     "tips": [
       "Don't forget to confirm pending entries.",
@@ -492,7 +540,9 @@
     "loadError": "Failed to load data"
   },
   "nav": {
-    "home": "Home"
+    "home": "Home",
+    "myShop": "My Shop",
+    "marketRadar": "Market Radar"
   },
   "backend": {
     "connected": "Connected to Backend successfully",
