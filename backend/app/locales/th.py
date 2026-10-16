@@ -23,6 +23,7 @@ TRANSACTION_EDIT_REPLY = (
 )
 TRANSACTION_ALREADY_RESOLVED_REPLY = "รายการนี้ถูกดำเนินการไปแล้วครับ"
 TRANSACTION_NOT_FOUND_REPLY = "ไม่พบรายการนี้ครับ"
+TAX_SNOOZE_REPLY = "รับทราบครับ เดือนหน้าจะส่งสรุปเพดาน VAT ให้อีกครั้ง 🦊"
 
 NO_TRANSACTIONS_PARSED_REPLY = "ไม่พบรายการที่สามารถบันทึกได้ครับ ลองพิมพ์ใหม่อีกครั้งได้ไหมครับ"
 UNSUPPORTED_MESSAGE_TYPE_REPLY = "ตอนนี้รองรับข้อความ รูปสลิป/ใบเสร็จ และข้อความเสียงครับ ลองส่งแบบนั้นมาได้เลยนะครับ"

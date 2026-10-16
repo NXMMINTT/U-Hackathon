@@ -69,7 +69,7 @@ def test_edit_button_is_a_chat_postback_without_liff(monkeypatch):
 
     monkeypatch.setattr(transaction_confirm.settings, "liff_id", "")
     bubble = build_transaction_confirmation_message([_txn(42, "3500", "0.9")]).contents.contents[0]
-    datas = [b.action.data for b in bubble.footer.contents if hasattr(b.action, "data")]
+    datas = [a.data for a in _all_actions(bubble.body) if hasattr(a, "data")]
     assert "action=edit&id=42" in datas
 
 
@@ -78,5 +78,31 @@ def test_edit_button_opens_liff_form_when_liff_is_set(monkeypatch):
 
     monkeypatch.setattr(transaction_confirm.settings, "liff_id", "1234567890-abcdefgh")
     bubble = build_transaction_confirmation_message([_txn(42, "3500", "0.9")]).contents.contents[0]
-    uris = [b.action.uri for b in bubble.footer.contents if hasattr(b.action, "uri")]
-    assert uris == ["https://liff.line.me/1234567890-abcdefgh/transactions?edit=42"]
+    uris = {a.uri for a in _all_actions(bubble.body) if hasattr(a, "uri")}
+    assert uris == {"https://liff.line.me/1234567890-abcdefgh/transactions?edit=42"}
+
+
+def _all_actions(box) -> list:
+    """Every action attached to a component inside `box`, recursively."""
+    found = []
+    for c in getattr(box, "contents", None) or []:
+        if getattr(c, "action", None) is not None:
+            found.append(c.action)
+        found.extend(_all_actions(c))
+    return found
+
+
+def test_date_row_opens_date_picker_for_that_transaction():
+    bubble = build_transaction_confirmation_message([_txn(42, "3500", "0.9")]).contents.contents[0]
+    pickers = [a for a in _all_actions(bubble.body) if getattr(a, "mode", None) == "date"]
+    assert len(pickers) == 1
+    assert pickers[0].data == "action=edit_date&id=42"
+    assert pickers[0].initial == "2026-10-15"
+
+
+def test_expense_card_uses_red_theme_and_minus_sign():
+    bubble = build_transaction_confirmation_message(
+        [_txn(7, "2000", "0.9", type_=IncomeExpenseType.EXPENSE)]
+    ).contents.contents[0]
+    assert bubble.hero.url.endswith("banner-expense.jpg")
+    assert "-฿2,000.00" in _all_texts(bubble.body)

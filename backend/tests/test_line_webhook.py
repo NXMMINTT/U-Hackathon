@@ -81,6 +81,7 @@ def client(monkeypatch: pytest.MonkeyPatch) -> TestClient:
     monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda *a, **k: None)
     monkeypatch.setattr(line_webhook.line_service, "reply_messages", lambda *a, **k: None)
     monkeypatch.setattr(line_webhook.line_service, "push_text", lambda *a, **k: None)
+    monkeypatch.setattr(line_webhook.line_service, "push_messages", lambda *a, **k: None)
 
     return TestClient(app)
 
@@ -414,3 +415,147 @@ def test_confirming_sale_replies_with_remaining_stock(client: TestClient, monkey
     client.post("/api/v1/line/webhook", content=confirm_body, headers={"x-line-signature": _sign(confirm_body)})
 
     assert replies[-1].endswith("📦 กล้วยตาก คงเหลือ 7 ถุง")
+
+
+def _postback_with_date_body(data: str, picked: str, user_id: str = "Utestuser1") -> bytes:
+    payload = json.loads(_postback_event_body(data, user_id))
+    payload["events"][0]["postback"]["params"] = {"date": picked}
+    return json.dumps(payload).encode("utf-8")
+
+
+def _record_one_income(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> int:
+    parsed = GeminiParseResult(
+        intent=ParsedIntent.RECORD_TRANSACTIONS,
+        transactions=[
+            ParsedTransaction(
+                type=ParsedTransactionType.INCOME,
+                amount=Decimal("3500"),
+                category_hint="ขายหน้าร้าน",
+                description="ขายหน้าร้าน",
+                txn_date=date(2026, 10, 15),
+                is_personal=False,
+                confidence=Decimal("0.9"),
+            )
+        ],
+        clarification_question=None,
+    )
+    monkeypatch.setattr(line_webhook.gemini_service, "parse_user_message", lambda text, **kwargs: parsed)
+    body = _message_event_body("ขายของได้ 3500")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+    from app.models import Transaction
+
+    from app.models.enums import TransactionStatus
+
+    session = line_webhook.SessionLocal()
+    txn_id = session.query(Transaction).filter_by(status=TransactionStatus.PENDING).one().id
+    session.close()
+    return txn_id
+
+
+def test_edit_date_postback_updates_date_and_resends_card(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    txn_id = _record_one_income(client, monkeypatch)
+    sent = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_messages", lambda token, messages: sent.append(messages))
+
+    body = _postback_with_date_body(f"action=edit_date&id={txn_id}", "2026-10-01")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    from app.models import Transaction
+    from app.models.enums import TransactionStatus
+
+    session = line_webhook.SessionLocal()
+    txn = session.query(Transaction).one()
+    assert txn.txn_date == date(2026, 10, 1)
+    assert txn.status == TransactionStatus.PENDING
+    session.close()
+    assert len(sent) == 1 and "กรุณายืนยัน" in sent[0][0].alt_text
+
+
+def test_tax_question_replies_with_tax_alert_card(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    parsed = GeminiParseResult(intent=ParsedIntent.TAX_QUESTION, transactions=[], clarification_question=None)
+    monkeypatch.setattr(line_webhook.gemini_service, "parse_user_message", lambda text, **kwargs: parsed)
+    sent = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_messages", lambda token, messages: sent.append(messages))
+
+    body = _message_event_body("ภาษีเป็นยังไงบ้าง")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert len(sent) == 1
+    assert "แจ้งเตือนภาษี · โซนเขียว" in sent[0][0].alt_text
+
+
+def test_year_summary_request_replies_with_year_card(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    parsed = GeminiParseResult(intent=ParsedIntent.SUMMARY_REQUEST, transactions=[], clarification_question=None)
+    monkeypatch.setattr(line_webhook.gemini_service, "parse_user_message", lambda text, **kwargs: parsed)
+    sent = []
+    monkeypatch.setattr(line_webhook.line_service, "reply_messages", lambda token, messages: sent.append(messages))
+
+    body = _message_event_body("สรุปทั้งปีให้หน่อย")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert len(sent) == 1
+    assert sent[0][0].alt_text.startswith("สรุปปี ")
+
+
+@pytest.mark.parametrize(
+    ("data", "expect_flex"),
+    [("action=tax_snooze", False), ("action=tax_detail", False), ("action=year_report", True), ("action=month_summary", True)],
+)
+def test_card_buttons_without_liff_reply(client: TestClient, monkeypatch: pytest.MonkeyPatch, data, expect_flex):
+    texts, flexes = [], []
+    monkeypatch.setattr(line_webhook.line_service, "reply_text", lambda token, text: texts.append(text))
+    monkeypatch.setattr(line_webhook.line_service, "reply_messages", lambda token, messages: flexes.append(messages))
+
+    body = _postback_event_body(data)
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert (len(flexes), len(texts)) == ((1, 0) if expect_flex else (0, 1))
+
+
+def test_confirm_near_vat_ceiling_pushes_tax_alert_card(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    from app.models import Business, Transaction, User
+    from app.models.enums import (
+        ExpenseMethod,
+        IncomeExpenseType,
+        TaxStatus,
+        TransactionSource,
+        TransactionStatus,
+    )
+
+    session = line_webhook.SessionLocal()
+    user = User(line_user_id="Utestuser1", display_name="t")
+    session.add(user)
+    session.flush()
+    biz = Business(
+        owner_id=user.id,
+        name="ร้าน",
+        business_type="อื่นๆ",
+        tax_status=TaxStatus.INDIVIDUAL,
+        vat_registered=False,
+        expense_method=ExpenseMethod.FLAT_RATE,
+    )
+    session.add(biz)
+    session.flush()
+    session.add(
+        Transaction(
+            business_id=biz.id,
+            type=IncomeExpenseType.INCOME,
+            amount=Decimal("1600000"),
+            txn_date=date.today(),
+            is_personal=False,
+            source=TransactionSource.TEXT,
+            status=TransactionStatus.CONFIRMED,
+        )
+    )
+    session.commit()
+    session.close()
+
+    txn_id = _record_one_income(client, monkeypatch)
+    pushed = []
+    monkeypatch.setattr(line_webhook.line_service, "push_messages", lambda user_id, messages: pushed.append(messages))
+
+    body = _postback_event_body(f"action=confirm&id={txn_id}")
+    client.post("/api/v1/line/webhook", content=body, headers={"x-line-signature": _sign(body)})
+
+    assert len(pushed) == 1
+    assert "แจ้งเตือนภาษี" in pushed[0][0].alt_text

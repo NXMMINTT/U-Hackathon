@@ -1,248 +1,124 @@
-"""Flex Message for confirming AI-parsed transactions. Styled to match
-the U-Fox mascot design with colored headers and structured form layout.
+"""Flex Message for confirming AI-parsed transactions (U-Fox banner design).
+
+Every detail row is tappable: the date row opens LINE's date picker
+(action=edit_date), the other rows start the edit flow (LIFF form when
+LIFF_ID is set, otherwise the chat `action=edit` postback).
 """
 
 from decimal import Decimal
 
-from linebot.v3.messaging import (
-    FlexBox,
-    FlexBubble,
-    FlexButton,
-    FlexCarousel,
-    FlexIcon,
-    FlexImage,
-    FlexMessage,
-    FlexSeparator,
-    FlexText,
-    PostbackAction,
-    URIAction,
-)
+from linebot.v3.messaging import FlexMessage
 
 from app.core.formatting import format_thai_date, format_thb
 from app.core.settings import settings
+from app.line_messages.flex_style import GREEN, GREY, NAVY, RED, asset, footer, hero, pill, postback, to_flex_message
 from app.locales import th
 from app.models import Transaction
 from app.models.enums import IncomeExpenseType
 
 LOW_CONFIDENCE_THRESHOLD = Decimal("0.70")
 
-CATEGORY_EMOJI_MAP = {
-    "อาหาร": "🍽️",
-    "เครื่องดื่ม": "🥤",
-    "ช้อปปิ้ง": "🛍️",
-    "ขนส่ง": "🚚",
-    "ค่าที่พัก": "🏠",
-    "ค่าเช่า": "🏠",
-    "วัตถุดิบ": "🛒",
-    "สินค้า": "🛒",
-    "ค่าแรง": "👷",
-    "ค่าน้ำ": "💧",
-    "ค่าไฟ": "⚡",
-    "ค่าเน็ต": "🌐",
-    "ค่าโทรศัพท์": "📱",
-    "การตลาด": "📣",
-    "ขายสินค้า": "💰",
-    "รายได้": "💵",
-    "เงินเดือน": "💼",
+_THEMES = {
+    IncomeExpenseType.INCOME: {**GREEN, "key": "income", "sign": "+", "label": th.INCOME_LABEL},
+    IncomeExpenseType.EXPENSE: {**RED, "key": "expense", "sign": "-", "label": th.EXPENSE_LABEL},
 }
 
 
-def _category_emoji(category_name: str | None) -> str:
-    if not category_name:
-        return "📋"
-    for key, emoji in CATEGORY_EMOJI_MAP.items():
-        if key in category_name:
-            return emoji
-    return "📋"
+def _edit_action(txn: Transaction) -> dict:
+    if settings.liff_id:
+        return {
+            "type": "uri",
+            "label": th.TRANSACTION_EDIT_BUTTON,
+            "uri": f"https://liff.line.me/{settings.liff_id}/transactions?edit={txn.id}",
+        }
+    return postback(th.TRANSACTION_EDIT_BUTTON, f"action=edit&id={txn.id}", th.TRANSACTION_EDIT_BUTTON)
 
 
-def _build_bubble(txn: Transaction) -> FlexBubble:
-    is_income = txn.type == IncomeExpenseType.INCOME
-    type_label = th.INCOME_LABEL if is_income else th.EXPENSE_LABEL
-    type_emoji = "💰" if is_income else "💸"
+def _date_action(txn: Transaction) -> dict:
+    return {
+        "type": "datetimepicker",
+        "label": "date",
+        "data": f"action=edit_date&id={txn.id}",
+        "mode": "date",
+        "initial": txn.txn_date.isoformat(),
+    }
 
-    header_bg = "#1A73E8" if is_income else "#4A90D9"
-    accent_color = "#1DB446" if is_income else "#E8547E"
-    btn_primary_color = "#1DB446" if is_income else "#E8547E"
 
-    category_name = txn.category.name_th if txn.category else None
-    cat_emoji = _category_emoji(category_name)
-
-    header = FlexBox(
-        layout="vertical",
-        background_color=header_bg,
-        padding_all="16px",
-        contents=[
-            FlexBox(
-                layout="horizontal",
-                contents=[
-                    FlexText(
-                        text=f"{type_emoji} {type_label}",
-                        color="#FFFFFF",
-                        size="lg",
-                        weight="bold",
-                        flex=0,
-                    ),
-                ],
-            ),
-            FlexText(
-                text="เลือกหมวดหมู่ แล้วใส่จำนวนเงินได้เลยครับ"
-                if not is_income
-                else "บันทึกรายรับของคุณครับ",
-                color="#FFFFFFCC",
-                size="xs",
-                margin="sm",
-                wrap=True,
-            ),
+def _row(icon: str, label: str, value: str, action: dict, t: dict) -> dict:
+    return {
+        "type": "box", "layout": "horizontal", "alignItems": "center", "spacing": "md",
+        "backgroundColor": t["tint"] + "99", "cornerRadius": "14px",
+        "paddingAll": "10px", "paddingStart": "12px", "paddingEnd": "12px", "action": action,
+        "contents": [
+            {"type": "box", "layout": "vertical", "flex": 0, "width": "34px", "height": "34px", "cornerRadius": "10px",
+             "backgroundColor": t["main"], "justifyContent": "center", "alignItems": "center",
+             "contents": [{"type": "image", "url": asset(f"icon-{icon}-white.png"), "size": "18px", "aspectRatio": "1:1"}]},
+            {"type": "box", "layout": "vertical", "flex": 1, "contents": [
+                {"type": "text", "text": label, "size": "xxs", "color": GREY},
+                {"type": "text", "text": value, "size": "md", "weight": "bold", "color": NAVY, "wrap": True, "maxLines": 2},
+            ]},
+            {"type": "box", "layout": "vertical", "flex": 0, "backgroundColor": "#FFFFFF", "cornerRadius": "10px",
+             "paddingTop": "4px", "paddingBottom": "4px", "paddingStart": "10px", "paddingEnd": "10px",
+             "contents": [{"type": "text", "text": th.TRANSACTION_EDIT_BUTTON, "size": "xs", "weight": "bold",
+                           "color": t["dark"]}]},
         ],
-    )
+    }
 
-    body_rows: list = []
 
-    if txn.ai_confidence is not None and txn.ai_confidence < LOW_CONFIDENCE_THRESHOLD:
-        body_rows.append(
-            FlexBox(
-                layout="horizontal",
-                background_color="#FFF3E0",
-                corner_radius="8px",
-                padding_all="8px",
-                margin="none",
-                contents=[
-                    FlexText(
-                        text=f"⚠ {th.LOW_CONFIDENCE_BADGE}",
-                        size="xs",
-                        color="#E09000",
-                        weight="bold",
-                        wrap=True,
-                    ),
-                ],
-            )
-        )
+def build_transaction_bubble(txn: Transaction) -> dict:
+    t = _THEMES[txn.type]
+    edit = _edit_action(txn)
 
-    body_rows.append(
-        _field_row("📅 วันที่", format_thai_date(txn.txn_date))
-    )
-    body_rows.append(FlexSeparator(margin="md"))
-    body_rows.append(
-        _field_row("📝 รายการ", txn.description or "-")
-    )
-    body_rows.append(FlexSeparator(margin="md"))
-    body_rows.append(
-        FlexBox(
-            layout="horizontal",
-            margin="md",
-            contents=[
-                FlexText(text="💲 จำนวนเงิน", size="sm", color="#888888", flex=4),
-                FlexText(
-                    text=format_thb(txn.amount),
-                    size="lg",
-                    weight="bold",
-                    color=accent_color,
-                    align="end",
-                    flex=6,
-                ),
-            ],
-        )
-    )
-    body_rows.append(FlexSeparator(margin="md"))
-
-    if category_name:
-        body_rows.append(
-            _field_row(f"{cat_emoji} หมวดหมู่", category_name)
-        )
-    else:
-        body_rows.append(
-            _field_row("📋 หมวดหมู่", "ไม่ระบุ")
-        )
-
-    if txn.product is not None:
-        body_rows.append(FlexSeparator(margin="md"))
-        qty_str = f"{txn.quantity.normalize():f} {txn.product.unit}" if txn.quantity else "-"
-        body_rows.append(
-            _field_row("📦 สินค้า", f"{txn.product.name} ({qty_str})")
-        )
-
-    body = FlexBox(
-        layout="vertical",
-        padding_all="16px",
-        spacing="md",
-        contents=body_rows,
-    )
-
-    buttons = [
-        FlexButton(
-            style="primary",
-            color=btn_primary_color,
-            height="sm",
-            action=PostbackAction(
-                label=f"✅ {th.TRANSACTION_CONFIRM_BUTTON}",
-                data=f"action=confirm&id={txn.id}",
-                display_text=th.TRANSACTION_CONFIRM_BUTTON,
-            ),
-        ),
+    body: list[dict] = [
+        {"type": "box", "layout": "horizontal", "alignItems": "center", "contents": [
+            pill(t["label"], t["tint"], t["dark"]),
+            {"type": "text", "text": "ตรวจสอบก่อนบันทึก", "size": "xs", "color": GREY, "align": "end"},
+        ]},
     ]
+    if txn.ai_confidence is not None and txn.ai_confidence < LOW_CONFIDENCE_THRESHOLD:
+        body.append({"type": "text", "text": f"⚠ {th.LOW_CONFIDENCE_BADGE}", "size": "xs", "weight": "bold",
+                     "color": "#E09000", "margin": "md", "wrap": True})
 
-    edit_action = (
-        URIAction(
-            label=f"✏️ {th.TRANSACTION_EDIT_BUTTON}",
-            uri=f"https://liff.line.me/{settings.liff_id}/transactions?edit={txn.id}",
-        )
-        if settings.liff_id
-        else PostbackAction(
-            label=f"✏️ {th.TRANSACTION_EDIT_BUTTON}",
-            data=f"action=edit&id={txn.id}",
-            display_text=th.TRANSACTION_EDIT_BUTTON,
-        )
-    )
-    buttons.append(
-        FlexButton(style="secondary", height="sm", action=edit_action)
-    )
-    buttons.append(
-        FlexButton(
-            style="secondary",
-            height="sm",
-            action=PostbackAction(
-                label=th.TRANSACTION_CANCEL_BUTTON,
-                data=f"action=cancel&id={txn.id}",
-                display_text=th.TRANSACTION_CANCEL_BUTTON,
-            ),
+    body.append({"type": "text", "text": f"{t['sign']}{format_thb(txn.amount)}", "size": "3xl", "weight": "bold",
+                 "color": t["main"], "margin": "md", "adjustMode": "shrink-to-fit", "action": edit})
+    body.append({"type": "box", "layout": "horizontal", "alignItems": "center", "margin": "sm", "spacing": "md",
+                 "contents": [
+                     {"type": "text", "text": f"“{txn.raw_input}”" if txn.raw_input else " ", "size": "xxs",
+                      "color": GREY, "flex": 1, "wrap": True, "maxLines": 2},
+                     {"type": "box", "layout": "horizontal", "flex": 0, "spacing": "xs", "alignItems": "center",
+                      "backgroundColor": t["tint"], "cornerRadius": "14px", "paddingTop": "5px",
+                      "paddingBottom": "5px", "paddingStart": "10px", "paddingEnd": "12px", "action": edit,
+                      "contents": [
+                          {"type": "image", "url": asset(f"icon-edit-{t['key']}.png"), "size": "14px",
+                           "aspectRatio": "1:1", "flex": 0},
+                          {"type": "text", "text": "แก้ยอด", "size": "xs", "weight": "bold", "color": t["dark"],
+                           "flex": 0},
+                      ]},
+                 ]})
+
+    rows = [
+        _row("calendar", "วันที่", format_thai_date(txn.txn_date), _date_action(txn), t),
+        _row("category", "หมวดหมู่", txn.category.name_th if txn.category else "ไม่ระบุ", edit, t),
+        _row("note", "รายการ", txn.description or "-", edit, t),
+    ]
+    if txn.product is not None:
+        qty = f"{txn.quantity.normalize():f} {txn.product.unit}" if txn.quantity else "-"
+        rows.append(_row("note", "สินค้า", f"{txn.product.name} ({qty})", edit, t))
+    body.append({"type": "box", "layout": "vertical", "margin": "lg", "spacing": "sm", "contents": rows})
+
+    return {
+        "type": "bubble", "size": "mega",
+        "hero": hero(asset(f"banner-{t['key']}.jpg")),
+        "body": {"type": "box", "layout": "vertical", "paddingAll": "20px", "paddingBottom": "4px", "contents": body},
+        "footer": footer(
+            postback(f"✓ {th.TRANSACTION_CONFIRM_BUTTON}บันทึก", f"action=confirm&id={txn.id}",
+                     th.TRANSACTION_CONFIRM_BUTTON),
+            t["main"],
+            postback(th.TRANSACTION_CANCEL_BUTTON, f"action=cancel&id={txn.id}", th.TRANSACTION_CANCEL_BUTTON),
         ),
-    )
-
-    footer = FlexBox(
-        layout="vertical",
-        spacing="sm",
-        padding_all="12px",
-        contents=buttons,
-    )
-
-    return FlexBubble(
-        header=header,
-        body=body,
-        footer=footer,
-    )
-
-
-def _field_row(label: str, value: str) -> FlexBox:
-    return FlexBox(
-        layout="horizontal",
-        margin="md",
-        contents=[
-            FlexText(text=label, size="sm", color="#888888", flex=4),
-            FlexText(
-                text=value,
-                size="sm",
-                color="#333333",
-                weight="bold",
-                align="end",
-                flex=6,
-                wrap=True,
-            ),
-        ],
-    )
+    }
 
 
 def build_transaction_confirmation_message(transactions: list[Transaction]) -> FlexMessage:
-    bubbles = [_build_bubble(txn) for txn in transactions]
-    alt_text = f"พบ {len(transactions)} รายการ กรุณายืนยัน"
-    return FlexMessage(alt_text=alt_text, contents=FlexCarousel(contents=bubbles))
+    carousel = {"type": "carousel", "contents": [build_transaction_bubble(txn) for txn in transactions]}
+    return to_flex_message(f"พบ {len(transactions)} รายการ กรุณายืนยัน", carousel)

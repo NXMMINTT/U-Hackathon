@@ -18,9 +18,12 @@ from sqlalchemy.orm import Session
 
 from app.core.db import SessionLocal
 from app.core.settings import settings
+from app.analytics import business_overview
 from app.line_messages.summary import build_summary_flex
+from app.line_messages.tax_alert import build_tax_alert_flex
 from app.line_messages.transaction_confirm import build_transaction_confirmation_message
 from app.line_messages.welcome import build_howto_flex, build_welcome_flex
+from app.line_messages.year_summary import ProductShare, build_year_summary_flex
 from app.locales import th
 from app.models import Attachment, Business, Transaction
 from app.models.enums import TransactionSource, TransactionStatus
@@ -116,7 +119,12 @@ def _handle_message_event(db: Session, event: MessageEvent) -> None:
         return
 
     if parsed.intent == ParsedIntent.TAX_QUESTION:
-        line_service.reply_text(event.reply_token, _tax_status_reply(db, business))
+        annual_income = transaction_service.current_year_confirmed_income(db, business.id)
+        line_service.reply_messages(event.reply_token, [build_tax_alert_flex(annual_income)])
+        return
+
+    if parsed.intent == ParsedIntent.SUMMARY_REQUEST and raw_input and "ปี" in raw_input:
+        line_service.reply_messages(event.reply_token, [_year_summary(db, business)])
         return
 
     if parsed.intent == ParsedIntent.SUMMARY_REQUEST:
@@ -158,8 +166,30 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
         line_service.reply_messages(event.reply_token, [flex])
         return
 
+    # Buttons on the tax alert / year summary cards (shown when LIFF_ID isn't set).
+    if action == "tax_detail":
+        business = _resolve_business(db, line_user_id)
+        line_service.reply_text(event.reply_token, _tax_status_reply(db, business))
+        return
+    if action == "tax_snooze":
+        line_service.reply_text(event.reply_token, th.TAX_SNOOZE_REPLY)
+        return
+    if action == "year_report":
+        business = _resolve_business(db, line_user_id)
+        line_service.reply_messages(event.reply_token, [_year_summary(db, business)])
+        return
+    if action == "month_summary":
+        business = _resolve_business(db, line_user_id)
+        today = date.today()
+        income_total, expense_total = business_overview.period_totals(
+            db, business.id, today.replace(day=1), today
+        )
+        flex = build_summary_flex(income_total, expense_total, period_label="เดือนนี้")
+        line_service.reply_messages(event.reply_token, [flex])
+        return
+
     txn_id_raw = params.get("id")
-    if action not in {"confirm", "cancel", "edit"} or txn_id_raw is None or not txn_id_raw.isdigit():
+    if action not in {"confirm", "cancel", "edit", "edit_date"} or txn_id_raw is None or not txn_id_raw.isdigit():
         if action and action.startswith("menu_"):
             line_service.reply_messages(event.reply_token, [build_welcome_flex()])
         return
@@ -175,6 +205,15 @@ def _handle_postback_event(db: Session, event: PostbackEvent) -> None:
 
     if txn.status != TransactionStatus.PENDING:
         line_service.reply_text(event.reply_token, th.TRANSACTION_ALREADY_RESOLVED_REPLY)
+        return
+
+    if action == "edit_date":
+        picked = (event.postback.params or {}).get("date")
+        if picked:
+            txn.txn_date = date.fromisoformat(picked)
+            db.commit()
+            db.refresh(txn)
+        line_service.reply_messages(event.reply_token, [build_transaction_confirmation_message([txn])])
         return
 
     if action == "confirm":
@@ -217,8 +256,20 @@ def _maybe_push_vat_warning(db: Session, business: Business, line_user_id: str) 
     level = vat.vat_warning_level(annual_income)
     if level is None:
         return
-    ratio = vat.vat_threshold_ratio(annual_income)
-    line_service.push_text(line_user_id, th.vat_warning_message(_percent(ratio)))
+    line_service.push_messages(line_user_id, [build_tax_alert_flex(annual_income)])
+
+
+def _year_summary(db: Session, business: Business):
+    today = date.today()
+    start = date(today.year, 1, 1)
+    income_total, expense_total = business_overview.period_totals(db, business.id, start, today)
+    top = business_overview.top_products(db, business.id, start, today, limit=3)
+    shares = [
+        ProductShare(name=item.product.name, share_percent=item.revenue / income_total * 100)
+        for item in top
+        if income_total > 0
+    ]
+    return build_year_summary_flex(today.year, income_total, expense_total, shares)
 
 
 def _percent(ratio: Decimal) -> str:
