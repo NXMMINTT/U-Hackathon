@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-import { CategoryThumb } from "@/components/market/CategoryIcon";
+import { CategoryThumb } from "@/components/market/CategoryThumb";
 import { PlatformBadge } from "@/components/market/PlatformBadge";
 import { PriceHistoryChart } from "@/components/market/PriceHistoryChart";
 import { SearchTrendChart } from "@/components/market/SearchTrendChart";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { useTrendCatalog } from "@/hooks/useMarket";
-import { formatGrowth, TREND_STATUS_TONE, trendStatus } from "@/lib/market";
+import { useTrendCatalog } from "@/hooks/market/useTrendCatalog";
+import { formatGrowth, TREND_STATUS_TONE, trendStatus } from "@/lib/market/trendStatus";
 import th from "@/locales/th.json";
 
 const t = th.marketRadar.product;

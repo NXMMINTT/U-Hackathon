@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { UBot } from "@/components/brand";
-import { useOverview } from "@/hooks/useDashboard";
+import { ProductThumb } from "@/components/dashboard/ProductThumb";
+import { CategoryBreakdown } from "@/components/summary/CategoryBreakdown";
+import { MonthSummaryCards } from "@/components/summary/MonthSummaryCards";
+import { MonthTransactionList } from "@/components/summary/MonthTransactionList";
+import { useOverview } from "@/hooks/dashboard/useOverview";
 import { formatBaht } from "@/lib/format";
 
 const TABS = [
@@ -14,65 +17,86 @@ const TABS = [
   { id: "products", label: "สินค้า" },
 ] as const;
 
+type TabId = (typeof TABS)[number]["id"];
+
 const MONTHS_TH = [
   "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
   "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
 ];
 
-const EXPENSE_CATEGORIES = [
-  { label: "อาหาร", icon: "🍽️", color: "bg-[#FF9800]" },
-  { label: "วัตถุดิบ / สินค้า", icon: "🛒", color: "bg-[#2196F3]" },
-  { label: "ขนส่ง", icon: "🚚", color: "bg-[#FF9800]" },
-  { label: "ค่าที่พัก / ค่าเช่า", icon: "🏠", color: "bg-[#4CAF50]" },
-  { label: "อื่นๆ", icon: "•••", color: "bg-[#9E9E9E]" },
-];
+const PRODUCT_TINTS = ["bg-[#FFE9E3] text-[#C2410C]", "bg-brand-soft text-brand", "bg-[#E6F7EE] text-income"];
+
+/** "YYYY-MM" for a year and a 0-based month (which may run past 0..11). */
+function monthKey(year: number, month: number): string {
+  const d = new Date(year, month, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function BestSellers({ month }: { month: string }) {
+  const { data, isLoading } = useOverview(month);
+  return (
+    <section className="flex flex-col gap-4 rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center justify-between">
+        <h2 className="m-0 text-[18px] font-bold text-navy">สินค้าขายดีเดือนนี้</h2>
+        <Link href="/stock" className="text-[14px] font-semibold text-brand no-underline">
+          ดูสต็อก &gt;
+        </Link>
+      </div>
+      {isLoading && <p className="m-0 text-ink-muted">กำลังโหลด…</p>}
+      {data?.top_products.length === 0 && <p className="m-0 text-ink-muted">ยังไม่มียอดขายสินค้าในเดือนนี้</p>}
+      {data?.top_products.map((p, i) => (
+        <div key={p.product_id} className="flex items-center gap-3.5">
+          <ProductThumb name={p.name} rank={i + 1} tint={PRODUCT_TINTS[i % PRODUCT_TINTS.length]} imageUrl={p.image_url} />
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold">{p.name}</div>
+            <div className="text-[14px] text-ink-muted">
+              ขาย {Number(p.quantity_sold).toLocaleString("en-US")} {p.unit} · เหลือ {Number(p.stock_qty).toLocaleString("en-US")}
+            </div>
+          </div>
+          <b>{formatBaht(p.revenue)}</b>
+        </div>
+      ))}
+    </section>
+  );
+}
 
 export default function SummaryPage() {
-  const [activeTab, setActiveTab] = useState<string>("overview");
-  const { data: overview, isLoading, error } = useOverview();
-
+  const [activeTab, setActiveTab] = useState<TabId>("overview");
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth());
   const [year, setYear] = useState(now.getFullYear());
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+
+  const current = monthKey(year, month);
+  const previous = monthKey(year, month - 1);
 
   const prevMonth = () => {
-    if (month === 0) { setMonth(11); setYear(year - 1); }
-    else setMonth(month - 1);
+    if (month === 0) {
+      setMonth(11);
+      setYear(year - 1);
+    } else setMonth(month - 1);
   };
   const nextMonth = () => {
-    if (month === 11) { setMonth(0); setYear(year + 1); }
-    else setMonth(month + 1);
+    if (isCurrentMonth) return;
+    if (month === 11) {
+      setMonth(0);
+      setYear(year + 1);
+    } else setMonth(month + 1);
   };
-
-  const income = overview ? Number(overview.income) : 0;
-  const expense = overview ? Number(overview.expense) : 0;
-  const profit = overview ? Number(overview.net_profit) : 0;
-
-  const mockCategories = [
-    { label: "อาหาร", icon: "🍽️", amount: 2850, pct: 39, color: "bg-[#FF9800]" },
-    { label: "วัตถุดิบ / สินค้า", icon: "🛒", amount: 1920, pct: 27, color: "bg-[#2196F3]" },
-    { label: "ขนส่ง", icon: "🚚", amount: 980, pct: 14, color: "bg-[#FFA726]" },
-    { label: "ค่าที่พัก / ค่าเช่า", icon: "🏠", amount: 800, pct: 11, color: "bg-[#66BB6A]" },
-    { label: "อื่นๆ", icon: "•••", amount: 680, pct: 9, color: "bg-[#BDBDBD]" },
-  ];
-
-  if (error) {
-    return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อมูลไม่สำเร็จ: {error.message}</p>;
-  }
 
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex gap-2 rounded-full bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+      <div role="tablist" aria-label="หมวดสรุป" className="flex gap-2 rounded-full bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 rounded-full py-2.5 text-[14px] font-bold transition-all ${
-              activeTab === tab.id
-                ? "bg-brand text-white shadow-sm"
-                : "text-ink-muted"
+              activeTab === tab.id ? "bg-brand text-white shadow-sm" : "text-ink-muted"
             }`}
           >
             {tab.label}
@@ -82,100 +106,41 @@ export default function SummaryPage() {
 
       {/* Month selector */}
       <div className="flex items-center justify-center gap-4">
-        <button type="button" onClick={prevMonth} className="h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center text-ink-muted">
+        <button
+          type="button"
+          onClick={prevMonth}
+          aria-label="เดือนก่อน"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm"
+        >
           ‹
         </button>
         <span className="text-[16px] font-bold text-navy">
           {MONTHS_TH[month]} {year + 543}
         </span>
-        <button type="button" onClick={nextMonth} className="h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center text-ink-muted">
+        <button
+          type="button"
+          onClick={nextMonth}
+          disabled={isCurrentMonth}
+          aria-label="เดือนถัดไป"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm disabled:opacity-40"
+        >
           ›
         </button>
       </div>
 
-      {/* Summary cards */}
-      <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <div className="flex items-center gap-2 mb-5">
-          <h2 className="text-[18px] font-bold text-navy m-0">สรุปภาพรวมเดือนนี้</h2>
-          <span className="text-ink-faint text-sm">ⓘ</span>
-          <UBot size={70} pose="commerce" className="ml-auto -mr-2 -mt-4" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {/* Income card */}
-          <div className="rounded-2xl bg-[#E8F5E9] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C8E6C9] text-sm">📈</span>
-              <span className="text-[13px] font-semibold text-[#2E7D32]">รายรับ</span>
-            </div>
-            <div className="text-[22px] font-extrabold text-[#1B5E20]">
-              ฿{isLoading ? "..." : income.toLocaleString()}
-            </div>
-            <span className="text-[12px] text-[#43A047] font-semibold">↑ 12%</span>
-          </div>
-
-          {/* Expense card */}
-          <div className="rounded-2xl bg-[#FCE4EC] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F8BBD0] text-sm">🛒</span>
-              <span className="text-[13px] font-semibold text-[#C62828]">รายจ่าย</span>
-            </div>
-            <div className="text-[22px] font-extrabold text-[#B71C1C]">
-              ฿{isLoading ? "..." : expense.toLocaleString()}
-            </div>
-            <span className="text-[12px] text-[#E53935] font-semibold">↑ 8%</span>
-          </div>
-        </div>
-
-        {/* Net profit */}
-        <div className="rounded-2xl bg-[#E3F2FD] p-4 flex items-center gap-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm">📊</span>
-              <span className="text-[13px] font-semibold text-brand">กำไรสุทธิ</span>
-            </div>
-            <div className="text-[26px] font-extrabold text-brand">
-              ฿{isLoading ? "..." : Math.abs(profit).toLocaleString()}
-            </div>
-            <span className="text-[12px] text-brand font-semibold">↑ 15%</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Expense by category */}
-      <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[18px] font-bold text-navy m-0">รายจ่ายตามหมวดหมู่</h2>
-          <Link href="/transactions" className="text-[14px] font-semibold text-brand no-underline">
-            ดูทั้งหมด &gt;
-          </Link>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {mockCategories.map((cat) => (
-            <div key={cat.label} className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-line-subtle text-lg shrink-0">
-                {cat.icon}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[14px] font-semibold text-navy">{cat.label}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-bold text-navy">฿{cat.amount.toLocaleString()}</span>
-                    <span className="text-[12px] text-ink-muted">{cat.pct}%</span>
-                  </div>
-                </div>
-                <div className="h-2 rounded-full bg-line-subtle overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${cat.color}`}
-                    style={{ width: `${cat.pct}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {activeTab === "overview" && (
+        <>
+          <MonthSummaryCards month={current} previousMonth={previous} />
+          <CategoryBreakdown month={current} type="expense" />
+        </>
+      )}
+      {(activeTab === "income" || activeTab === "expense") && (
+        <>
+          <CategoryBreakdown key={activeTab} month={current} type={activeTab} />
+          <MonthTransactionList month={current} type={activeTab} />
+        </>
+      )}
+      {activeTab === "products" && <BestSellers month={current} />}
     </div>
   );
 }

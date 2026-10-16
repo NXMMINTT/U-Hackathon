@@ -13,7 +13,7 @@ import random
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.data_loader import load_json
+from app.mock_data_loader import load_json
 
 router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
 

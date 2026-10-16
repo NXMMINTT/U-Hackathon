@@ -4,10 +4,10 @@ from datetime import date
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.data_loader import load_json
+from app.mock_data_loader import load_json
 from app.routers.ubot import get_client
 from app.routers.voice import _synthesize
-from app.config import GEMINI_MODEL
+from app.core.ai_provider_settings import GEMINI_MODEL
 
 router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
 

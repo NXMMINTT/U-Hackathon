@@ -1,9 +1,11 @@
 "use client";
 
-import { ReceiptEdge, Sticker } from "@/components/doodles";
+import { ReceiptEdge } from "@/components/decor/ReceiptEdge";
+import { Sticker } from "@/components/decor/Sticker";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { useSubscription } from "@/hooks/useMarket";
+import { useChoosePlan } from "@/hooks/market/useChoosePlan";
+import { useSubscription } from "@/hooks/market/useSubscription";
 import { formatThaiDate } from "@/lib/format";
 import th from "@/locales/th.json";
 
@@ -13,6 +15,7 @@ const STATUS = t.statusLabel as Record<string, string>;
 
 export default function PlansPage() {
   const { data, error, isLoading } = useSubscription();
+  const choose = useChoosePlan();
 
   if (error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>;
   if (isLoading || !data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
@@ -22,6 +25,7 @@ export default function PlansPage() {
   return (
     <div className="flex flex-col gap-[22px]">
       <h2 className="m-0 text-2xl font-bold md:text-[28px]">{t.title}</h2>
+      {choose.error && <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{choose.error.message}</Card>}
 
       <Card className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
         <div>
@@ -89,8 +93,9 @@ export default function PlansPage() {
               </div>
               <button
                 type="button"
-                disabled={isCurrent}
-                className={`min-h-[48px] rounded-full px-5 font-bold ${
+                disabled={isCurrent || choose.isPending}
+                onClick={() => choose.mutate(plan.plan_id)}
+                className={`min-h-[48px] rounded-full px-5 font-bold disabled:cursor-default ${
                   isCurrent
                     ? "bg-line-subtle text-ink-muted"
                     : isPremium

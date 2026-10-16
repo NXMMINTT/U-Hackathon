@@ -57,6 +57,7 @@ async function request<T>(path: string, init?: RequestInit, as: "json" | "blob" 
     throw new Error(message);
   }
 
+  if (response.status === 204) return undefined as T; // e.g. DELETE: no body to parse
   return (as === "blob" ? response.blob() : response.json()) as Promise<T>;
 }
 

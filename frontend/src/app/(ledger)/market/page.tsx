@@ -1,16 +1,15 @@
 "use client";
 
-import { Note } from "@/components/doodles";
-import { UBotLive } from "@/components/playful";
-import {
-  type CompetitorPrices,
-  useCompetitorPrices,
-  useEuArbitrage,
-  useKeywordVolume,
-  useMarketTrend,
-  useSponsors,
-  useUBotInsights,
-} from "@/hooks/useMarket";
+import { Note } from "@/components/decor/Note";
+import { UBotLive } from "@/components/brand/UBotLive";
+import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
+import { useEuArbitrage } from "@/hooks/market/useEuArbitrage";
+import { useKeywordVolume } from "@/hooks/market/useKeywordVolume";
+import { useMarketTrend } from "@/hooks/market/useMarketTrend";
+import { useRecordSponsorClick } from "@/hooks/market/useRecordSponsorClick";
+import { useSponsors } from "@/hooks/market/useSponsors";
+import { useUBotInsights } from "@/hooks/market/useUBotInsights";
+import type { CompetitorPrices } from "@/types/market";
 import { formatBaht } from "@/lib/format";
 
 const IN_STOCK = "มีสินค้า";
@@ -26,6 +25,7 @@ export default function MarketRadarPage() {
   const keywords = useKeywordVolume();
   const eu = useEuArbitrage();
   const sponsors = useSponsors(productId);
+  const sponsorClick = useRecordSponsorClick();
 
   if (prices.error) return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อมูลตลาดไม่สำเร็จ: {prices.error.message}</p>;
   if (!prices.data) return <p className="rounded-3xl bg-white p-6 text-center text-ink-muted">กำลังโหลดข้อมูลตลาด…</p>;
@@ -138,7 +138,13 @@ export default function MarketRadarPage() {
             </div>
             <div className="text-[15px] text-ink-muted">{sponsor.description}</div>
           </div>
-          <a href={sponsor.cta_link} className="inline-flex min-h-[46px] items-center rounded-full bg-brand-soft px-5 font-semibold no-underline">
+          <a
+            href={sponsor.cta_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => sponsorClick.mutate(sponsor.listing_id)}
+            className="inline-flex min-h-[46px] items-center rounded-full bg-brand-soft px-5 font-semibold no-underline"
+          >
             ดูข้อเสนอ
           </a>
         </section>

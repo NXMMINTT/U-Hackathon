@@ -16,8 +16,8 @@ from statistics import median
 from fastapi import APIRouter
 from pydantic import BaseModel, Field, ValidationError
 
-from app.config import GEMINI_MODEL
-from app.data_loader import load_json
+from app.core.ai_provider_settings import GEMINI_MODEL
+from app.mock_data_loader import load_json
 from app.routers.ubot import SYSTEM_PROMPT, build_context, get_client
 
 logger = logging.getLogger(__name__)

@@ -17,7 +17,7 @@ pnpm dev
 
 ## หน้าที่มี
 
-ดีไซน์โทนขาวฟ้า มี U-Bot เป็นมาสคอต (`src/components/brand.tsx`) — สีอยู่ใน `tailwind.config.ts`, ฟอนต์ Noto Sans Thai
+ดีไซน์โทนขาวฟ้า มี U-Bot เป็นมาสคอต (`src/components/brand/`) — สีอยู่ใน `tailwind.config.ts`, ฟอนต์ Noto Sans Thai
 
 - `/` — หน้าแรก (`src/app/(site)/`) โครงแบบ parnuan.com: แชท LINE + Rich Menu, ขั้นตอน 1/3–3/3, ราคา, FAQ
   ปุ่ม "เพิ่มเพื่อน" ใช้ `NEXT_PUBLIC_LINE_ADD_FRIEND_URL`
@@ -33,11 +33,27 @@ pnpm dev
 - `/stock` — สต็อกสินค้าคงเหลือและต้นทุนต่อหน่วย
 
 มาสคอต **U-Fox** (ทีมออกแบบ) อยู่ที่ `public/mascot/u-fox-<ท่า>.png` — 17 ท่า ตัดจากชีตสติกเกอร์ของทีม
-ใช้ผ่าน `<UBot pose="radar" />` ใน `src/components/brand.tsx` (สี `#0B1F4D · #2563EB · #60A5FA · #E0F2FE` ตามชีตแบรนด์)
+ใช้ผ่าน `<UBot pose="radar" />` ใน `src/components/brand/UBot.tsx` (สี `#0B1F4D · #2563EB · #60A5FA · #E0F2FE` ตามชีตแบรนด์)
 
-`src/app/(site)` (หน้าแรก) กับ `src/app/(ledger)` (แอป) มี root layout แยกกัน ลูกเล่น (U-Bot ขยับตา/คลิกคุย,
-แถบเลื่อนมิเตอร์ภาษี, แชทพิมพ์เอง) อยู่ใน `src/components/playful.tsx` ลายมือ/สติกเกอร์/ใบเสร็จอยู่ใน `doodles.tsx`
-— ทุก animation ปิดเองเมื่อเครื่องตั้ง prefers-reduced-motion
+`src/app/(site)` (หน้าแรก) กับ `src/app/(ledger)` (แอป) มี root layout แยกกัน
+ทุก animation ปิดเองเมื่อเครื่องตั้ง prefers-reduced-motion
+
+## โครงสร้างโฟลเดอร์
+
+หนึ่งไฟล์ = หนึ่ง component / hook / ฟังก์ชัน ชื่อไฟล์ตรงกับชื่อที่ export
+
+| โฟลเดอร์ | มีอะไร |
+|---|---|
+| `src/components/brand/` | มาสคอตและแบรนด์: `UBot`, `UBotFace`, `UBotLive` (ขยับตา/คลิกคุย), `Logo`, `LineAddFriendButton` |
+| `src/components/decor/` | ของตกแต่ง: `Twinkle`, `Paw`, `Curl`, `Note`, `Sticker`, `ReceiptEdge` ฯลฯ |
+| `src/components/home/` | ส่วนต่างๆ ของหน้าแรก (`HeroSection`, `LedgerSection`, `TaxSection`, `PricingSection` …) |
+| `src/components/home/phone/` | ชิ้นส่วนมือถือจำลอง (`Phone`, `ChatShell`, `UserBubble`, `ConfirmCard` …) |
+| `src/components/home/screens/` | หน้าจอในมือถือจำลองแต่ละจอ (`SlipScreen`, `VoiceScreen`, `TaxAlertScreen` …) |
+| `src/components/market/` | ชิ้นส่วนของ Market Radar (กราฟ, โลโก้แพลตฟอร์ม, `CategoryThumb`) |
+| `src/components/ui/` | ชิ้นพื้นฐาน: `Card`, `Badge`, `Ring` |
+| `src/hooks/dashboard/`, `src/hooks/market/` | React Query hook หนึ่งตัวต่อไฟล์ |
+| `src/types/` | type ของข้อมูล (`dashboard.ts`, `market.ts`) และ `api.gen.ts` |
+| `src/lib/market/` | ฟังก์ชันช่วยของ Market Radar (สกุลเงิน, สี/โลโก้แพลตฟอร์ม, เทรนด์ …) |
 
 ## Generate API types จาก backend
 
@@ -50,7 +66,7 @@ pnpm gen:api
 ```
 
 ไฟล์ที่ได้คือ `src/types/api.gen.ts` — **ห้ามแก้ไขด้วยมือ** รัน `pnpm gen:api` ใหม่แทน
-(`src/hooks/useDashboard.ts` ใช้ type จากไฟล์นี้)
+(`src/types/dashboard.ts` ใช้ type จากไฟล์นี้)
 
 ## ที่ยังไม่ได้ทำ (รอ phase ถัดไป)
 

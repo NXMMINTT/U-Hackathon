@@ -2,8 +2,8 @@
 
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import type { CatalogPlatform, CatalogProduct } from "@/hooks/useMarket";
-import { platformColor } from "@/lib/market";
+import type { CatalogPlatform, CatalogProduct } from "@/types/market";
+import { platformColor } from "@/lib/market/platformColor";
 
 /** 8-week price history for domestic platforms, one line per platform with a direct end label. */
 export function PriceHistoryChart({
