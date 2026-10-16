@@ -1,10 +1,13 @@
 "use client";
 
-import { Note } from "@/components/decor/Note";
+import Link from "next/link";
+import { useState } from "react";
+
 import { UBotLive } from "@/components/brand/UBotLive";
 import { useCompetitorPrices } from "@/hooks/market/useCompetitorPrices";
 import { useEuArbitrage } from "@/hooks/market/useEuArbitrage";
 import { useKeywordVolume } from "@/hooks/market/useKeywordVolume";
+import { useMarketProducts } from "@/hooks/market/useMarketProducts";
 import { useMarketTrend } from "@/hooks/market/useMarketTrend";
 import { useRecordSponsorClick } from "@/hooks/market/useRecordSponsorClick";
 import { useSponsors } from "@/hooks/market/useSponsors";
@@ -18,11 +21,14 @@ const EUR_TO_THB = 39; // approximate demo rate, not live — the UI says "ป�
 
 /** Market Radar overview (premium lock and trial badge live in layout.tsx). */
 export default function MarketRadarPage() {
-  const prices = useCompetitorPrices();
+  // undefined until the shop picks one; the backend then answers with its first product.
+  const [picked, setPicked] = useState<string>();
+  const products = useMarketProducts();
+  const prices = useCompetitorPrices({ productId: picked });
   const productId = prices.data?.product_id;
   const ubot = useUBotInsights(productId);
-  const trend = useMarketTrend();
-  const keywords = useKeywordVolume();
+  const trend = useMarketTrend(productId);
+  const keywords = useKeywordVolume(productId);
   const eu = useEuArbitrage();
   const sponsors = useSponsors(productId);
   const sponsorClick = useRecordSponsorClick();
@@ -39,26 +45,52 @@ export default function MarketRadarPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="m-0 text-[15px] text-ink-muted">วิเคราะห์ตลาดของ</p>
-        <h2 className="m-0 text-2xl font-bold leading-snug md:text-[28px]">{p.product_name}</h2>
+      <div className="flex flex-col gap-3">
+        <div>
+          <p className="m-0 text-[15px] text-ink-muted">วิเคราะห์ตลาดของ</p>
+          <h2 className="m-0 text-2xl font-bold leading-snug md:text-[28px]">{p.product_name}</h2>
+        </div>
+        {products.data && products.data.length > 1 && (
+          <div role="group" aria-label="เลือกสินค้าที่จะดูภาพรวม" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:px-0">
+            {products.data.map((item) => {
+              const active = item.product_id === p.product_id;
+              return (
+                <button
+                  key={item.product_id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setPicked(item.product_id)}
+                  className={`inline-flex min-h-[40px] flex-none items-center whitespace-nowrap rounded-full px-4 text-[15px] ${
+                    active ? "bg-brand font-semibold text-white" : "border border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                  }`}
+                >
+                  {item.product_name}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      <section aria-label="U-Bot แนะนำราคา" className="flex flex-wrap items-center gap-x-9 gap-y-6 rounded-[32px] bg-sky-deep p-6 md:p-9">
+      <section
+        aria-label="U-Bot แนะนำราคา"
+        aria-busy={prices.isPlaceholderData}
+        className={`flex flex-wrap items-center gap-x-8 gap-y-5 rounded-[28px] bg-sky-deep p-6 md:p-8 ${prices.isPlaceholderData ? "opacity-60" : ""}`}
+      >
         <UBotLive
           pose="radar"
-          size={140}
+          size={96}
           bubbleSide="right"
-          tips={["หนูแอบส่องคู่แข่งมาให้แล้วค่ะ", "จุดน้ำเงินเข้มในกราฟคือร้านคุณนะ", "ร้านที่ของหมด คือโอกาสของเรา!"]}
+          tips={["หนูแอบส่องคู่แข่งมาให้แล้วค่ะ", "แท่งสีน้ำเงินเข้มในกราฟคือร้านคุณนะ", "ร้านที่ของหมด คือโอกาสของเรา!"]}
           className="shrink-0 max-sm:hidden"
         />
-        <div className="min-w-0 flex-[1_1_440px]">
+        <div className="min-w-0 flex-[1_1_400px]">
           <div className="text-[15px] font-semibold text-brand">U-Bot แนะนำวันนี้</div>
           {ubot.data ? (
             <>
-              <p className="m-0 text-[22px] leading-normal md:text-[25px]">{ubot.data.reason}</p>
+              <p className="m-0 text-lg leading-relaxed md:text-xl">{ubot.data.reason}</p>
               {ubot.data.insights.length > 0 && (
-                <ul className="mb-0 mt-3 flex flex-col gap-1 pl-5 text-ink-body">
+                <ul className="mb-0 mt-3 flex flex-col gap-1 pl-5 text-[15px] text-ink-body">
                   {ubot.data.insights.map((text) => (
                     <li key={text}>{text}</li>
                   ))}
@@ -66,16 +98,13 @@ export default function MarketRadarPage() {
               )}
             </>
           ) : (
-            <p className="m-0 text-[22px] text-ink-muted">{ubot.error ? `U-Bot ยังตอบไม่ได้: ${ubot.error.message}` : "U-Bot กำลังวิเคราะห์ราคาคู่แข่ง…"}</p>
+            <p className="m-0 text-lg text-ink-muted">{ubot.error ? `U-Bot ยังตอบไม่ได้: ${ubot.error.message}` : "U-Bot กำลังวิเคราะห์ราคาคู่แข่ง…"}</p>
           )}
         </div>
         {suggested !== undefined && (
-          <div className="relative flex flex-col items-center gap-1 rounded-[26px] bg-white px-6 py-5 md:-rotate-2">
-            <Note className="absolute -top-5 right-2 rounded-lg bg-sun px-2.5 py-0.5 text-[15px] !text-[#4A3500] shadow-md" tilt={6}>
-              ราคานี้กำลังดี!
-            </Note>
+          <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white px-6 py-4">
             <div className="text-sm text-ink-muted">ราคาแนะนำ</div>
-            <div className="text-[34px] font-bold leading-tight text-brand">{formatBaht(suggested)}</div>
+            <div className="text-[30px] font-bold leading-tight text-brand">{formatBaht(suggested)}</div>
             <div className="text-sm text-ink-muted">กำไร {formatBaht(suggested - p.my_cost_price)} ต่อชิ้น</div>
           </div>
         )}
@@ -83,73 +112,116 @@ export default function MarketRadarPage() {
 
       <PriceStrip prices={p} suggested={suggested} />
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,330px),1fr))] gap-5">
-        <section aria-label="ขายที่ไหนดี" className="flex flex-col gap-3 rounded-[28px] bg-white p-6">
-          <h2 className="m-0 text-xl font-semibold">ขายที่ไหนดี</h2>
-          <p className="m-0 text-[15px] text-ink-muted">ยอดขายสินค้าแบบเดียวกันในตลาด แยกตามแพลตฟอร์ม</p>
-          {shares.slice(0, 4).map((s, i) => (
-            <div key={s.platform}>
-              <div className="flex justify-between">
-                <span>{s.platform}</span>
-                <b>{s.pct}%</b>
-              </div>
-              <div className="h-2.5 rounded-full bg-brand-soft">
-                <div className={`h-full rounded-full ${i < 2 ? "bg-brand" : "bg-brand-light"}`} style={{ width: `${(s.pct / shares[0].pct) * 100}%` }} />
-              </div>
-            </div>
-          ))}
-        </section>
-
-        <section aria-label="คำค้นยอดฮิต" className="flex flex-col gap-3 rounded-[28px] bg-white p-6">
-          <h2 className="m-0 text-xl font-semibold">ลูกค้าค้นหาคำว่า</h2>
-          <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-            {topKeywords.map((k) => (
-              <li key={`${k.keyword}-${k.platform}`} className="rounded-full bg-brand-soft px-3.5 py-1.5 font-semibold">
-                {k.keyword}
-                {k.trend === "up" && <span className="text-brand"> ↑</span>}
-                <span className="ml-1.5 text-sm font-normal text-ink-muted">{(k.search_volume / 1000).toFixed(1)}k</span>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-5">
+        <InfoCard label="ขายที่ไหนดี" title="ขายที่ไหนดี" subtitle="สัดส่วนยอดขายสินค้าแบบเดียวกัน แยกตามแพลตฟอร์ม">
+          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            {shares.slice(0, 4).map((s, i) => (
+              <li key={s.platform} className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-[15px]">
+                  <span>{s.platform}</span>
+                  <b className="tabular-nums">{s.pct}%</b>
+                </div>
+                <div className="h-2 rounded-full bg-brand-soft">
+                  <div className={`h-full rounded-full ${i === 0 ? "bg-brand" : "bg-brand-light"}`} style={{ width: `${(s.pct / shares[0].pct) * 100}%` }} />
+                </div>
               </li>
             ))}
           </ul>
-          <p className="m-0 text-[15px] text-ink-muted">↑ = กำลังมาแรง ใส่ในชื่อสินค้าหรือโฆษณาได้เลย</p>
-        </section>
+        </InfoCard>
+
+        <InfoCard label="คำค้นยอดฮิต" title="ลูกค้าค้นหาคำว่า" subtitle="ใส่คำที่กำลังมาแรงในชื่อสินค้าหรือโฆษณาได้เลย">
+          <ol className="m-0 flex list-none flex-col divide-y divide-line-subtle p-0">
+            {topKeywords.map((k) => (
+              <li key={`${k.keyword}-${k.platform}`} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+                <div className="min-w-0">
+                  <div className="truncate text-[15px] font-semibold">{k.keyword}</div>
+                  <div className="text-sm text-ink-muted">{k.platform}</div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {k.trend === "up" && <span className="rounded-full bg-[#E6F7EE] px-2 py-0.5 text-xs font-bold text-[#0F6B42]">มาแรง</span>}
+                  <span className="w-14 text-right text-[15px] tabular-nums text-ink-body">{(k.search_volume / 1000).toFixed(1)}k</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </InfoCard>
 
         {euItem && (
-          <section aria-label="ส่งออกยุโรป" className="flex flex-col gap-3 rounded-[28px] bg-white p-6">
-            <h2 className="m-0 text-xl font-semibold">ส่งไปยุโรปได้ไหม</h2>
-            <p className="m-0">
-              {euItem.eu_market.region} ขายปลีกราว <b>€{euItem.eu_market.avg_retail_price_eur.toFixed(2)}</b> (ประมาณ{" "}
-              {formatBaht(euItem.eu_market.avg_retail_price_eur * EUR_TO_THB)}) ราคาส่งที่แนะนำ €
-              {euItem.eu_market.suggested_wholesale_price_eur.toFixed(2)}
-            </p>
-            <span className="self-start rounded-full bg-[#E6F7EE] px-3 py-1 text-sm font-bold text-[#0F6B42]">
-              ความต้องการ {euItem.eu_market.demand_score}/100
-            </span>
-          </section>
+          <InfoCard label="ส่งออกยุโรป" title="ส่งไปยุโรปได้ไหม" subtitle={euItem.eu_market.region}>
+            <dl className="m-0 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-brand-tint px-4 py-3">
+                <dt className="text-sm text-ink-muted">ราคาปลีก</dt>
+                <dd className="m-0 text-xl font-bold text-navy">€{euItem.eu_market.avg_retail_price_eur.toFixed(2)}</dd>
+                <dd className="m-0 text-sm text-ink-muted">≈ {formatBaht(euItem.eu_market.avg_retail_price_eur * EUR_TO_THB)}</dd>
+              </div>
+              <div className="rounded-2xl bg-brand-tint px-4 py-3">
+                <dt className="text-sm text-ink-muted">ราคาส่งแนะนำ</dt>
+                <dd className="m-0 text-xl font-bold text-navy">€{euItem.eu_market.suggested_wholesale_price_eur.toFixed(2)}</dd>
+                <dd className="m-0 text-sm text-ink-muted">≈ {formatBaht(euItem.eu_market.suggested_wholesale_price_eur * EUR_TO_THB)}</dd>
+              </div>
+            </dl>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex justify-between text-[15px]">
+                <span>ความต้องการตลาด</span>
+                <b className="tabular-nums">{euItem.eu_market.demand_score}/100</b>
+              </div>
+              <div className="h-2 rounded-full bg-[#E6F7EE]">
+                <div className="h-full rounded-full bg-[#22B862]" style={{ width: `${euItem.eu_market.demand_score}%` }} />
+              </div>
+            </div>
+            <p className="m-0 text-sm text-ink-muted">{euItem.eu_market.demand_note}</p>
+          </InfoCard>
         )}
       </div>
 
       {sponsor && (
-        <section aria-label="ผู้สนับสนุน" className="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-[28px] border-2 border-[#FFE7A3] bg-white px-6 py-5">
-          <span className="rounded-full bg-sun-soft px-3 py-0.5 text-[13px] font-bold text-sun-ink">ผู้สนับสนุน</span>
-          <div className="min-w-0 flex-[1_1_360px]">
-            <div className="font-semibold">
-              {sponsor.sponsor_name} · {sponsor.product_name} {formatBaht(sponsor.price)}/{sponsor.unit}
+        <section aria-label="ผู้สนับสนุน" className="flex flex-col gap-4 rounded-[28px] border-2 border-[#FFE7A3] bg-white p-6 md:flex-row md:items-center md:gap-6">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-sun-soft px-3 py-0.5 text-[13px] font-bold text-sun-ink">ผู้สนับสนุน</span>
+              <span className="text-sm text-ink-muted">
+                {sponsor.sponsor_name} · {sponsor.sponsor_type}
+              </span>
             </div>
-            <div className="text-[15px] text-ink-muted">{sponsor.description}</div>
+            <div className="text-lg font-semibold leading-snug">{sponsor.product_name}</div>
+            <p className="m-0 line-clamp-2 text-[15px] text-ink-muted">{sponsor.description}</p>
           </div>
-          <a
-            href={sponsor.cta_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => sponsorClick.mutate(sponsor.listing_id)}
-            className="inline-flex min-h-[46px] items-center rounded-full bg-brand-soft px-5 font-semibold no-underline"
-          >
-            ดูข้อเสนอ
-          </a>
+          <div className="flex shrink-0 flex-col gap-3 md:items-end">
+            <div className="text-xl font-bold text-navy">
+              {formatBaht(sponsor.price)}
+              <span className="text-[15px] font-normal text-ink-muted">/{sponsor.unit}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/market/sponsors"
+                className="inline-flex min-h-[44px] items-center rounded-full border border-line bg-white px-4 font-semibold text-ink-body no-underline hover:border-brand hover:text-brand"
+              >
+                ดูข้อเสนอทั้งหมด
+              </Link>
+              <Link
+                href={`/market/sponsors/${sponsor.listing_id}`}
+                onClick={() => sponsorClick.mutate(sponsor.listing_id)}
+                className="inline-flex min-h-[44px] items-center rounded-full bg-brand px-5 font-semibold text-white no-underline"
+              >
+                ดูข้อเสนอ
+              </Link>
+            </div>
+          </div>
         </section>
       )}
     </div>
+  );
+}
+
+function InfoCard({ label, title, subtitle, children }: { label: string; title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <section aria-label={label} className="flex flex-col gap-4 rounded-[28px] bg-white p-6">
+      <div>
+        <h2 className="m-0 text-xl font-semibold">{title}</h2>
+        <p className="m-0 text-[15px] text-ink-muted">{subtitle}</p>
+      </div>
+      {children}
+    </section>
   );
 }
 
@@ -285,7 +357,11 @@ function barColor(i: number, total: number, stock: string, isMine: boolean) {
   return "bg-[#79AEF3]";
 }
 
-/** Bar chart of every competitor's price, with the cost line and the suggested-price band overlaid. */
+const PLOT_H = 320;
+const TICK_STEPS = [10, 20, 25, 50, 100, 200, 250, 500, 1000];
+
+/** Bar chart of every competitor's price, with the cost line and the suggested-price band overlaid.
+ *  Axis, gridlines, overlays and bars all sit in one plot box so they share the same ฿0 baseline and scale. */
 function PriceBarChart({
   competitors,
   myPrice,
@@ -298,76 +374,86 @@ function PriceBarChart({
   costPrice: number;
 }) {
   const total = competitors.length + 1;
-  const chartH = 260;
-  const max = Math.max(myPrice, costPrice, ...(suggested ? [suggested + 5] : []), ...competitors.map((c) => c.price));
-  const top = Math.ceil((max + 5) / 20) * 20;
-  const h = (v: number) => (v / top) * (chartH - 40);
-  const ticks = Array.from({ length: Math.floor(top / 20) + 1 }, (_, i) => i * 20);
-  const band = suggested !== undefined ? { lo: h(suggested - 4), hi: h(suggested + 4) } : null;
-
-  const Item = ({
-    label,
-    price,
-    mine,
-    index,
-    stock,
-  }: {
-    label: string;
-    price: number;
-    mine?: boolean;
-    index: number;
-    stock: string;
-  }) => (
-    <div className="flex min-w-0 flex-1 flex-col items-center gap-2" title={`${label} ${formatBaht(price)}${stock === IN_STOCK ? "" : " (ของหมด)"}`}>
-      <span className={`text-[15px] font-bold ${mine ? "text-navy" : stock === IN_STOCK ? "text-ink-body" : "text-ink-muted"}`}>{formatBaht(price)}</span>
-      <div className="flex w-full items-end justify-center" style={{ height: chartH - 30 }}>
-        <div
-          className={`w-full max-w-[58px] rounded-t-xl transition-[height] ${barColor(index, total, stock, !!mine)} ${mine ? "ring-2 ring-brand ring-offset-2 ring-offset-white" : ""}`}
-          style={{ height: Math.max(h(price), 6) }}
-        />
-      </div>
-      {/* fixed-height caption block so every bar starts from the same baseline */}
-      <div className="flex h-[64px] w-[86px] flex-col items-center gap-0.5">
-        <PlatformLogo id={label.split("\n")[0]} name={label.split("\n")[0]} seller={label.split("\n")[1]} mine={mine} />
-        {stock !== IN_STOCK && <span className="text-[12px] text-ink-muted">ของหมด</span>}
-      </div>
-    </div>
-  );
+  // Headroom above the tallest bar for its price label, and about five gridlines whatever the price range.
+  const max = Math.max(myPrice, costPrice, suggested ?? 0, ...competitors.map((c) => c.price)) * 1.15;
+  const step = TICK_STEPS.find((s) => max / s <= 5) ?? 2000;
+  const top = Math.ceil(max / step) * step;
+  const h = (v: number) => (v / top) * PLOT_H;
+  const ticks = Array.from({ length: top / step + 1 }, (_, i) => i * step);
+  const bandHalf = Math.max(3, h(4));
+  const bars = [
+    ...competitors.map((c, i) => ({ key: `${c.platform_id}-${c.seller}`, id: c.platform_id, name: c.platform, seller: c.seller, price: c.price, stock: c.stock, index: i, mine: false })),
+    { key: "mine", id: "", name: "ร้านคุณ", seller: undefined, price: myPrice, stock: IN_STOCK, index: total - 1, mine: true },
+  ];
 
   return (
-    <div className="relative rounded-[22px] bg-white px-2 pt-2">
-      {/* suggested price band */}
-      {band && (
-        <>
-          <div className="absolute inset-x-10 rounded-lg bg-[#DCEBFF]/70" style={{ bottom: 92 + band.lo, height: band.hi - band.lo }} />
-          <span className="absolute right-0 z-10 -translate-y-1/2 rounded-full bg-[#DCEBFF] px-2.5 py-0.5 text-[13px] font-bold text-brand" style={{ bottom: 92 + band.hi }}>
-            ราคาแนะนำ {formatBaht(suggested!)}
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-muted">
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true" className="h-3 w-3 rounded-sm bg-navy" />
+          ร้านคุณ
+        </span>
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true" className="w-5 border-t-2 border-dashed border-[#F5A54B]" />
+          ต้นทุน {formatBaht(costPrice)}
+        </span>
+        {suggested !== undefined && (
+          <span className="flex items-center gap-2">
+            <span aria-hidden="true" className="h-3 w-5 rounded-sm bg-[#DCEBFF]" />
+            ราคาแนะนำ {formatBaht(suggested)}
           </span>
-        </>
-      )}
-      {/* cost dashed line */}
-      <div className="absolute left-8 right-0 border-t-2 border-dashed border-[#F5A54B]" style={{ bottom: 92 + h(costPrice) }} />
-      <span
-        className="absolute z-10 -translate-y-1/2 rounded-full bg-[#FFE7C7] px-2.5 py-0.5 text-[13px] font-bold text-[#9A5B12]"
-        style={{ bottom: 92 + h(costPrice), right: 0 }}
-      >
-        ต้นทุน {formatBaht(costPrice)}
-      </span>
+        )}
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true" className="h-3 w-3 rounded-sm bg-[#D3D9E3]" />
+          ของหมด
+        </span>
+      </div>
 
       <div className="flex gap-3">
         {/* Y axis */}
-        <div className="relative w-12 shrink-0 text-right" style={{ height: chartH - 30 }}>
+        <div className="relative w-12 shrink-0" style={{ height: PLOT_H }}>
           {ticks.map((t) => (
-            <span key={t} className="absolute right-0 -translate-y-1/2 text-[13px] text-ink-muted" style={{ bottom: h(t) }}>
+            <span key={t} className="absolute right-0 translate-y-1/2 text-[13px] text-ink-muted" style={{ bottom: h(t) }}>
               ฿{t}
             </span>
           ))}
         </div>
-        <div className="flex flex-1 items-end gap-1.5 border-l border-line pl-1">
-          {competitors.map((c, i) => (
-            <Item key={`${c.platform}-${c.seller}`} label={`${c.platform}\n${c.seller}`} price={c.price} index={i} stock={c.stock} />
+        <div className="relative flex-1 border-b border-l border-line" style={{ height: PLOT_H }}>
+          {ticks.slice(1).map((t) => (
+            <div key={t} className="absolute inset-x-0 border-t border-line-subtle" style={{ bottom: h(t) }} />
           ))}
-          <Item label="ร้านคุณ" price={myPrice} mine index={total - 1} stock={IN_STOCK} />
+          {suggested !== undefined && (
+            <div className="absolute inset-x-0 bg-[#DCEBFF]/80" style={{ bottom: h(suggested) - bandHalf, height: bandHalf * 2 }} />
+          )}
+          <div className="absolute inset-0 flex items-end gap-1.5 px-1">
+            {bars.map((b) => (
+              <div
+                key={b.key}
+                className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1"
+                title={`${b.name}${b.seller ? ` ${b.seller}` : ""} ${formatBaht(b.price)}${b.stock === IN_STOCK ? "" : " (ของหมด)"}`}
+              >
+                <span className={`text-[15px] font-bold ${b.mine ? "text-navy" : b.stock === IN_STOCK ? "text-ink-body" : "text-ink-muted"}`}>{formatBaht(b.price)}</span>
+                <div
+                  className={`w-full max-w-[58px] rounded-t-xl transition-[height] ${barColor(b.index, total, b.stock, b.mine)} ${b.mine ? "ring-2 ring-brand ring-offset-2 ring-offset-white" : ""}`}
+                  style={{ height: Math.max(h(b.price), 6) }}
+                />
+              </div>
+            ))}
+          </div>
+          {/* cost line drawn over the bars so it stays visible across them */}
+          <div className="pointer-events-none absolute inset-x-0 border-t-2 border-dashed border-[#F5A54B]" style={{ bottom: h(costPrice) }} />
+        </div>
+      </div>
+
+      <div className="flex gap-3">
+        <div aria-hidden="true" className="w-12 shrink-0" />
+        <div className="flex flex-1 gap-1.5 px-1">
+          {bars.map((b) => (
+            <div key={b.key} className="flex min-w-0 flex-1 flex-col items-center gap-0.5">
+              <PlatformLogo id={b.id} name={b.name} seller={b.seller} mine={b.mine} />
+              {b.stock !== IN_STOCK && <span className="text-[12px] text-ink-muted">ของหมด</span>}
+            </div>
+          ))}
         </div>
       </div>
     </div>

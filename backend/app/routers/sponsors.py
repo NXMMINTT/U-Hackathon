@@ -38,6 +38,14 @@ def match_sponsors(product_id: Optional[str] = None, keyword: Optional[str] = No
     return [_with_live_clicks(l) for l in matched]
 
 
+@router.get("/sponsors/{listing_id}")
+def get_sponsor(listing_id: str):
+    listing = next((l for l in load_json("b2b-sponsors.json") if l["listing_id"] == listing_id), None)
+    if listing is None:
+        raise HTTPException(status_code=404, detail="Sponsored listing not found")
+    return _with_live_clicks(listing)
+
+
 @router.post("/sponsors/{listing_id}/click")
 def record_click(listing_id: str):
     listings = load_json("b2b-sponsors.json")

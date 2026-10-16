@@ -9,6 +9,8 @@ export type Competitor = {
   stock: string;
 };
 
+export type MarketProduct = { product_id: string; product_name: string };
+
 export type CompetitorPrices = {
   product_id: string;
   product_name: string;
@@ -25,7 +27,7 @@ export type MarketTrend = {
   series: { platform: string; points: { week: string; units_sold: number }[] }[];
 };
 
-export type KeywordVolume = { keyword: string; platform: string; search_volume: number; trend: "up" | "down" | "stable" };
+export type KeywordVolume = { product_id: string; keyword: string; platform: string; search_volume: number; trend: "up" | "down" | "stable" };
 
 export type EuArbitrage = {
   product_id: string;
@@ -59,6 +61,7 @@ export type Sponsor = {
   price: number;
   unit: string;
   moq: number;
+  target_product_ids: string[];
   cta_link: string;
 };
 

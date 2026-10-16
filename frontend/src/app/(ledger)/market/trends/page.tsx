@@ -23,8 +23,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`min-h-[44px] flex-none rounded-full border-2 px-4 text-[15px] font-semibold ${
-        active ? "border-brand bg-brand text-white" : "border-[#C7DEFC] bg-white text-ink hover:border-brand"
+      className={`min-h-[40px] flex-none whitespace-nowrap rounded-full border px-4 text-[15px] ${
+        active ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body hover:border-brand hover:text-brand"
       }`}
     >
       {children}
@@ -50,6 +50,10 @@ function TrendsView() {
   const { categories, products } = catalog.data;
   // Picked on /market/platforms; until then show the first few (Thai majors) so the chip row stays short.
   const platforms = picked?.length ? catalog.data.platforms.filter((p) => picked.includes(p.id)) : catalog.data.platforms.slice(0, DEFAULT_CHIPS);
+  // However many are picked, only the first few get a chip; the rest sit in one "อื่น ๆ" dropdown.
+  const chipPlatforms = platforms.slice(0, DEFAULT_CHIPS);
+  const morePlatforms = platforms.slice(DEFAULT_CHIPS);
+  const moreActive = morePlatforms.some((p) => p.id === pf);
   const catOf = (p: CatalogProduct) => categories.find((c) => c.category_id === p.category_id)!;
   const category = categories.find((c) => c.category_id === catId);
   const query = q.trim();
@@ -126,20 +130,36 @@ function TrendsView() {
             )}
           </div>
         )}
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
-          <Chip active={pf === "all"} onClick={() => setPf("all")}>
-            {t.allPlatforms}
-          </Chip>
-          {platforms.map((p) => (
-            <Chip key={p.id} active={pf === p.id} onClick={() => setPf(p.id)}>
-              {p.name}
+        <div className="flex flex-wrap items-center gap-2">
+          <div role="group" aria-label="กรองตามแพลตฟอร์ม" className="-mx-4 flex min-w-0 flex-1 gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:px-0">
+            <Chip active={pf === "all"} onClick={() => setPf("all")}>
+              {t.allPlatforms}
             </Chip>
-          ))}
-          <Link
-            href="/market/platforms"
-            className="inline-flex min-h-[44px] flex-none items-center rounded-full border-2 border-dashed border-sky-line px-4 font-hand text-[15px] font-bold text-brand no-underline"
-          >
-            + เลือกแพลตฟอร์มเพิ่ม
+            {chipPlatforms.map((p) => (
+              <Chip key={p.id} active={pf === p.id} onClick={() => setPf(p.id)}>
+                {p.name}
+              </Chip>
+            ))}
+            {morePlatforms.length > 0 && (
+              <select
+                aria-label="แพลตฟอร์มอื่น"
+                value={moreActive ? pf : ""}
+                onChange={(e) => e.target.value && setPf(e.target.value)}
+                className={`min-h-[40px] flex-none rounded-full border px-4 text-[15px] [&>option]:bg-white [&>option]:text-ink ${
+                  moreActive ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body"
+                }`}
+              >
+                <option value="">อื่น ๆ (+{morePlatforms.length})</option>
+                {morePlatforms.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          <Link href="/market/platforms" className="flex-none text-sm font-semibold text-brand no-underline hover:underline">
+            จัดการแพลตฟอร์ม
           </Link>
         </div>
       </div>

@@ -12,6 +12,7 @@ const SUB_NAV = [
   { href: "/market/trends", label: "เทรนด์ตลาด", also: "/market/products/" },
   { href: "/market/compare", label: "เทียบราคา" },
   { href: "/market/chat", label: "ถาม U-Bot" },
+  { href: "/market/sponsors", label: "ผู้สนับสนุน" },
   { href: "/market/platforms", label: "เลือกแพลตฟอร์ม" },
   { href: "/market/plans", label: "แพ็กเกจ" },
 ];

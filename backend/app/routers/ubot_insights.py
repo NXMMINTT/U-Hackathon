@@ -17,7 +17,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field, ValidationError
 
 from app.core.ai_provider_settings import GEMINI_MODEL
-from app.mock_data_loader import load_json
+from app.mock_data_loader import competitor_entry, load_json
 from app.routers.ubot import SYSTEM_PROMPT, build_context, get_client
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class _AiAnswer(BaseModel):
 
 def rule_price(product_id: str) -> int:
     """Median of in-stock Thai competitors, floored at cost × MIN_MARGIN."""
-    data = load_json("competitor-prices.json")
+    data = competitor_entry(product_id=product_id)
     in_stock = [
         c["price"]
         for c in data["competitors"]
@@ -69,7 +69,7 @@ def _fallback(product_id: str, price: int) -> InsightsOut:
 
 
 def _ask_gemini(product_id: str, price: int) -> InsightsOut:
-    cost = load_json("competitor-prices.json")["my_cost_price"]
+    cost = competitor_entry(product_id=product_id)["my_cost_price"]
     prompt = (
         f"ราคาแนะนำจากกฎ (ค่ากลางคู่แข่งไทยที่มีของ) = {price} บาท, ต้นทุน = {cost} บาท\n"
         "วิเคราะห์ CONTEXT แล้วตอบเป็น JSON เท่านั้น: "

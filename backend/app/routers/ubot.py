@@ -5,7 +5,7 @@ from openai import OpenAI
 from pydantic import BaseModel
 
 from app.core.ai_provider_settings import GEMINI_API_KEY, GEMINI_BASE_URL, GEMINI_MODEL
-from app.mock_data_loader import load_json
+from app.mock_data_loader import competitor_entry, load_json
 
 router = APIRouter(prefix="/api/ubot", tags=["ubot"])
 
@@ -36,8 +36,9 @@ def build_context(product_id: str | None) -> str:
     """A compact context: only the essentials, so each call stays cheap on tokens."""
     products = load_json("products.json")
     tax = load_json("tax-status.json")
-    competitor_prices = load_json("competitor-prices.json")
+    competitor_prices = competitor_entry(product_id=product_id)
     keywords = load_json("keyword-volume.json")
+    keywords = [k for k in keywords if k["product_id"] == product_id] or keywords
 
     product = next((p for p in products if p["product_id"] == product_id), None) if product_id else None
 

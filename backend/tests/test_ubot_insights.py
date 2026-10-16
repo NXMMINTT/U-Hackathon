@@ -34,18 +34,18 @@ client = TestClient(app)
 
 
 def test_rule_price_is_median_of_in_stock_thai_competitors_floored_at_margin():
-    # competitor-prices.json: in-stock THB prices median = 82, cost 45 × 1.3 = 58.5
-    assert ubot_insights.rule_price("P001") == 82
+    # competitor-prices.json P001: in-stock THB prices median = 110, cost 55 × 1.3 = 71.5
+    assert ubot_insights.rule_price("P001") == 110
 
 
 def test_gemini_answer_in_markdown_fences_is_used(monkeypatch: pytest.MonkeyPatch):
-    answer = '```json\n{"suggested_price": 85, "reason": "ใกล้ราคากลาง", "insights": ["ข้อ 1", "ข้อ 2"]}\n```'
+    answer = '```json\n{"suggested_price": 115, "reason": "ใกล้ราคากลาง", "insights": ["ข้อ 1", "ข้อ 2"]}\n```'
     monkeypatch.setattr(ubot_insights, "get_client", lambda: _fake_client(answer))
 
     body = client.get("/api/ubot/insights").json()
 
     assert body["generated_by"] == "gemini"
-    assert body["suggested_price"] == 85
+    assert body["suggested_price"] == 115
     assert body["insights"] == ["ข้อ 1", "ข้อ 2"]
 
 
@@ -56,7 +56,7 @@ def test_unsafe_ai_price_falls_back_to_rules(monkeypatch: pytest.MonkeyPatch):
     body = client.get("/api/ubot/insights").json()
 
     assert body["generated_by"] == "rules"
-    assert body["suggested_price"] == 82
+    assert body["suggested_price"] == 110
     assert body["insights"]  # static insights.json for P001
 
 
@@ -66,4 +66,4 @@ def test_ai_failure_falls_back_to_rules(monkeypatch: pytest.MonkeyPatch):
     body = client.get("/api/ubot/insights").json()
 
     assert body["generated_by"] == "rules"
-    assert body["suggested_price"] == body["rule_price"] == 82
+    assert body["suggested_price"] == body["rule_price"] == 110

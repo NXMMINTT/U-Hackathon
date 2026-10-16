@@ -51,16 +51,18 @@ function NumberField({ label, value, onChange }: { label: string; value: string;
 }
 
 export default function ComparePage() {
-  const { data, error, isLoading } = useCompetitorPrices();
+  const products = useProducts();
+  const [stockProductId, setStockProductId] = useState("");
+  const stockProduct = products.data?.find((sp) => String(sp.id) === stockProductId);
+  // The picked shop product drives which product's competitor prices the whole page compares.
+  const { data, error, isLoading } = useCompetitorPrices({ name: stockProduct?.name });
+  const ubot = useUBotInsights(data?.product_id);
   const [sort, setSort] = useState<Sort>("cheapest");
   const [thaiOnly, setThaiOnly] = useState(true);
-  // null = not edited yet, so the shop's figures from the data are shown
+  // null = not edited yet, so the selected product's figures from the data are shown
   const [cost, setCost] = useState<string | null>(null);
   const [sellPrice, setSellPrice] = useState<string | null>(null);
   const [feePct, setFeePct] = useState("10");
-  const [stockProductId, setStockProductId] = useState("");
-  const ubot = useUBotInsights(data?.product_id);
-  const products = useProducts();
 
   if (error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>;
   if (isLoading || !data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
@@ -89,7 +91,6 @@ export default function ComparePage() {
   const margin = price > 0 ? (profit / price) * 100 : 0;
   const thaiAvailable = data.competitors.filter((c) => c.currency === "THB" && isAvailable(c));
   const suggested = ubot.data?.suggested_price;
-  const stockProduct = products.data?.find((sp) => String(sp.id) === stockProductId);
 
   return (
     <div className="flex flex-col gap-[22px]">
@@ -104,6 +105,34 @@ export default function ComparePage() {
         </span>
         {t.title} · {data.product_name}
       </h2>
+
+      <Card className="flex flex-col gap-1.5">
+        <label className="flex flex-col gap-1.5 text-sm">
+          <span className="font-semibold text-ink-body">เลือกสินค้าของร้านที่จะวิเคราะห์</span>
+          <select
+            value={stockProductId}
+            onChange={(e) => {
+              setStockProductId(e.target.value);
+              const picked = products.data?.find((sp) => String(sp.id) === e.target.value);
+              setCost(picked?.unit_cost ? String(Number(picked.unit_cost)) : null);
+              setSellPrice(null);
+            }}
+            className="min-h-[44px] rounded-[10px] border border-line bg-white px-3 text-base text-navy"
+          >
+            <option value="">— เลือกสินค้าของร้าน —</option>
+            {(products.data ?? []).map((sp) => (
+              <option key={sp.id} value={sp.id}>
+                {sp.name}
+                {sp.unit_cost ? ` · ต้นทุน ฿${Number(sp.unit_cost)}` : " · ยังไม่มีต้นทุน"}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs text-ink-muted">หน้านี้จะเทียบราคาคู่แข่งของสินค้าที่เลือก และดึงต้นทุนจากหน้าสต็อกมาคำนวณกำไรให้</span>
+        </label>
+        {stockProduct && !stockProduct.unit_cost && (
+          <span className="text-xs text-sun-ink">สินค้านี้ยังไม่มีต้นทุน ใส่เองในช่องต้นทุนด้านล่าง หรือตั้งได้ที่หน้าสต็อก (แก้ไข → ต้นทุน/หน่วย)</span>
+        )}
+      </Card>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="rounded-xl bg-[#ECFDF5] px-4 py-3.5 text-[#065F46]">
@@ -238,29 +267,6 @@ export default function ComparePage() {
 
       <Card className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold">{t.calcTitle}</h2>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-ink-muted">สินค้าของร้าน (ดึงต้นทุนจากหน้าสต็อก)</span>
-          <select
-            value={stockProductId}
-            onChange={(e) => {
-              setStockProductId(e.target.value);
-              const picked = products.data?.find((sp) => String(sp.id) === e.target.value);
-              setCost(picked?.unit_cost ? String(Number(picked.unit_cost)) : null);
-            }}
-            className="min-h-[44px] rounded-[10px] border border-line bg-white px-3 text-base text-navy"
-          >
-            <option value="">ใช้ตัวเลขตัวอย่างของ {data.product_name}</option>
-            {(products.data ?? []).map((sp) => (
-              <option key={sp.id} value={sp.id}>
-                {sp.name}
-                {sp.unit_cost ? ` · ต้นทุน ฿${Number(sp.unit_cost)}` : " · ยังไม่มีต้นทุน"}
-              </option>
-            ))}
-          </select>
-          {stockProduct && !stockProduct.unit_cost && (
-            <span className="text-xs text-sun-ink">สินค้านี้ยังไม่มีต้นทุน ใส่เองด้านล่าง หรือตั้งได้ที่หน้าสต็อก (แก้ไข → ต้นทุน/หน่วย)</span>
-          )}
-        </label>
         <div className="grid gap-3 sm:grid-cols-3">
           <NumberField label={t.cost} value={costText} onChange={setCost} />
           <NumberField label={t.sellPrice} value={priceText} onChange={setSellPrice} />
