@@ -690,5 +690,13 @@
     "ctaTitle": "准备好比竞争对手更清楚地看透市场了吗？",
     "openDashboard": "打开 Dashboard",
     "footer": "U-Ledger AI · Future of Finance and Community · U-Hackathon 2026"
+  },
+  "site": {
+    "ledger": "记账",
+    "tax": "税务",
+    "radar": "竞品分析",
+    "pricing": "价格",
+    "faq": "常见问题",
+    "cta": "开始使用"
   }
 }

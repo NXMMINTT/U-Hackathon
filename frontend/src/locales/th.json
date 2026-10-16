@@ -683,5 +683,13 @@
     "ctaTitle": "พร้อมเห็นตลาด ชัดกว่าคู่แข่ง หรือยัง?",
     "openDashboard": "เปิด Dashboard",
     "footer": "U-Ledger AI · Future of Finance and Community · U-Hackathon 2026"
+  },
+  "site": {
+    "ledger": "จดบัญชี",
+    "tax": "ภาษี",
+    "radar": "ส่องคู่แข่ง",
+    "pricing": "ราคา",
+    "faq": "ถามบ่อย",
+    "cta": "เข้าใช้งาน"
   }
 }

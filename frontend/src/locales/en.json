@@ -690,5 +690,13 @@
     "ctaTitle": "Ready to see the market more clearly than your competitors?",
     "openDashboard": "Open Dashboard",
     "footer": "U-Ledger AI · Future of Finance and Community · U-Hackathon 2026"
+  },
+  "site": {
+    "ledger": "Bookkeeping",
+    "tax": "Tax",
+    "radar": "Competitors",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "cta": "Get Started"
   }
 }

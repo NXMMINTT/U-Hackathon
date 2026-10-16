@@ -31,7 +31,7 @@ def _synthesize(text: str) -> bytes:
     if not ELEVENLABS_API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="ELEVENLABS_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งานเสียง U-Bot",
+            detail="ELEVENLABS_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งานเสียง U-Fox",
         )
 
     url = ELEVENLABS_TTS_URL.format(voice_id=ELEVENLABS_VOICE_ID)

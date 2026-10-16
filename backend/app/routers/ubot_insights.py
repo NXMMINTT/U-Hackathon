@@ -2,7 +2,7 @@
 overview (spec 2.2 Dynamic Pricing, 2.3 Actionable AI Insights).
 
 The suggested price starts from a deterministic rule over mock competitor
-prices; Gemini (via U-Bot's KKU client) explains it and may adjust it. If the
+prices; Gemini (via U-Fox's KKU client) explains it and may adjust it. If the
 AI call fails or proposes something unsafe, the rule price and the static
 insights.json are returned instead, so the demo page never breaks.
 """
@@ -112,7 +112,7 @@ def get_insights(product_id: str = "P001", refresh: bool = False) -> InsightsOut
     try:
         result, ttl = _ask_gemini(product_id, price), CACHE_SECONDS
     except (Exception, ValidationError):  # noqa: BLE001 - any AI failure falls back to rules
-        logger.warning("U-Bot insights fell back to rules", exc_info=True)
+        logger.warning("U-Fox insights fell back to rules", exc_info=True)
         result, ttl = _fallback(product_id, price), FALLBACK_CACHE_SECONDS
     _cache[product_id] = (time.monotonic() + ttl, result)
     return result

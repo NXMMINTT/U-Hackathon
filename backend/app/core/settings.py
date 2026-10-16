@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     # Dev/demo only (ignored when LIFF_ID is set): show this LINE user's shop on the dashboard instead of the demo shop.
     dashboard_line_user_id: str = ""
 
-    # KKU IntelSphere (OpenAI-compatible Gemini) — LINE bot parsing and U-Bot
+    # KKU IntelSphere (OpenAI-compatible Gemini) — LINE bot parsing and U-Fox
     kku_base_url: str = "https://gen.ai.kku.ac.th/api/v1"
     kku_api_key: str = ""
     kku_model: str = "gemini-3.5-flash-lite"

@@ -9,7 +9,7 @@ from app.mock_data_loader import competitor_entry, load_json
 
 router = APIRouter(prefix="/api/ubot", tags=["ubot"])
 
-SYSTEM_PROMPT = """คุณคือ U-Bot ผู้ช่วย AI นักวิเคราะห์การตลาดของแอป U-Ledger AI
+SYSTEM_PROMPT = """คุณคือ U-Fox ผู้ช่วย AI นักวิเคราะห์การตลาดของแอป U-Ledger AI
 สำหรับพ่อค้าแม่ค้าออนไลน์ SME ไทย ตอบคำถามเรื่องกำไร รายรับรายจ่าย ภาษี
 และกลยุทธ์ตั้งราคาแข่งกับคู่แข่งบนแพลตฟอร์มต่างๆ โดยใช้ข้อมูลใน CONTEXT ที่ให้มาเท่านั้น
 ตอบเป็นภาษาไทย กระชับ ไม่เกิน 3-4 ประโยค เน้นคำแนะนำที่ลงมือทำได้ทันที (actionable)
@@ -71,7 +71,7 @@ def get_client() -> OpenAI:
     if not GEMINI_API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="KKU_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งาน U-Bot",
+            detail="KKU_API_KEY ยังไม่ได้ตั้งค่า — เพิ่มใน backend/.env ก่อนใช้งาน U-Fox",
         )
     return OpenAI(base_url=GEMINI_BASE_URL, api_key=GEMINI_API_KEY)
 
