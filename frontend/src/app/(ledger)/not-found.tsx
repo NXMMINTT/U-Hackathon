@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { UBot } from "@/components/brand/UBot";
+import { UFox } from "@/components/brand/UFox";
 
 export default function NotFound() {
   return (
@@ -10,13 +10,13 @@ export default function NotFound() {
         <div aria-hidden="true" className="absolute -right-16 -top-16 h-40 w-40 rounded-full border-[18px] border-sun-soft" />
         <div className="relative flex justify-center md:justify-start">
           <div className="absolute bottom-2 h-5 w-36 rounded-[50%] bg-[#DCEBFD] blur-sm" />
-          <UBot pose="question" size={230} className="relative drop-shadow-[0_14px_8px_rgba(21,48,90,.14)]" />
+          <UFox pose="question" size={230} className="relative drop-shadow-[0_14px_8px_rgba(21,48,90,.14)]" />
         </div>
 
         <section className="flex flex-col items-center gap-4 text-center md:items-start md:text-left">
           <span className="rounded-full bg-sun px-4 py-1 text-[13px] font-bold text-[#4A3500]">กำลังพัฒนา</span>
           <div>
-            <p className="m-0 font-hand text-lg font-bold text-brand">U-Bot กำลังประกอบหน้านี้อยู่ค่ะ</p>
+            <p className="m-0 font-hand text-lg font-bold text-brand">U-Fox กำลังประกอบหน้านี้อยู่ค่ะ</p>
             <h1 className="m-0 mt-1 text-[30px] font-extrabold leading-tight text-navy md:text-[38px]">หน้านี้ยังไม่พร้อมใช้งาน</h1>
           </div>
           <p className="m-0 max-w-[430px] text-[16px] leading-relaxed text-ink-body">
