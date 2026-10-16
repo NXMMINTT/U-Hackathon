@@ -20,3 +20,12 @@ export function useTopicScript() {
     mutationFn: (topicId: string) => apiFetch<TopicScript>(`/api/knowledge/topics/${topicId}/script`),
   });
 }
+
+export type TopicAudio = TopicScript & { audio_base64: string; audio_mime: string };
+
+/** On-demand: the briefing read aloud (Gemini + ElevenLabs). Needs voice keys on the server. */
+export function useTopicAudio() {
+  return useMutation({
+    mutationFn: (topicId: string) => apiFetch<TopicAudio>(`/api/knowledge/topics/${topicId}/audio`),
+  });
+}

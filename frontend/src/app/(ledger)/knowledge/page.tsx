@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { UBot } from "@/components/brand/UBot";
-import { useKnowledgeTopics, useTopicScript } from "@/hooks/knowledge/useKnowledge";
+import { useKnowledgeTopics, useTopicAudio, useTopicScript } from "@/hooks/knowledge/useKnowledge";
 import type { KnowledgeTopic } from "@/types/knowledge";
 
 const CATEGORY_STYLE: Record<string, string> = {
@@ -15,11 +15,20 @@ const CATEGORY_STYLE: Record<string, string> = {
 
 function TopicCard({ topic }: { topic: KnowledgeTopic }) {
   const script = useTopicScript();
+  const audio = useTopicAudio();
   const [open, setOpen] = useState(false);
 
   function toggle() {
     setOpen((v) => !v);
     if (!open && !script.data && !script.isPending) script.mutate(topic.topic_id);
+  }
+
+  function play() {
+    audio.mutate(topic.topic_id, {
+      onSuccess: (data) => {
+        new Audio(`data:${data.audio_mime};base64,${data.audio_base64}`).play().catch(() => {});
+      },
+    });
   }
 
   return (
@@ -34,13 +43,21 @@ function TopicCard({ topic }: { topic: KnowledgeTopic }) {
         ))}
       </ul>
 
-      <button
-        type="button"
-        onClick={toggle}
-        className="self-start text-[15px] font-semibold text-brand no-underline"
-      >
-        {open ? "ซ่อนสรุป" : "อ่านสรุปโดย U-Bot ✨"}
-      </button>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <button type="button" onClick={toggle} className="text-[15px] font-semibold text-brand no-underline">
+          {open ? "ซ่อนสรุป" : "อ่านสรุปโดย U-Bot ✨"}
+        </button>
+        <button
+          type="button"
+          onClick={play}
+          disabled={audio.isPending}
+          className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-brand no-underline disabled:opacity-60"
+        >
+          🔊 {audio.isPending ? "กำลังสร้างเสียง…" : "ฟังเสียง U-Bot"}
+        </button>
+      </div>
+
+      {audio.error && <p className="m-0 text-[14px] text-expense">{audio.error.message}</p>}
 
       {open && (
         <div className="rounded-2xl bg-brand-tint px-4 py-3 text-[15px] leading-relaxed text-ink-body">
