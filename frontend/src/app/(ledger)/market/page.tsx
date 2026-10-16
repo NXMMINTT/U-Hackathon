@@ -132,7 +132,7 @@ export default function MarketRadarPage() {
         <InfoCard label="คำค้นยอดฮิต" title="ลูกค้าค้นหาคำว่า" subtitle="ใส่คำที่กำลังมาแรงในชื่อสินค้าหรือโฆษณาได้เลย">
           <ol className="m-0 flex list-none flex-col divide-y divide-line-subtle p-0">
             {topKeywords.map((k) => (
-              <li key={`${k.keyword}-${k.platform}`} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+              <li key={`${k.product_id}-${k.keyword}-${k.platform}`} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
                 <div className="min-w-0">
                   <div className="truncate text-[15px] font-semibold">{k.keyword}</div>
                   <div className="text-sm text-ink-muted">{k.platform}</div>

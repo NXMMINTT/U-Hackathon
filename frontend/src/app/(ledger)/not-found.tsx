@@ -9,7 +9,7 @@ export default function NotFound() {
       <div className="relative grid w-full max-w-[820px] items-center gap-8 overflow-hidden rounded-[32px] border-2 border-sky-line bg-surface px-6 py-8 shadow-[0_18px_50px_rgba(21,48,90,.12)] md:grid-cols-[.9fr_1.1fr] md:px-12 md:py-10">
         <div aria-hidden="true" className="absolute -right-16 -top-16 h-40 w-40 rounded-full border-[18px] border-sun-soft" />
         <div className="relative flex justify-center md:justify-start">
-          <div className="absolute bottom-2 h-5 w-36 rounded-[50%] bg-[#DCEBFD] blur-sm" />
+          <div className="absolute bottom-2 h-5 w-36 rounded-[50%] bg-sky-deep blur-sm" />
           <UFox pose="question" size={230} className="relative drop-shadow-[0_14px_8px_rgba(21,48,90,.14)]" />
         </div>
 

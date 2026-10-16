@@ -20,7 +20,7 @@ export default function Loading() {
       <section className="relative flex w-full max-w-[520px] flex-col items-center gap-5 rounded-[32px] border-2 border-sky-line bg-surface px-6 py-9 text-center shadow-[0_18px_50px_rgba(21,48,90,.12)] md:px-12">
         <span aria-hidden="true" className="absolute -right-8 -top-8 h-20 w-20 rounded-full border-[12px] border-sun-soft" />
         <div className="relative">
-          <div aria-hidden="true" className="absolute bottom-1 left-1/2 h-4 w-32 -translate-x-1/2 rounded-[50%] bg-[#DCEBFD] blur-sm" />
+          <div aria-hidden="true" className="absolute bottom-1 left-1/2 h-4 w-32 -translate-x-1/2 rounded-[50%] bg-sky-deep blur-sm" />
           <UFox pose="happy" size={190} className="relative animate-pulse drop-shadow-[0_14px_8px_rgba(21,48,90,.14)]" />
         </div>
         <div className="flex flex-col gap-1">
