@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import liff from "@line/liff";
 
-import { UBot } from "@/components/brand";
+import { UBot } from "@/components/brand/UBot";
 import { ensureSession, getStoredJwt } from "@/lib/api-client";
 import { ensureLoggedIn, initLiff, isLiffConfigured } from "@/lib/liff";
 
