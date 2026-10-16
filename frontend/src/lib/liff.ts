@@ -35,6 +35,16 @@ export async function getIdToken(): Promise<string | null> {
   return liff.getIDToken();
 }
 
+/** Logs the user out of LINE (LIFF). The caller clears our own session separately. */
+export function liffLogout(): void {
+  if (!LIFF_ID) return;
+  try {
+    if (liff.isLoggedIn()) liff.logout();
+  } catch {
+    /* ignore */
+  }
+}
+
 export type LineProfile = { displayName: string; pictureUrl?: string };
 
 /** The signed-in LINE user's profile, or null outside LIFF / when not logged in. */

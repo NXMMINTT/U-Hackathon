@@ -13,7 +13,7 @@ export function setStoredJwt(token: string): void {
   window.localStorage.setItem(JWT_STORAGE_KEY, token);
 }
 
-function clearStoredJwt(): void {
+export function clearStoredJwt(): void {
   window.localStorage.removeItem(JWT_STORAGE_KEY);
 }
 
