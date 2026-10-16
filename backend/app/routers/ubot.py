@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, HTTPException
 from openai import OpenAI
 from pydantic import BaseModel
@@ -13,6 +15,13 @@ SYSTEM_PROMPT = """คุณคือ U-Bot ผู้ช่วย AI นัก�
 ตอบเป็นภาษาไทย กระชับ ไม่เกิน 3-4 ประโยค เน้นคำแนะนำที่ลงมือทำได้ทันที (actionable)
 ถ้าถามเรื่องภาษี ให้บอกว่าตัวเลขเป็นการประมาณเบื้องต้น ควรตรวจกับผู้สอบบัญชีก่อนยื่นจริง"""
 
+# Keep answers short and stop the model from running up output tokens.
+MAX_ANSWER_TOKENS = 400
+MAX_QUESTION_CHARS = 500
+# Repeated questions reuse the cached answer instead of calling Gemini again.
+CACHE_SECONDS = 600
+_cache: dict[tuple[str, str], tuple[float, str]] = {}
+
 
 class AskRequest(BaseModel):
     question: str
@@ -24,24 +33,32 @@ class AskResponse(BaseModel):
 
 
 def build_context(product_id: str | None) -> str:
+    """A compact context: only the essentials, so each call stays cheap on tokens."""
     products = load_json("products.json")
     tax = load_json("tax-status.json")
     competitor_prices = load_json("competitor-prices.json")
     keywords = load_json("keyword-volume.json")
 
-    product = None
-    if product_id:
-        product = next((p for p in products if p["product_id"] == product_id), None)
+    product = next((p for p in products if p["product_id"] == product_id), None) if product_id else None
+
+    product_list = ", ".join(f"{p.get('name')} (ขาย {p.get('my_selling_price', '-')}฿)" for p in products)
+    # Thai, in-stock competitors only, cheapest first, capped — that's what pricing advice needs.
+    comps = [c for c in competitor_prices["competitors"] if c.get("currency") == "THB" and c.get("price")]
+    comps.sort(key=lambda c: c["price"])
+    comp_list = ", ".join(f"{c['platform']} {c['seller']} {c['price']}฿" for c in comps[:6])
+    top_keywords = ", ".join(
+        f"{k['keyword']} ({k['search_volume']})"
+        for k in sorted(keywords, key=lambda k: k["search_volume"], reverse=True)[:5]
+    )
 
     parts = [
         f"สถานะภาษี: ยอดขายสะสม {tax['cumulative_revenue']} บาท "
         f"({tax['percent_of_threshold']}% ของเพดาน VAT {tax['vat_threshold']} บาท) "
         f"ระดับความเสี่ยง {tax['risk_level']}",
-        f"สินค้าทั้งหมด: {products}",
-        f"ราคาคู่แข่งของสินค้า {competitor_prices['product_name']}: "
-        f"{competitor_prices['competitors']}, ต้นทุนเรา {competitor_prices['my_cost_price']} บาท, "
-        f"ราคาขายเรา {competitor_prices['my_selling_price']} บาท",
-        f"คำค้นหายอดฮิต: {keywords}",
+        f"รายการสินค้า: {product_list}",
+        f"ราคาคู่แข่งไทยของ {competitor_prices['product_name']} (ถูกสุดก่อน): {comp_list} "
+        f"| ต้นทุนเรา {competitor_prices['my_cost_price']}฿ ขายเรา {competitor_prices['my_selling_price']}฿",
+        f"คำค้นยอดฮิต: {top_keywords}",
     ]
     if product:
         parts.insert(1, f"สินค้าที่กำลังคุยถึง: {product}")
@@ -60,20 +77,34 @@ def get_client() -> OpenAI:
 
 @router.post("/ask", response_model=AskResponse)
 def ask(req: AskRequest):
+    question = req.question.strip()
+    if not question:
+        raise HTTPException(status_code=400, detail="กรุณาพิมพ์คำถามครับ")
+    if len(question) > MAX_QUESTION_CHARS:
+        raise HTTPException(status_code=400, detail=f"คำถามยาวเกินไป (จำกัด {MAX_QUESTION_CHARS} ตัวอักษร)")
+
+    cache_key = (req.product_id or "", question.lower())
+    cached = _cache.get(cache_key)
+    if cached and time.monotonic() < cached[0]:
+        return AskResponse(answer=cached[1])
+
     client = get_client()
     context = build_context(req.product_id)
 
     try:
         completion = client.chat.completions.create(
             model=GEMINI_MODEL,
+            max_tokens=MAX_ANSWER_TOKENS,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "system", "content": f"CONTEXT:\n{context}"},
-                {"role": "user", "content": req.question},
+                {"role": "user", "content": question},
             ],
         )
     except Exception as exc:  # noqa: BLE001 - surface upstream error to caller
         raise HTTPException(status_code=502, detail=f"เรียก Gemini ไม่สำเร็จ: {exc}") from exc
 
-    answer = completion.choices[0].message.content or ""
-    return AskResponse(answer=answer.strip())
+    answer = (completion.choices[0].message.content or "").strip()
+    if answer:
+        _cache[cache_key] = (time.monotonic() + CACHE_SECONDS, answer)
+    return AskResponse(answer=answer)
