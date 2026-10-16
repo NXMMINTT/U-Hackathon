@@ -17,7 +17,7 @@ export default function Loading() {
   return (
     <main className="relative flex min-h-[calc(100svh-150px)] items-center justify-center overflow-hidden py-8" aria-busy="true" aria-live="polite">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,200,61,.2),transparent_26%),radial-gradient(circle_at_50%_85%,rgba(37,99,235,.12),transparent_34%)]" />
-      <section className="relative flex w-full max-w-[520px] flex-col items-center gap-5 rounded-[32px] border-2 border-[#C7DEFC] bg-white px-6 py-9 text-center shadow-[0_18px_50px_rgba(21,48,90,.12)] md:px-12">
+      <section className="relative flex w-full max-w-[520px] flex-col items-center gap-5 rounded-[32px] border-2 border-sky-line bg-surface px-6 py-9 text-center shadow-[0_18px_50px_rgba(21,48,90,.12)] md:px-12">
         <span aria-hidden="true" className="absolute -right-8 -top-8 h-20 w-20 rounded-full border-[12px] border-sun-soft" />
         <div className="relative">
           <div aria-hidden="true" className="absolute bottom-1 left-1/2 h-4 w-32 -translate-x-1/2 rounded-[50%] bg-[#DCEBFD] blur-sm" />
@@ -25,7 +25,7 @@ export default function Loading() {
         </div>
         <div className="flex flex-col gap-1">
           <p className="m-0 font-hand text-lg font-bold text-brand">U-Fox กำลังเตรียมข้อมูลให้ค่ะ</p>
-          <h1 className="m-0 text-[25px] font-extrabold leading-tight text-navy">กำลังดาวน์โหลดข้อมูล...</h1>
+          <h1 className="m-0 text-[25px] font-extrabold leading-tight text-ink">กำลังดาวน์โหลดข้อมูล...</h1>
           <p className="m-0 mt-1 text-[15px] text-ink-muted">อีกนิดเดียวก็พร้อมใช้งานแล้วนะคะ</p>
         </div>
         <div
@@ -37,7 +37,7 @@ export default function Loading() {
           aria-valuenow={progress}
           aria-valuetext={`${progress}%`}
         >
-          <div className="h-5 overflow-hidden rounded-full border-2 border-[#C7DEFC] bg-[#F0F7FF] p-0.5">
+          <div className="h-5 overflow-hidden rounded-full border-2 border-sky-line bg-brand-tint p-0.5">
             <div
               className="h-full rounded-full bg-gradient-to-r from-[#16C9E8] via-brand to-[#2563EB] transition-[width] duration-75"
               style={{ width: `${progress}%` }}

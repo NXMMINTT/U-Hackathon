@@ -8,8 +8,10 @@ export function TextEntryScreen() {
     <ChatShell>
       <UserBubble>ขายน้ำพริก 20 กระปุก 1780</UserBubble>
       <ConfirmCard
-        title="จดให้แล้ว ถูกไหมคะ?"
-        rows={[["ประเภท", <span key="t" className="text-income">รายรับ</span>], ["ยอด", "฿1,780"], ["สินค้า", "น้ำพริก ×20"]]}
+        kind="income"
+        amount="1,780.00"
+        quote="ขายน้ำพริก 20 กระปุก 1780"
+        rows={[["category", "หมวดหมู่", "ขายสินค้า"], ["note", "รายการ", "น้ำพริก ×20"]]}
       />
       <SavedReply>ตัดสต็อกน้ำพริก เหลือ 120</SavedReply>
     </ChatShell>

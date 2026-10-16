@@ -24,7 +24,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       aria-pressed={active}
       onClick={onClick}
       className={`min-h-[40px] flex-none whitespace-nowrap rounded-full border px-4 text-[15px] ${
-        active ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+        active ? "border-brand bg-brand font-semibold text-white" : "border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
       }`}
     >
       {children}
@@ -46,7 +46,7 @@ function TrendsView() {
 
   useEffect(() => setPicked(loadPickedPlatforms()), []);
 
-  if (catalog.error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{catalog.error.message}</Card>;
+  if (catalog.error) return <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{catalog.error.message}</Card>;
   if (!catalog.data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
   const { categories, products } = catalog.data;
@@ -120,7 +120,7 @@ function TrendsView() {
               onChange={(e) => setQ(e.target.value)}
               placeholder={t.searchPlaceholder}
               aria-label={t.searchPlaceholder}
-              className="min-h-[54px] w-full rounded-full border-2 border-[#C7DEFC] bg-white px-6 pr-24 text-[17px] shadow-[0_10px_24px_rgba(26,111,214,.08)] focus:border-brand"
+              className="min-h-[54px] w-full rounded-full border-2 border-sky-line bg-surface px-6 pr-24 text-[17px] shadow-[0_10px_24px_rgba(26,111,214,.08)] focus:border-brand"
             />
             {q && (
               <button
@@ -148,7 +148,7 @@ function TrendsView() {
               // <select> is as wide as its longest option) and still opens the native picker.
               <label
                 className={`relative inline-flex min-h-[40px] flex-none items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[15px] ${
-                  moreActive ? "border-brand bg-brand font-semibold text-white" : "border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                  moreActive ? "border-brand bg-brand font-semibold text-white" : "border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
                 }`}
               >
                 <span className="max-w-[180px] truncate">{moreActive ? moreActive.name : `อื่น ๆ (+${morePlatforms.length})`}</span>
@@ -183,7 +183,7 @@ function TrendsView() {
             <p className="text-sm text-ink-muted">{t.noResults}</p>
           ) : (
             results.map((r) => (
-              <Link key={r.key} href={r.href} className="flex items-center gap-3 rounded-[10px] px-2 py-2 hover:bg-[#F5F7FA]">
+              <Link key={r.key} href={r.href} className="flex items-center gap-3 rounded-[10px] px-2 py-2 hover:bg-line-subtle">
                 <CategoryThumb categoryId={r.cat.category_id} path={r.cat.icon_path} />
                 <span className="min-w-0">
                   <span className="block truncate font-semibold">{r.name}</span>
@@ -204,7 +204,7 @@ function TrendsView() {
               key={c.category_id}
               type="button"
               onClick={() => router.push(`/market/trends?cat=${c.category_id}`)}
-              className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-white p-4 text-center text-sm font-medium hover:border-brand"
+              className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface p-4 text-center text-sm font-medium hover:border-brand"
             >
               <CategoryThumb categoryId={c.category_id} path={c.icon_path} size={52} />
               {c.name}
@@ -240,7 +240,7 @@ function TrendsView() {
                   <li key={p.product_id} className="border-t border-line-subtle first:border-t-0">
                     <Link
                       href={`/market/products/${p.product_id}`}
-                      className="flex flex-wrap items-center gap-3 py-3 hover:bg-[#F8FAFC]"
+                      className="flex flex-wrap items-center gap-3 py-3 hover:bg-line-subtle"
                     >
                       <span className="w-6 text-center text-lg font-bold text-ink-faint">{i + 1}</span>
                       <CategoryThumb categoryId={p.category_id} path={category.icon_path} />
@@ -335,18 +335,18 @@ function ForecastOverview({
     { label: t.summaryTotal, value: products.length },
   ];
 
-  const statusTone: Record<string, string> = { hot: "text-expense", rising: "text-brand", stable: "text-[#0F9D58]" };
+  const statusTone: Record<string, string> = { hot: "text-expense", rising: "text-brand", stable: "text-success-ink" };
   void statusTone;
 
   return (
     <div className="flex flex-col gap-5">
       {/* hero */}
       <div className="flex items-center gap-4">
-        <span aria-hidden="true" className="grid h-14 w-14 flex-none place-items-center rounded-full bg-[#FFF1E6] text-[28px] leading-none">
+        <span aria-hidden="true" className="grid h-14 w-14 flex-none place-items-center rounded-full bg-[#FFF1E6] dark:bg-[#431407] text-[28px] leading-none">
           🔥
         </span>
         <div>
-          <h2 className="m-0 text-2xl font-bold leading-tight text-navy md:text-[28px]">{t.forecastTitle}</h2>
+          <h2 className="m-0 text-2xl font-bold leading-tight text-ink md:text-[28px]">{t.forecastTitle}</h2>
           <p className="m-0 mt-1 text-[15px] text-ink-muted">{t.forecastSub}</p>
         </div>
       </div>
@@ -354,9 +354,9 @@ function ForecastOverview({
       {/* how many products sit in each trend bucket */}
       <dl className="m-0 grid grid-cols-3 gap-3">
         {summary.map((s) => (
-          <div key={s.label} className="rounded-[20px] bg-white px-4 py-4 shadow-[0_4px_16px_rgba(26,111,214,.06)] md:px-5">
+          <div key={s.label} className="rounded-[20px] bg-surface px-4 py-4 shadow-[0_4px_16px_rgba(26,111,214,.06)] md:px-5">
             <dt className="text-[15px] text-ink-muted">{s.label}</dt>
-            <dd className="m-0 text-[26px] font-bold leading-tight text-navy">
+            <dd className="m-0 text-[26px] font-bold leading-tight text-ink">
               {s.value.toLocaleString("en-US")} <span className="text-[15px] font-normal text-ink-muted">{t.productsUnit}</span>
             </dd>
           </div>
@@ -404,7 +404,7 @@ function TrendCard({
   const max = ps.length ? Math.max(...ps) : p.base_price;
 
   return (
-    <div className="flex flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_16px_rgba(26,111,214,.06)]">
+    <div className="flex flex-col rounded-[22px] bg-surface p-5 shadow-[0_4px_16px_rgba(26,111,214,.06)]">
       {/* header: rank + status badge */}
       <div className="flex items-center gap-2.5">
         <span className={`grid h-9 w-9 flex-none place-items-center rounded-full text-[16px] font-bold text-white ${tone.rank}`}>{rank}</span>
@@ -421,7 +421,7 @@ function TrendCard({
         <div className="min-w-0 flex-1">
           <Link
             href={`/market/products/${p.product_id}`}
-            className="block text-[22px] font-bold leading-tight text-navy no-underline hover:text-brand hover:underline"
+            className="block text-[22px] font-bold leading-tight text-ink no-underline hover:text-brand hover:underline"
           >
             {p.name}
           </Link>
@@ -464,12 +464,12 @@ function TrendCard({
       </div>
 
       {/* mini stats */}
-      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-[#F7FAFD] p-2.5">
+      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-brand-tint p-2.5">
         <MiniStat label={t.miniStart} value={baht(min)} />
         <MiniStat label={t.miniRange} value={`${baht(min)} – ${baht(max)}`} />
-        <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-[#E6F7EE] px-2 py-2 text-center">
-          <span className="truncate text-[12px] leading-tight text-[#0F6B42]">แนวโน้ม</span>
-          <b className="whitespace-nowrap text-[15px] leading-tight text-[#0F9D58]">
+        <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-success-soft px-2 py-2 text-center">
+          <span className="truncate text-[12px] leading-tight text-success-ink">แนวโน้ม</span>
+          <b className="whitespace-nowrap text-[15px] leading-tight text-success-ink">
             {status === "hot" ? "⤴ เพิ่มขึ้น" : status === "rising" ? "↑ เพิ่มขึ้น" : "→ ทรงตัว"}
           </b>
         </div>
@@ -480,9 +480,9 @@ function TrendCard({
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-white px-2 py-2 text-center">
+    <div className="flex flex-col items-center justify-center gap-0.5 rounded-xl bg-surface px-2 py-2 text-center">
       <span className="truncate text-[12px] leading-tight text-ink-muted">{label}</span>
-      <b className="whitespace-nowrap text-[15px] leading-tight text-navy">{value}</b>
+      <b className="whitespace-nowrap text-[15px] leading-tight text-ink">{value}</b>
     </div>
   );
 }
@@ -551,7 +551,7 @@ function PriceChart({
 
       {/* horizontal subtle gridlines */}
       {yTicks.map((v) => (
-        <line key={v} x1={padL} x2={w - 6} y1={y(v)} y2={y(v)} stroke="#F0F4F8" strokeWidth="1" />
+        <line key={v} x1={padL} x2={w - 6} y1={y(v)} y2={y(v)} stroke="rgb(var(--line-subtle))" strokeWidth="1" />
       ))}
 
       {/* Y axis labels */}

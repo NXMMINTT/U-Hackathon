@@ -31,7 +31,7 @@ export function TransactionList() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="m-0 text-2xl font-bold md:text-[30px]">{th.transactions.title}</h1>
         <div className="flex gap-2">
-          <Link href="/transactions?mode=income" className="inline-flex min-h-[40px] items-center rounded-full bg-income px-4 text-sm font-bold text-white no-underline">
+          <Link href="/transactions?mode=income" className="inline-flex min-h-[40px] items-center rounded-full bg-income-solid px-4 text-sm font-bold text-white no-underline">
             + รายรับ
           </Link>
           <Link href="/transactions?mode=expense" className="inline-flex min-h-[40px] items-center rounded-full bg-[#FF4081] px-4 text-sm font-bold text-white no-underline">
@@ -39,8 +39,8 @@ export function TransactionList() {
           </Link>
         </div>
       </div>
-      {error && <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>}
-      {actionError && <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{actionError.message}</Card>}
+      {error && <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{error.message}</Card>}
+      {actionError && <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{actionError.message}</Card>}
       {isLoading && <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>}
       {data?.length === 0 && <Card className="text-center text-sm text-ink-muted">{th.transactions.empty}</Card>}
 

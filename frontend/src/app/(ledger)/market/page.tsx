@@ -33,8 +33,8 @@ export default function MarketRadarPage() {
   const sponsors = useSponsors(productId);
   const sponsorClick = useRecordSponsorClick();
 
-  if (prices.error) return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อมูลตลาดไม่สำเร็จ: {prices.error.message}</p>;
-  if (!prices.data) return <p className="rounded-3xl bg-white p-6 text-center text-ink-muted">กำลังโหลดข้อมูลตลาด…</p>;
+  if (prices.error) return <p className="rounded-3xl bg-danger-soft p-6 text-expense">โหลดข้อมูลตลาดไม่สำเร็จ: {prices.error.message}</p>;
+  if (!prices.data) return <p className="rounded-3xl bg-surface p-6 text-center text-ink-muted">กำลังโหลดข้อมูลตลาด…</p>;
 
   const p = prices.data;
   const suggested = ubot.data?.suggested_price;
@@ -61,7 +61,7 @@ export default function MarketRadarPage() {
                   aria-pressed={active}
                   onClick={() => setPicked(item.product_id)}
                   className={`inline-flex min-h-[40px] flex-none items-center whitespace-nowrap rounded-full px-4 text-[15px] ${
-                    active ? "bg-brand font-semibold text-white" : "border border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                    active ? "bg-brand font-semibold text-white" : "border border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
                   }`}
                 >
                   {item.product_name}
@@ -102,7 +102,7 @@ export default function MarketRadarPage() {
           )}
         </div>
         {suggested !== undefined && (
-          <div className="flex flex-col items-center gap-1 rounded-[22px] bg-white px-6 py-4">
+          <div className="flex flex-col items-center gap-1 rounded-[22px] bg-surface px-6 py-4">
             <div className="text-sm text-ink-muted">ราคาแนะนำ</div>
             <div className="text-[30px] font-bold leading-tight text-brand">{formatBaht(suggested)}</div>
             <div className="text-sm text-ink-muted">กำไร {formatBaht(suggested - p.my_cost_price)} ต่อชิ้น</div>
@@ -138,7 +138,7 @@ export default function MarketRadarPage() {
                   <div className="text-sm text-ink-muted">{k.platform}</div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  {k.trend === "up" && <span className="rounded-full bg-[#E6F7EE] px-2 py-0.5 text-xs font-bold text-[#0F6B42]">มาแรง</span>}
+                  {k.trend === "up" && <span className="rounded-full bg-success-soft px-2 py-0.5 text-xs font-bold text-success-ink">มาแรง</span>}
                   <span className="w-14 text-right text-[15px] tabular-nums text-ink-body">{(k.search_volume / 1000).toFixed(1)}k</span>
                 </div>
               </li>
@@ -151,12 +151,12 @@ export default function MarketRadarPage() {
             <dl className="m-0 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-brand-tint px-4 py-3">
                 <dt className="text-sm text-ink-muted">ราคาปลีก</dt>
-                <dd className="m-0 text-xl font-bold text-navy">€{euItem.eu_market.avg_retail_price_eur.toFixed(2)}</dd>
+                <dd className="m-0 text-xl font-bold text-ink">€{euItem.eu_market.avg_retail_price_eur.toFixed(2)}</dd>
                 <dd className="m-0 text-sm text-ink-muted">≈ {formatBaht(euItem.eu_market.avg_retail_price_eur * EUR_TO_THB)}</dd>
               </div>
               <div className="rounded-2xl bg-brand-tint px-4 py-3">
                 <dt className="text-sm text-ink-muted">ราคาส่งแนะนำ</dt>
-                <dd className="m-0 text-xl font-bold text-navy">€{euItem.eu_market.suggested_wholesale_price_eur.toFixed(2)}</dd>
+                <dd className="m-0 text-xl font-bold text-ink">€{euItem.eu_market.suggested_wholesale_price_eur.toFixed(2)}</dd>
                 <dd className="m-0 text-sm text-ink-muted">≈ {formatBaht(euItem.eu_market.suggested_wholesale_price_eur * EUR_TO_THB)}</dd>
               </div>
             </dl>
@@ -165,7 +165,7 @@ export default function MarketRadarPage() {
                 <span>ความต้องการตลาด</span>
                 <b className="tabular-nums">{euItem.eu_market.demand_score}/100</b>
               </div>
-              <div className="h-2 rounded-full bg-[#E6F7EE]">
+              <div className="h-2 rounded-full bg-success-soft">
                 <div className="h-full rounded-full bg-[#22B862]" style={{ width: `${euItem.eu_market.demand_score}%` }} />
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function MarketRadarPage() {
       </div>
 
       {sponsor && (
-        <section aria-label="ผู้สนับสนุน" className="flex flex-col gap-4 rounded-[28px] border-2 border-[#FFE7A3] bg-white p-6 md:flex-row md:items-center md:gap-6">
+        <section aria-label="ผู้สนับสนุน" className="flex flex-col gap-4 rounded-[28px] border-2 border-[#FFE7A3] dark:border-sun/30 bg-surface p-6 md:flex-row md:items-center md:gap-6">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-sun-soft px-3 py-0.5 text-[13px] font-bold text-sun-ink">ผู้สนับสนุน</span>
@@ -187,14 +187,14 @@ export default function MarketRadarPage() {
             <p className="m-0 line-clamp-2 text-[15px] text-ink-muted">{sponsor.description}</p>
           </div>
           <div className="flex shrink-0 flex-col gap-3 md:items-end">
-            <div className="text-xl font-bold text-navy">
+            <div className="text-xl font-bold text-ink">
               {formatBaht(sponsor.price)}
               <span className="text-[15px] font-normal text-ink-muted">/{sponsor.unit}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/market/sponsors"
-                className="inline-flex min-h-[44px] items-center rounded-full border border-line bg-white px-4 font-semibold text-ink-body no-underline hover:border-brand hover:text-brand"
+                className="inline-flex min-h-[44px] items-center rounded-full border border-line bg-surface px-4 font-semibold text-ink-body no-underline hover:border-brand hover:text-brand"
               >
                 ดูข้อเสนอทั้งหมด
               </Link>
@@ -215,7 +215,7 @@ export default function MarketRadarPage() {
 
 function InfoCard({ label, title, subtitle, children }: { label: string; title: string; subtitle: string; children: React.ReactNode }) {
   return (
-    <section aria-label={label} className="flex flex-col gap-4 rounded-[28px] bg-white p-6">
+    <section aria-label={label} className="flex flex-col gap-4 rounded-[28px] bg-surface p-6">
       <div>
         <h2 className="m-0 text-xl font-semibold">{title}</h2>
         <p className="m-0 text-[15px] text-ink-muted">{subtitle}</p>
@@ -248,7 +248,7 @@ function PriceStrip({ prices: p, suggested }: { prices: CompetitorPrices; sugges
   const pricier = diffFromMine.filter((c) => c.diff >= 0).sort((a, b) => b.price - a.price);
 
   return (
-    <section aria-label="ราคาคู่แข่ง" className="flex flex-col gap-5 rounded-[28px] bg-white p-6 md:p-8">
+    <section aria-label="ราคาคู่แข่ง" className="flex flex-col gap-5 rounded-[28px] bg-surface p-6 md:p-8">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="m-0 text-[22px] font-semibold">คู่แข่งขายเท่าไหร่</h2>
         <span className="text-[15px] text-ink-muted">
@@ -287,13 +287,13 @@ function PriceStrip({ prices: p, suggested }: { prices: CompetitorPrices; sugges
 function SummaryCard({ icon, label, value, sub, accent }: { icon: React.ReactNode; label: string; value: string; sub?: string; accent?: boolean }) {
   return (
     <div className="flex items-center gap-3 rounded-[20px] bg-brand-soft/60 px-4 py-4">
-      <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white text-brand">
+      <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-surface text-brand">
         {icon}
       </span>
       <div className="min-w-0">
         <div className="text-[15px] text-ink-muted">{label}</div>
-        <div className={`text-[24px] font-bold leading-tight ${accent ? "text-brand" : "text-navy"}`}>{value}</div>
-        {sub && <div className={`text-sm font-semibold ${sub.startsWith("-") ? "text-expense" : "text-[#0F6B42]"}`}>{sub}</div>}
+        <div className={`text-[24px] font-bold leading-tight ${accent ? "text-brand" : "text-ink"}`}>{value}</div>
+        {sub && <div className={`text-sm font-semibold ${sub.startsWith("-") ? "text-expense" : "text-success-ink"}`}>{sub}</div>}
       </div>
     </div>
   );
@@ -399,7 +399,7 @@ function PriceBarChart({
         </span>
         {suggested !== undefined && (
           <span className="flex items-center gap-2">
-            <span aria-hidden="true" className="h-3 w-5 rounded-sm bg-[#DCEBFF]" />
+            <span aria-hidden="true" className="h-3 w-5 rounded-sm bg-brand-light/25" />
             ราคาแนะนำ {formatBaht(suggested)}
           </span>
         )}
@@ -423,7 +423,7 @@ function PriceBarChart({
             <div key={t} className="absolute inset-x-0 border-t border-line-subtle" style={{ bottom: h(t) }} />
           ))}
           {suggested !== undefined && (
-            <div className="absolute inset-x-0 bg-[#DCEBFF]/80" style={{ bottom: h(suggested) - bandHalf, height: bandHalf * 2 }} />
+            <div className="absolute inset-x-0 bg-brand-light/25" style={{ bottom: h(suggested) - bandHalf, height: bandHalf * 2 }} />
           )}
           <div className="absolute inset-0 flex items-end gap-1.5 px-1">
             {bars.map((b) => (
@@ -432,9 +432,9 @@ function PriceBarChart({
                 className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1"
                 title={`${b.name}${b.seller ? ` ${b.seller}` : ""} ${formatBaht(b.price)}${b.stock === IN_STOCK ? "" : " (ของหมด)"}`}
               >
-                <span className={`text-[15px] font-bold ${b.mine ? "text-navy" : b.stock === IN_STOCK ? "text-ink-body" : "text-ink-muted"}`}>{formatBaht(b.price)}</span>
+                <span className={`text-[15px] font-bold ${b.mine ? "text-ink" : b.stock === IN_STOCK ? "text-ink-body" : "text-ink-muted"}`}>{formatBaht(b.price)}</span>
                 <div
-                  className={`w-full max-w-[58px] rounded-t-xl transition-[height] ${barColor(b.index, total, b.stock, b.mine)} ${b.mine ? "ring-2 ring-brand ring-offset-2 ring-offset-white" : ""}`}
+                  className={`w-full max-w-[58px] rounded-t-xl transition-[height] ${barColor(b.index, total, b.stock, b.mine)} ${b.mine ? "ring-2 ring-brand ring-offset-2 ring-offset-surface" : ""}`}
                   style={{ height: Math.max(h(b.price), 6) }}
                 />
               </div>
@@ -471,7 +471,7 @@ function CompareTable({
 }) {
   if (rows.length === 0) return null;
   return (
-    <div className="rounded-[18px] bg-white p-4">
+    <div className="rounded-[18px] bg-surface p-4">
       <div className="mb-2 grid grid-cols-[minmax(0,1fr)_72px_168px] gap-x-4 text-[15px] font-semibold text-ink-muted">
         <span className="flex items-center gap-2">
           <span aria-hidden="true" className="h-8 w-8 shrink-0" />
@@ -489,11 +489,11 @@ function CompareTable({
               {c.stock !== IN_STOCK && <span className="text-[13px] text-ink-muted">ของหมด</span>}
             </span>
             <b className="text-right tabular-nums">{formatBaht(c.price)}</b>
-            <b className={`text-center tabular-nums ${c.diff < 0 ? "text-expense" : "text-[#0F6B42]"}`}>{c.diff > 0 ? `+${c.diff}` : c.diff}</b>
+            <b className={`text-center tabular-nums ${c.diff < 0 ? "text-expense" : "text-success-ink"}`}>{c.diff > 0 ? `+${c.diff}` : c.diff}</b>
           </li>
         ))}
         <li className="grid grid-cols-[minmax(0,1fr)_72px_168px] items-center gap-x-4 bg-brand-soft/50 py-2.5 pl-2">
-          <span className="flex items-center gap-3 font-bold text-navy">
+          <span className="flex items-center gap-3 font-bold text-ink">
             <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-navy text-[13px] font-bold text-white">คุณ</span>
             ร้านคุณ
           </span>
@@ -531,7 +531,7 @@ function PlatformLogo({
       // eslint-disable-next-line @next/next/no-img-element
       <img src={src} alt="" aria-hidden="true" className="h-8 w-8 flex-none rounded-[10px] border border-line bg-white object-contain p-1" />
     ) : (
-      <span aria-hidden="true" className="grid h-8 w-8 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-sm font-bold text-brand">
+      <span aria-hidden="true" className="grid h-8 w-8 flex-none place-items-center rounded-[10px] bg-brand-soft text-sm font-bold text-brand">
         {name.charAt(0).toUpperCase()}
       </span>
     );

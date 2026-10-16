@@ -13,7 +13,7 @@ export function PendingCard({ pending }: { pending: TransactionItem[] }) {
   const first = pending[0];
 
   return (
-    <section aria-label="รอยืนยัน" className="flex flex-col gap-4 rounded-[28px] bg-white p-7">
+    <section aria-label="รอยืนยัน" className="flex flex-col gap-4 rounded-[28px] bg-surface p-7">
       <div className="flex items-center justify-between gap-3">
         <h2 className="m-0 text-[21px] font-semibold">รอคุณยืนยัน{pending.length > 1 ? ` (${pending.length})` : ""}</h2>
         <Link href="/transactions" className="text-[15px] font-semibold no-underline">
@@ -39,7 +39,7 @@ export function PendingCard({ pending }: { pending: TransactionItem[] }) {
             </button>
             <Link
               href={`/transactions?edit=${first.id}`}
-              className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border-2 border-[#C7DEFC] bg-white font-semibold text-ink no-underline"
+              className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border-2 border-sky-line bg-surface font-semibold text-ink no-underline"
             >
               แก้ไข
             </Link>

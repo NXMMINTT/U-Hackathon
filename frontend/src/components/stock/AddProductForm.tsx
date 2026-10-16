@@ -25,7 +25,7 @@ export function AddProductForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form
-      className="flex flex-col gap-4 rounded-[28px] border-2 border-brand bg-white p-6"
+      className="flex flex-col gap-4 rounded-[28px] border-2 border-brand bg-surface p-6"
       onSubmit={async (e) => {
         e.preventDefault();
         const product = await create.mutateAsync({
@@ -38,7 +38,7 @@ export function AddProductForm({ onDone }: { onDone: () => void }) {
         onDone();
       }}
     >
-      <h2 className="m-0 text-[18px] font-bold text-navy">เพิ่มสินค้าใหม่</h2>
+      <h2 className="m-0 text-[18px] font-bold text-ink">เพิ่มสินค้าใหม่</h2>
       <ProductImagePicker src={preview} onPick={setPhoto} onRemove={() => setPhoto(null)} />
       <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
         <label className="flex flex-col gap-1.5 text-[14px] font-bold text-ink">
@@ -61,10 +61,10 @@ export function AddProductForm({ onDone }: { onDone: () => void }) {
         </label>
       </div>
       {(create.error ?? uploadImage.error) && (
-        <p className="m-0 rounded-xl bg-[#FEF2F2] px-4 py-3 text-sm text-expense">{(create.error ?? uploadImage.error)?.message}</p>
+        <p className="m-0 rounded-xl bg-danger-soft px-4 py-3 text-sm text-expense">{(create.error ?? uploadImage.error)?.message}</p>
       )}
       <div className="flex gap-2.5">
-        <button type="button" onClick={onDone} className="min-h-[46px] rounded-full border-2 border-[#C7DEFC] px-6 font-bold text-ink-body">
+        <button type="button" onClick={onDone} className="min-h-[46px] rounded-full border-2 border-sky-line px-6 font-bold text-ink-body">
           ยกเลิก
         </button>
         <button type="submit" disabled={create.isPending || uploadImage.isPending || !name.trim()} className="min-h-[46px] rounded-full bg-brand px-6 font-bold text-white disabled:opacity-50">

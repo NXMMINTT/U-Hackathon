@@ -64,7 +64,7 @@ function SpeakButton({ text }: { text: string }) {
         <LineIcon name={state === "playing" ? "pause" : "speaker"} size={16} />
         {state === "loading" ? t.voiceLoading : state === "playing" ? t.stop : t.listen}
       </button>
-      {state === "error" && <span className="text-xs text-[#991B1B]">{error}</span>}
+      {state === "error" && <span className="text-xs text-danger-ink">{error}</span>}
     </div>
   );
 }
@@ -123,7 +123,7 @@ export default function UFoxChatPage() {
                 <UFoxFace size={34} />
                 <div
                   className={`whitespace-pre-wrap rounded-[20px] rounded-bl-md px-4 py-2.5 leading-relaxed ${
-                    m.role === "error" ? "bg-[#FDECEC] text-expense" : "bg-white text-ink"
+                    m.role === "error" ? "bg-danger-soft text-expense" : "bg-surface text-ink"
                   }`}
                 >
                   {m.role === "bot" ? (
@@ -141,7 +141,7 @@ export default function UFoxChatPage() {
           {ask.isPending && (
             <div className="flex items-end gap-2.5 self-start" aria-label={t.thinking}>
               <UFoxFace size={34} />
-              <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4">
+              <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-surface px-5 py-4">
                 {[0, 150, 300].map((d) => (
                   <span key={d} className="h-2 w-2 animate-typing rounded-full bg-brand-light" style={{ animationDelay: `${d}ms` }} />
                 ))}
@@ -158,7 +158,7 @@ export default function UFoxChatPage() {
               type="button"
               onClick={() => send(s)}
               disabled={ask.isPending}
-              className="inline-flex min-h-[44px] items-center rounded-full border-2 border-[#C7DEFC] bg-white px-4 text-[15px] font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+              className="inline-flex min-h-[44px] items-center rounded-full border-2 border-sky-line bg-surface px-4 text-[15px] font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
             >
               {s}
             </button>
@@ -177,7 +177,7 @@ export default function UFoxChatPage() {
             onChange={(e) => setDraft(e.target.value)}
             placeholder={t.placeholder}
             aria-label={t.placeholder}
-            className="min-h-[50px] min-w-0 flex-1 rounded-full border-2 border-[#C7DEFC] px-5 text-[17px] focus:border-brand"
+            className="min-h-[50px] min-w-0 flex-1 rounded-full border-2 border-sky-line px-5 text-[17px] focus:border-brand"
           />
           <button
             type="submit"

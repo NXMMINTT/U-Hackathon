@@ -6,9 +6,9 @@ export function Badge({
   tone?: "success" | "warning" | "danger" | "info" | "neutral";
 }) {
   const toneClasses = {
-    success: "bg-[#E6F7EE] text-[#0F6B42]",
+    success: "bg-success-soft text-success-ink",
     warning: "bg-sun-soft text-sun-ink",
-    danger: "bg-[#FDECEC] text-expense",
+    danger: "bg-danger-soft text-expense",
     info: "bg-brand-soft text-brand",
     neutral: "bg-line-subtle text-ink-body",
   }[tone];

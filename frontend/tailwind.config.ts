@@ -1,44 +1,58 @@
 import type { Config } from "tailwindcss";
 
 // U-Fox brand palette (team brand sheet): #0B1F4D · #2563EB · #60A5FA · #E0F2FE · #FFFFFF
+// Colors that change in dark mode read a CSS variable set in globals.css (:root = light, html.dark = dark),
+// so every utility — including opacity variants like bg-brand-soft/60 — switches together.
+const themed = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
   darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
+        // Card / panel background. Use bg-white only for things that must stay white (logo tiles).
+        surface: themed("surface"),
         navy: "#0B1F4D",
         brand: {
           DEFAULT: "#2563EB",
           dark: "#1D4ED8",
           light: "#60A5FA",
-          soft: "#E8F2FE",
-          tint: "#F4F9FF",
+          soft: themed("brand-soft"),
+          tint: themed("brand-tint"),
         },
         sky: {
-          DEFAULT: "#EEF6FF",
-          deep: "#E0F2FE",
-          line: "#BBD8FB",
+          DEFAULT: themed("sky"),
+          deep: themed("sky-deep"),
+          line: themed("sky-line"),
         },
         ink: {
-          DEFAULT: "#0B1F4D",
-          body: "#36486E",
-          muted: "#4A5B80",
-          faint: "#7D8DAD",
+          DEFAULT: themed("ink"),
+          body: themed("ink-body"),
+          muted: themed("ink-muted"),
+          faint: themed("ink-faint"),
         },
         line: {
-          DEFAULT: "#E6EEF9",
-          subtle: "#F1F5FB",
+          DEFAULT: themed("line"),
+          subtle: themed("line-subtle"),
         },
         sun: {
           DEFAULT: "#FFC83D",
-          soft: "#FFF4D1",
-          ink: "#7A5200",
+          soft: themed("sun-soft"),
+          ink: themed("sun-ink"),
         },
         chat: "#9BE07A",
         linegreen: "#06C755",
-        income: "#12804F",
-        expense: "#B42318",
+        // DEFAULT is for text on surfaces; solid is a button/badge fill under white text.
+        income: { DEFAULT: themed("income"), solid: "#12804F" },
+        expense: { DEFAULT: themed("expense"), solid: "#B42318" },
+        // Status tiles: soft = background, line = border / icon chip, ink = text on soft.
+        success: { soft: themed("success-soft"), line: themed("success-line"), ink: themed("success-ink") },
+        danger: { soft: themed("danger-soft"), line: themed("danger-line"), ink: themed("danger-ink") },
+      },
+      // Brand blue is too dark to read as text on dark surfaces, but bg-brand buttons keep it.
+      textColor: {
+        brand: { DEFAULT: themed("brand-fg") },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

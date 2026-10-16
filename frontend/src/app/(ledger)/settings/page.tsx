@@ -12,7 +12,7 @@ import { useI18n, LOCALE_LABELS, type Locale } from "@/lib/i18n";
 import { useTheme, type ThemeMode } from "@/lib/theme";
 import type { BusinessInfo } from "@/types/dashboard";
 
-const inputClass = "min-h-[48px] w-full rounded-xl border border-line bg-white px-4 text-[15px] text-ink";
+const inputClass = "min-h-[48px] w-full rounded-xl border border-line bg-surface px-4 text-[15px] text-ink";
 
 function ShopForm({ business }: { business: BusinessInfo }) {
   const update = useUpdateBusiness();
@@ -44,7 +44,7 @@ function ShopForm({ business }: { business: BusinessInfo }) {
           className={inputClass}
         />
       </label>
-      {update.error && <p className="m-0 rounded-xl bg-[#FEF2F2] px-4 py-3 text-sm text-expense">{update.error.message}</p>}
+      {update.error && <p className="m-0 rounded-xl bg-danger-soft px-4 py-3 text-sm text-expense">{update.error.message}</p>}
       {update.isSuccess && !changed && <p className="m-0 text-sm text-income">{tr("settings.saved")}</p>}
       <button
         type="submit"
@@ -69,18 +69,18 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#E0F2FE] to-[#F0F7FF] px-6 py-5">
+      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-sky-deep to-brand-tint px-6 py-5">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
-            <h1 className="m-0 text-[22px] font-bold text-navy">{tr("settings.title")}</h1>
+            <h1 className="m-0 text-[22px] font-bold text-ink">{tr("settings.title")}</h1>
             <p className="m-0 mt-1 text-[14px] text-ink-muted">{tr("settings.subtitle")}</p>
           </div>
           <UFox size={80} pose="proud" className="shrink-0" />
         </div>
       </section>
 
-      <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <h2 className="m-0 mb-4 text-[18px] font-bold text-navy">{tr("settings.appearance")}</h2>
+      <section className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+        <h2 className="m-0 mb-4 text-[18px] font-bold text-ink">{tr("settings.appearance")}</h2>
 
         <div className="flex flex-col gap-5">
           <div>
@@ -92,7 +92,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={() => setLocale(l)}
                   className={`min-h-[40px] rounded-full px-5 text-[14px] font-semibold ${
-                    locale === l ? "bg-brand text-white" : "border-2 border-[#C7DEFC] bg-white text-ink-body"
+                    locale === l ? "bg-brand text-white" : "border-2 border-sky-line bg-surface text-ink-body"
                   }`}
                 >
                   {LOCALE_LABELS[l]}
@@ -110,7 +110,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={() => setMode(m)}
                   className={`min-h-[40px] rounded-full px-5 text-[14px] font-semibold ${
-                    mode === m ? "bg-brand text-white" : "border-2 border-[#C7DEFC] bg-white text-ink-body"
+                    mode === m ? "bg-brand text-white" : "border-2 border-sky-line bg-surface text-ink-body"
                   }`}
                 >
                   {m === "light" ? `☀️ ${tr("settings.themeLight")}` : m === "dark" ? `🌙 ${tr("settings.themeDark")}` : `🖥 ${tr("settings.themeSystem")}`}
@@ -121,15 +121,15 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <h2 className="m-0 mb-4 text-[18px] font-bold text-navy">{tr("settings.shopInfo")}</h2>
+      <section className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+        <h2 className="m-0 mb-4 text-[18px] font-bold text-ink">{tr("settings.shopInfo")}</h2>
         {business.error && <p className="m-0 text-expense">{tr("common.loadError")} {business.error.message}</p>}
         {business.isLoading && <p className="m-0 text-ink-muted">{tr("common.loading")}</p>}
         {business.data && <ShopForm key={business.data.name + business.data.business_type} business={business.data} />}
       </section>
 
-      <section className="flex flex-col gap-3 rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <h2 className="m-0 text-[18px] font-bold text-navy">{tr("settings.tax")}</h2>
+      <section className="flex flex-col gap-3 rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+        <h2 className="m-0 text-[18px] font-bold text-ink">{tr("settings.tax")}</h2>
         <p className="m-0 text-ink-body">
           {tr("settings.vatStatus")}{" "}
           <b>{business.data ? (business.data.vat_registered ? tr("settings.vatRegistered") : tr("settings.vatNotRegistered")) : "…"}</b>
@@ -137,8 +137,8 @@ export default function SettingsPage() {
         <p className="m-0 text-[14px] text-ink-muted">{tr("settings.vatReminder")}</p>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <h2 className="m-0 text-[18px] font-bold text-navy">{tr("settings.plan")}</h2>
+      <section className="flex flex-col gap-3 rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+        <h2 className="m-0 text-[18px] font-bold text-ink">{tr("settings.plan")}</h2>
         <p className="m-0 text-ink-body">
           {tr("settings.currentPlan")} <b>{plan?.name ?? "…"}</b>
           {subscription.data?.current_user.status === "trialing" && tr("settings.trialing")}
@@ -148,8 +148,8 @@ export default function SettingsPage() {
         </Link>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-        <h2 className="m-0 text-[18px] font-bold text-navy">{tr("settings.line")}</h2>
+      <section className="flex flex-col gap-3 rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+        <h2 className="m-0 text-[18px] font-bold text-ink">{tr("settings.line")}</h2>
         <p className="m-0 text-[14px] text-ink-muted">{tr("settings.lineDesc")}</p>
         <LineAddFriendButton label={tr("settings.openLineChat")} className="self-start" />
       </section>

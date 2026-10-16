@@ -7,7 +7,7 @@ import { Sprinkles } from "@/components/home/Sprinkles";
 
 export function HeroSection() {
   return (
-    <section aria-label="U-Ledger AI" className="relative bg-white">
+    <section aria-label="U-Ledger AI" className="relative bg-surface">
       {/* header + hero fit one screen on desktop */}
       <div className="relative mx-auto flex max-w-[1200px] flex-wrap items-center gap-12 px-6 py-8 lg:h-[calc(100svh-68px)] lg:min-h-[520px] lg:flex-nowrap lg:py-6">
         {/* same twinkles and paws as around the phone, spread over the empty areas (desktop only) */}
@@ -48,7 +48,7 @@ export function HeroSection() {
 
         <div className="relative flex min-w-0 flex-[1_1_520px] justify-center">
           <div className="relative">
-            <span aria-hidden="true" className="absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-brand-soft to-white max-lg:hidden" />
+            <span aria-hidden="true" className="absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-brand-soft to-surface max-lg:hidden" />
             <div className="relative">
               <Phone tall>
                 <HeroChatScreen />

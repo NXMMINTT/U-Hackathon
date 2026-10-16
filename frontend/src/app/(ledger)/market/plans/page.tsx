@@ -17,7 +17,7 @@ export default function PlansPage() {
   const { data, error, isLoading } = useSubscription();
   const choose = useChoosePlan();
 
-  if (error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>;
+  if (error) return <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{error.message}</Card>;
   if (isLoading || !data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
   const user = data.current_user;
@@ -25,7 +25,7 @@ export default function PlansPage() {
   return (
     <div className="flex flex-col gap-[22px]">
       <h2 className="m-0 text-2xl font-bold md:text-[28px]">{t.title}</h2>
-      {choose.error && <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{choose.error.message}</Card>}
+      {choose.error && <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{choose.error.message}</Card>}
 
       <Card className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
         <div>
@@ -69,7 +69,7 @@ export default function PlansPage() {
                   {plan.trial_days} วัน
                 </Sticker>
               )}
-            <section className="flex flex-col gap-4 rounded-t-2xl bg-white px-7 pb-6 pt-7">
+            <section className="flex flex-col gap-4 rounded-t-2xl bg-surface px-7 pb-6 pt-7">
               <div className="text-center font-hand text-sm tracking-[0.2em] text-ink-muted">— ใบเสร็จ U-LEDGER —</div>
               <div>
                 <div className={`text-[28px] font-extrabold ${isPremium ? "text-brand" : ""}`}>{plan.name}</div>

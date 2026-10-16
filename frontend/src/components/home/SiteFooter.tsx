@@ -2,7 +2,7 @@ import { UFoxFace } from "@/components/brand/UFoxFace";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-line bg-white">
+    <footer className="border-t border-line bg-surface">
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-6 px-6 py-10 text-[15px]">
         <div className="flex items-center gap-3">
           <UFoxFace size={44} />

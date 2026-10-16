@@ -53,14 +53,14 @@ export function ProductRow({ product }: { product: ProductItem }) {
             type="button"
             aria-expanded={open === "edit"}
             onClick={() => setOpen(open === "edit" ? null : "edit")}
-            className="min-h-[40px] rounded-full border-2 border-[#C7DEFC] px-4 text-[14px] font-bold text-ink"
+            className="min-h-[40px] rounded-full border-2 border-sky-line px-4 text-[14px] font-bold text-ink"
           >
             แก้ไข
           </button>
         </div>
       </div>
       {qty < 0 && open === null && (
-        <p className="m-0 rounded-xl bg-[#FEF2F2] px-4 py-2.5 text-[13px] text-expense">
+        <p className="m-0 rounded-xl bg-danger-soft px-4 py-2.5 text-[13px] text-expense">
           สต็อกติดลบ แปลว่าขายไปมากกว่าที่บันทึกซื้อเข้า กด “ปรับสต็อก” แล้วใส่จำนวนที่นับได้จริง
         </p>
       )}

@@ -8,10 +8,10 @@ import { useI18n } from "@/lib/i18n";
 import type { KnowledgeTopic } from "@/types/knowledge";
 
 const CATEGORY_STYLE: Record<string, string> = {
-  ภาษี: "bg-[#FFF4E0] text-[#B45309]",
-  การตลาด: "bg-[#E3F2FD] text-[#1D4ED8]",
-  แพลตฟอร์ม: "bg-[#EDE9FE] text-[#6D28D9]",
-  ส่งออก: "bg-[#E8F5E9] text-[#15803D]",
+  ภาษี: "bg-sun-soft text-sun-ink",
+  การตลาด: "bg-sky-deep text-[#1D4ED8] dark:text-brand-light",
+  แพลตฟอร์ม: "bg-[#EDE9FE] text-[#6D28D9] dark:bg-[#2e1065] dark:text-[#c4b5fd]",
+  ส่งออก: "bg-success-soft text-success-ink",
 };
 
 function formatTime(seconds: number) {
@@ -93,11 +93,11 @@ function TopicCard({ topic }: { topic: KnowledgeTopic }) {
   const categoryLabel = tr(`cat.${topic.category}`) !== `cat.${topic.category}` ? tr(`cat.${topic.category}`) : topic.category;
 
   return (
-    <article className="flex flex-col gap-3 rounded-[24px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.05)]">
+    <article className="flex flex-col gap-3 rounded-[24px] bg-surface p-5 shadow-[0_2px_14px_rgba(0,0,0,0.05)]">
       <span className={`self-start rounded-full px-3 py-1 text-[12px] font-bold ${CATEGORY_STYLE[topic.category] ?? "bg-line-subtle text-ink-body"}`}>
         {categoryLabel}
       </span>
-      <h2 className="m-0 text-[18px] font-bold leading-snug text-navy">{topic.title}</h2>
+      <h2 className="m-0 text-[18px] font-bold leading-snug text-ink">{topic.title}</h2>
       <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-[15px] text-ink-body">
         {topic.outline.map((point) => (
           <li key={point}>{point}</li>
@@ -171,10 +171,10 @@ export default function KnowledgePage() {
 
   return (
     <div className="flex flex-col gap-5 pb-4">
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#E0F2FE] to-[#F0F7FF] px-6 py-6">
+      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-sky-deep to-brand-tint px-6 py-6">
         <div className="flex items-start gap-4">
           <div className="min-w-0 flex-1">
-            <p className="m-0 text-[22px] font-bold leading-tight text-navy">{tr("knowledge.title")}</p>
+            <p className="m-0 text-[22px] font-bold leading-tight text-ink">{tr("knowledge.title")}</p>
             <p className="m-0 mt-1 text-[15px] text-ink-body">{tr("knowledge.subtitle")}</p>
           </div>
           <UFox size={90} pose="idea" className="shrink-0" />
@@ -182,9 +182,9 @@ export default function KnowledgePage() {
       </section>
 
       {topics.error && (
-        <p className="m-0 rounded-3xl bg-[#FDECEC] p-6 text-expense">{tr("knowledge.loadError")} {topics.error.message}</p>
+        <p className="m-0 rounded-3xl bg-danger-soft p-6 text-expense">{tr("knowledge.loadError")} {topics.error.message}</p>
       )}
-      {topics.isLoading && <p className="m-0 rounded-3xl bg-white p-6 text-center text-ink-muted">{tr("knowledge.loading")}</p>}
+      {topics.isLoading && <p className="m-0 rounded-3xl bg-surface p-6 text-center text-ink-muted">{tr("knowledge.loading")}</p>}
 
       {topics.data && (
         <>
@@ -192,7 +192,7 @@ export default function KnowledgePage() {
             <button
               type="button"
               onClick={() => setCategory(null)}
-              className={`min-h-[40px] flex-none rounded-full px-4 text-[14px] font-semibold ${!category ? "bg-navy text-white" : "border-2 border-[#C7DEFC] bg-white text-ink-body"}`}
+              className={`min-h-[40px] flex-none rounded-full px-4 text-[14px] font-semibold ${!category ? "bg-navy text-white" : "border-2 border-sky-line bg-surface text-ink-body"}`}
             >
               {tr("knowledge.all")}
             </button>
@@ -203,7 +203,7 @@ export default function KnowledgePage() {
                   key={c}
                   type="button"
                   onClick={() => setCategory(c)}
-                  className={`min-h-[40px] flex-none rounded-full px-4 text-[14px] font-semibold ${category === c ? "bg-navy text-white" : "border-2 border-[#C7DEFC] bg-white text-ink-body"}`}
+                  className={`min-h-[40px] flex-none rounded-full px-4 text-[14px] font-semibold ${category === c ? "bg-navy text-white" : "border-2 border-sky-line bg-surface text-ink-body"}`}
                 >
                   {label}
                 </button>

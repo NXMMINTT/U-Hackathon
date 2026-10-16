@@ -73,7 +73,7 @@ export default function PlatformsPage() {
   const pickedPlatforms = platforms.filter((p) => picked.includes(p.id));
 
   if (catalog.error)
-    return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{catalog.error.message}</Card>;
+    return <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{catalog.error.message}</Card>;
   if (!catalog.data)
     return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
@@ -109,7 +109,7 @@ export default function PlatformsPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="ค้นหาแพลตฟอร์ม เช่น Shopee, TikTok Shop..."
-          className="min-h-[48px] w-full rounded-xl border-2 border-line bg-white pl-11 pr-10 text-[15px] text-ink-body outline-none focus:border-brand"
+          className="min-h-[48px] w-full rounded-xl border-2 border-line bg-surface pl-11 pr-10 text-[15px] text-ink-body outline-none focus:border-brand"
         />
         {query !== "" && (
           <button
@@ -142,14 +142,14 @@ export default function PlatformsPage() {
               const thaiIds = platforms.filter((p) => !p.intl).map((p) => p.id);
               update([...new Set([...picked, ...thaiIds])]);
             }}
-            className="inline-flex min-h-[38px] items-center rounded-full border-2 border-line bg-white px-4 text-sm font-semibold text-ink-body hover:border-brand hover:text-brand"
+            className="inline-flex min-h-[38px] items-center rounded-full border-2 border-line bg-surface px-4 text-sm font-semibold text-ink-body hover:border-brand hover:text-brand"
           >
             เลือกทั้งหมดในไทย
           </button>
           <button
             type="button"
             onClick={() => update(platforms.map((p) => p.id))}
-            className="inline-flex min-h-[38px] items-center rounded-full border-2 border-line bg-white px-4 text-sm font-semibold text-ink-body hover:border-brand hover:text-brand"
+            className="inline-flex min-h-[38px] items-center rounded-full border-2 border-line bg-surface px-4 text-sm font-semibold text-ink-body hover:border-brand hover:text-brand"
           >
             เลือกทั้งหมด
           </button>
@@ -169,7 +169,7 @@ export default function PlatformsPage() {
               className={`inline-flex min-h-[40px] flex-none items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${
                 category === c.id
                   ? "bg-navy text-white"
-                  : "border-2 border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                  : "border-2 border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
               }`}
             >
               {c.label}
@@ -204,19 +204,19 @@ export default function PlatformsPage() {
                 className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 px-3 pb-4 pt-5 text-center transition-all ${
                   on
                     ? "border-brand bg-brand-tint shadow-[0_6px_20px_rgba(37,99,235,0.12)]"
-                    : "border-line bg-white hover:border-[#9DC1F0]"
+                    : "border-line bg-surface hover:border-brand-light"
                 }`}
               >
                 <span
                   className={`absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full text-xs ${
-                    on ? "bg-brand text-white" : "border-2 border-line bg-white text-transparent"
+                    on ? "bg-brand text-white" : "border-2 border-line bg-surface text-transparent"
                   }`}
                   aria-hidden="true"
                 >
                   {on ? "✓" : ""}
                 </span>
 
-                <span className="grid h-14 w-14 place-items-center overflow-hidden rounded-2xl border border-line bg-white">
+                <span className="grid h-14 w-14 place-items-center overflow-hidden rounded-2xl border border-line bg-surface">
                   {logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={logo} alt="" className="h-full w-full object-contain p-1.5" />
@@ -234,7 +234,7 @@ export default function PlatformsPage() {
       )}
 
       {/* Sticky bottom bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-white/95 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1160px] items-center justify-between gap-4 px-4 py-3 md:px-6">
           {/* Left: avatar stack + count */}
           <div className="flex min-w-0 items-center gap-3">
@@ -245,7 +245,7 @@ export default function PlatformsPage() {
                   return (
                     <span
                       key={p.id}
-                      className="grid h-9 w-9 place-items-center overflow-hidden rounded-full border-2 border-white bg-white shadow-sm"
+                      className="grid h-9 w-9 place-items-center overflow-hidden rounded-full border-2 border-surface bg-surface shadow-sm"
                       style={{ marginLeft: i === 0 ? 0 : -10, zIndex: 5 - i }}
                       title={p.name}
                     >
@@ -260,7 +260,7 @@ export default function PlatformsPage() {
                 })}
                 {pickedPlatforms.length > 5 && (
                   <span
-                    className="grid h-9 w-9 flex-none place-items-center rounded-full border-2 border-white bg-brand-soft text-[11px] font-bold text-brand shadow-sm"
+                    className="grid h-9 w-9 flex-none place-items-center rounded-full border-2 border-surface bg-brand-soft text-[11px] font-bold text-brand shadow-sm"
                     style={{ marginLeft: -10 }}
                   >
                     +{pickedPlatforms.length - 5}

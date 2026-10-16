@@ -18,7 +18,7 @@ export function PlanReceipt({
 }) {
   return (
     <div className="relative drop-shadow-[0_14px_24px_rgba(21,48,90,.12)]">
-      <div className="flex flex-col gap-3 rounded-t-2xl bg-white px-7 pb-6 pt-7">
+      <div className="flex flex-col gap-3 rounded-t-2xl bg-surface px-7 pb-6 pt-7">
         <div className="flex items-center justify-between gap-3">
           <h3 className={`m-0 text-[28px] font-extrabold ${highlight ? "text-brand" : ""}`}>{name}</h3>
           {highlight && <span className="rounded-full bg-sun px-3 py-1 text-sm font-bold text-[#4A3500]">ลองฟรี 7 วัน</span>}

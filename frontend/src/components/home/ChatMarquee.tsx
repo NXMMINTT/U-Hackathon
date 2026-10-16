@@ -7,7 +7,7 @@ export function ChatMarquee({ items }: { items: readonly string[] }) {
         {row.map((t, i) => (
           <span
             key={i}
-            className={`whitespace-nowrap rounded-2xl px-4 py-2 text-[15px] ${i % 3 === 1 ? "rounded-bl-sm bg-white text-ink" : "rounded-br-sm bg-chat text-[#0F2A12]"}`}
+            className={`whitespace-nowrap rounded-2xl px-4 py-2 text-[15px] ${i % 3 === 1 ? "rounded-bl-sm bg-surface text-ink" : "rounded-br-sm bg-chat text-[#0F2A12]"}`}
           >
             {t}
           </span>

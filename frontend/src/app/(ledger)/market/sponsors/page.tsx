@@ -35,7 +35,7 @@ export default function SponsorsPage() {
                 aria-pressed={active}
                 onClick={() => setProductId(f.id)}
                 className={`inline-flex min-h-[40px] flex-none items-center whitespace-nowrap rounded-full px-4 text-[15px] ${
-                  active ? "bg-brand font-semibold text-white" : "border border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                  active ? "bg-brand font-semibold text-white" : "border border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
                 }`}
               >
                 {f.label}
@@ -45,10 +45,10 @@ export default function SponsorsPage() {
         </div>
       </div>
 
-      {sponsors.error && <p className="m-0 rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อเสนอไม่สำเร็จ: {sponsors.error.message}</p>}
-      {!sponsors.data && !sponsors.error && <p className="m-0 rounded-3xl bg-white p-6 text-center text-ink-muted">กำลังโหลดข้อเสนอ…</p>}
+      {sponsors.error && <p className="m-0 rounded-3xl bg-danger-soft p-6 text-expense">โหลดข้อเสนอไม่สำเร็จ: {sponsors.error.message}</p>}
+      {!sponsors.data && !sponsors.error && <p className="m-0 rounded-3xl bg-surface p-6 text-center text-ink-muted">กำลังโหลดข้อเสนอ…</p>}
       {sponsors.data?.length === 0 && (
-        <p className="m-0 rounded-3xl bg-white p-6 text-center text-ink-muted">ยังไม่มีข้อเสนอสำหรับสินค้านี้</p>
+        <p className="m-0 rounded-3xl bg-surface p-6 text-center text-ink-muted">ยังไม่มีข้อเสนอสำหรับสินค้านี้</p>
       )}
 
       {sponsors.data && sponsors.data.length > 0 && (
@@ -57,7 +57,7 @@ export default function SponsorsPage() {
           className={`m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-5 p-0 ${sponsors.isPlaceholderData ? "opacity-60" : ""}`}
         >
           {sponsors.data.map((s) => (
-            <li key={s.listing_id} className="flex flex-col gap-3 rounded-[28px] border-2 border-[#FFE7A3] bg-white p-6">
+            <li key={s.listing_id} className="flex flex-col gap-3 rounded-[28px] border-2 border-[#FFE7A3] dark:border-sun/30 bg-surface p-6">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-sun-soft px-3 py-0.5 text-[13px] font-bold text-sun-ink">ผู้สนับสนุน</span>
                 <span className="text-sm text-ink-muted">{s.sponsor_type}</span>
@@ -68,7 +68,7 @@ export default function SponsorsPage() {
               </div>
               <p className="m-0 text-[15px] text-ink-body">{s.description}</p>
               <div className="flex flex-wrap items-baseline gap-x-3">
-                <span className="text-2xl font-bold text-navy">
+                <span className="text-2xl font-bold text-ink">
                   {formatBaht(s.price)}
                   <span className="text-base font-normal text-ink-muted">/{s.unit}</span>
                 </span>
@@ -80,7 +80,7 @@ export default function SponsorsPage() {
                 <div className="flex flex-wrap gap-1.5 text-sm">
                   <span className="text-ink-muted">เหมาะกับ</span>
                   {s.target_product_ids.map((id) => (
-                    <span key={id} className="rounded-full bg-brand-soft px-2.5 py-0.5 font-semibold text-navy">
+                    <span key={id} className="rounded-full bg-brand-soft px-2.5 py-0.5 font-semibold text-ink">
                       {productName(id) ?? id}
                     </span>
                   ))}

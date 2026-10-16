@@ -14,8 +14,8 @@ export function MonthTransactionList({ month, type }: { month: string; type: Ent
   const mt = th.monthTransaction;
 
   return (
-    <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-      <h2 className="m-0 mb-4 text-[18px] font-bold text-navy">{isIncome ? mt.incomeList : mt.expenseList}</h2>
+    <section className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+      <h2 className="m-0 mb-4 text-[18px] font-bold text-ink">{isIncome ? mt.incomeList : mt.expenseList}</h2>
       {error && <p className="m-0 text-expense">{mt.loadError}: {error.message}</p>}
       {isLoading && <p className="m-0 text-ink-muted">{mt.loading}</p>}
       {data?.length === 0 && <p className="m-0 text-ink-muted">{isIncome ? mt.noIncome : mt.noExpense}</p>}

@@ -43,7 +43,7 @@ export function StockAdjustPanel({ product, onDone }: { product: ProductItem; on
             aria-checked={mode === value}
             onClick={() => setMode(value)}
             className={`min-h-[40px] rounded-full border-2 px-4 text-[14px] font-semibold ${
-              mode === value ? "border-brand bg-brand text-white" : "border-[#C7DEFC] bg-white text-ink"
+              mode === value ? "border-brand bg-brand text-white" : "border-sky-line bg-surface text-ink"
             }`}
           >
             {label}
@@ -68,9 +68,9 @@ export function StockAdjustPanel({ product, onDone }: { product: ProductItem; on
         ตอนนี้ <b>{formatQty(product.stock_qty)}</b> → หลังปรับ{" "}
         <b className={valid && after < 0 ? "text-expense" : "text-brand"}>{valid ? formatQty(after) : "–"}</b> {product.unit}
       </p>
-      {adjust.error && <p className="m-0 rounded-xl bg-[#FEF2F2] px-4 py-3 text-sm text-expense">{adjust.error.message}</p>}
+      {adjust.error && <p className="m-0 rounded-xl bg-danger-soft px-4 py-3 text-sm text-expense">{adjust.error.message}</p>}
       <div className="flex gap-2.5">
-        <button type="button" onClick={onDone} className="min-h-[42px] rounded-full border-2 border-[#C7DEFC] bg-white px-5 text-[14px] font-bold text-ink-body">
+        <button type="button" onClick={onDone} className="min-h-[42px] rounded-full border-2 border-sky-line bg-surface px-5 text-[14px] font-bold text-ink-body">
           ยกเลิก
         </button>
         <button type="submit" disabled={!valid || adjust.isPending} className="min-h-[42px] rounded-full bg-brand px-5 text-[14px] font-bold text-white disabled:opacity-50">

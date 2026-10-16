@@ -43,14 +43,14 @@ export function LineProfileBadge() {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={profile.pictureUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
         )}
-        <span className="max-w-[120px] truncate text-[15px] font-semibold text-navy">{profile.displayName}</span>
+        <span className="max-w-[120px] truncate text-[15px] font-semibold text-ink">{profile.displayName}</span>
         <svg className="h-4 w-4 text-ink-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+6px)] z-20 w-44 overflow-hidden rounded-2xl border border-line bg-white shadow-lg">
+        <div className="absolute right-0 top-[calc(100%+6px)] z-20 w-44 overflow-hidden rounded-2xl border border-line bg-surface shadow-lg">
           <button
             type="button"
             onClick={logout}

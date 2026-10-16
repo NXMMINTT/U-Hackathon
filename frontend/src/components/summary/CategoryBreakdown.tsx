@@ -15,9 +15,9 @@ export function CategoryBreakdown({ month, type }: { month: string; type: EntryT
   const sum = (data ?? []).reduce((acc, c) => acc + Number(c.total), 0);
 
   return (
-    <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+    <section className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="m-0 text-[18px] font-bold text-navy">{type === "income" ? "รายรับตามหมวดหมู่" : "รายจ่ายตามหมวดหมู่"}</h2>
+        <h2 className="m-0 text-[18px] font-bold text-ink">{type === "income" ? "รายรับตามหมวดหมู่" : "รายจ่ายตามหมวดหมู่"}</h2>
         <Link href="/transactions" className="text-[14px] font-semibold text-brand no-underline">
           ดูทั้งหมด &gt;
         </Link>
@@ -37,9 +37,9 @@ export function CategoryBreakdown({ month, type }: { month: string; type: EntryT
               </span>
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center justify-between">
-                  <span className="text-[14px] font-semibold text-navy">{c.category}</span>
+                  <span className="text-[14px] font-semibold text-ink">{c.category}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-bold text-navy">{formatBaht(c.total)}</span>
+                    <span className="text-[14px] font-bold text-ink">{formatBaht(c.total)}</span>
                     <span className="text-[12px] text-ink-muted">{pct}%</span>
                   </div>
                 </div>

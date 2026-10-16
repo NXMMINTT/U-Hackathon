@@ -11,7 +11,7 @@ export function PlatformBadge({ id, name }: { id: string; name: string }) {
   }
   return (
     <span
-      className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-[#E3EEFB] text-sm font-bold text-brand"
+      className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-brand-soft text-sm font-bold text-brand"
       aria-hidden="true"
     >
       {name.charAt(0).toUpperCase()}

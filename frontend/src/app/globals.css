@@ -2,42 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme colors as "R G B" so Tailwind can add opacity (see `themed` in tailwind.config.ts).
+   .force-light keeps a block in light colors even in dark mode (e.g. the phone mockups on the landing page). */
+:root,
+html.dark .force-light {
+  --page: 255 255 255;
+  --page-fg: 21 48 90;
+  --surface: 255 255 255;
+  --brand-fg: 37 99 235;
+  --brand-soft: 232 242 254;
+  --brand-tint: 244 249 255;
+  --sky: 238 246 255;
+  --sky-deep: 224 242 254;
+  --sky-line: 187 216 251;
+  --ink: 11 31 77;
+  --ink-body: 54 72 110;
+  --ink-muted: 74 91 128;
+  --ink-faint: 125 141 173;
+  --line: 230 238 249;
+  --line-subtle: 241 245 251;
+  --sun-soft: 255 244 209;
+  --sun-ink: 122 82 0;
+  --income: 18 128 79;
+  --expense: 180 35 24;
+  --success-soft: 230 247 238;
+  --success-line: 200 230 201;
+  --success-ink: 15 107 66;
+  --danger-soft: 254 242 242;
+  --danger-line: 254 202 202;
+  --danger-ink: 153 27 27;
+}
+
+html.dark {
+  color-scheme: dark;
+  --page: 15 23 42;
+  --page-fg: 226 232 240;
+  --surface: 30 41 59;
+  --brand-fg: 96 165 250;
+  --brand-soft: 30 58 95;
+  --brand-tint: 15 23 42;
+  --sky: 23 32 54;
+  --sky-deep: 30 58 95;
+  --sky-line: 51 65 85;
+  --ink: 226 232 240;
+  --ink-body: 203 213 225;
+  --ink-muted: 148 163 184;
+  --ink-faint: 100 116 139;
+  --line: 51 65 85;
+  --line-subtle: 51 65 85;
+  --sun-soft: 66 32 6;
+  --sun-ink: 251 191 36;
+  --income: 74 222 128;
+  --expense: 248 113 113;
+  --success-soft: 21 54 45;
+  --success-line: 22 101 52;
+  --success-ink: 134 239 172;
+  --danger-soft: 63 25 33;
+  --danger-line: 127 29 29;
+  --danger-ink: 252 165 165;
+}
+
+.force-light {
+  color-scheme: light;
+  color: rgb(var(--page-fg));
+}
+
 body {
-  background-color: #ffffff;
-  color: #15305a;
+  background-color: rgb(var(--page));
+  color: rgb(var(--page-fg));
   transition: background-color 0.2s, color 0.2s;
 }
 
-html.dark body {
-  background-color: #0f172a;
-  color: #e2e8f0;
-}
-
-html.dark .bg-white { background-color: #1e293b !important; }
-html.dark .bg-brand-tint { background-color: #0f172a !important; }
-html.dark .bg-brand-soft { background-color: #1e3a5f !important; }
-html.dark .text-navy { color: #e2e8f0 !important; }
-html.dark .text-ink-body { color: #cbd5e1 !important; }
-html.dark .text-ink-muted { color: #94a3b8 !important; }
-html.dark .text-ink { color: #e2e8f0 !important; }
-html.dark .border-line { border-color: #334155 !important; }
-html.dark .bg-line-subtle { background-color: #334155 !important; }
-
 html.dark [class*="shadow-[0_2px"] { box-shadow: 0 2px 14px rgba(0,0,0,0.3) !important; }
-
-html.dark .from-\[\#E0F2FE\] { --tw-gradient-from: #1e3a5f !important; }
-html.dark .to-\[\#F0F7FF\] { --tw-gradient-to: #0f172a !important; }
-html.dark .bg-\[\#FFF4E0\] { background-color: #422006 !important; }
-html.dark .bg-\[\#E3F2FD\] { background-color: #172554 !important; }
-html.dark .bg-\[\#EDE9FE\] { background-color: #2e1065 !important; }
-html.dark .bg-\[\#E8F5E9\] { background-color: #14532d !important; }
-html.dark .text-\[\#B45309\] { color: #fbbf24 !important; }
-html.dark .text-\[\#1D4ED8\] { color: #60a5fa !important; }
-html.dark .text-\[\#6D28D9\] { color: #a78bfa !important; }
-html.dark .text-\[\#15803D\] { color: #4ade80 !important; }
-html.dark .bg-\[\#FDECEC\] { background-color: #450a0a !important; }
-html.dark .bg-\[\#FEF2F2\] { background-color: #450a0a !important; }
-html.dark .border-\[\#C7DEFC\] { border-color: #334155 !important; }
 
 a:focus-visible,
 button:focus-visible,

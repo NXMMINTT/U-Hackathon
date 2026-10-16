@@ -16,12 +16,12 @@ import { useLocale } from "@/lib/i18n";
 import { vatThresholdDate } from "@/lib/vatThresholdDate";
 
 const ZONE_STYLE = {
-  green: { chip: "bg-[#E6F7EE] text-[#0F6B42]", ring: "#34C27A", mood: "happy" },
+  green: { chip: "bg-success-soft text-success-ink", ring: "#34C27A", mood: "happy" },
   yellow: { chip: "bg-sun-soft text-sun-ink", ring: "#FFC83D", mood: "worried" },
-  red: { chip: "bg-[#FDECEC] text-expense", ring: "#F26B5B", mood: "shocked" },
+  red: { chip: "bg-danger-soft text-expense", ring: "#F26B5B", mood: "shocked" },
 } as const;
 
-const PRODUCT_TINTS = ["bg-[#FFE9E3] text-[#C2410C]", "bg-brand-soft text-brand", "bg-[#E6F7EE] text-income"];
+const PRODUCT_TINTS = ["bg-danger-soft text-danger-ink", "bg-brand-soft text-brand", "bg-success-soft text-income"];
 
 export function ShopOverview() {
   const th = useLocale();
@@ -32,10 +32,10 @@ export function ShopOverview() {
   const error = overview.error ?? meter.error;
 
   if (error) {
-    return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">{t.loadError}: {error.message}</p>;
+    return <p className="rounded-3xl bg-danger-soft p-6 text-expense">{t.loadError}: {error.message}</p>;
   }
   if (!overview.data || !meter.data) {
-    return <p className="rounded-3xl bg-white p-6 text-center text-ink-muted">{t.loading}</p>;
+    return <p className="rounded-3xl bg-surface p-6 text-center text-ink-muted">{t.loading}</p>;
   }
 
   const o = overview.data;
@@ -52,7 +52,7 @@ export function ShopOverview() {
       <section aria-label="U-Fox" className="flex flex-wrap items-center gap-x-10 gap-y-7 rounded-[32px] bg-sky-deep p-6 md:p-9">
         <div className="flex min-w-0 flex-[1_1_480px] items-end gap-4">
           <UFoxLive size={140} wave mood={style.mood} tips={t.tips} bubbleSide="right" className="shrink-0 max-sm:hidden" />
-          <div className="min-w-0 flex-1 rounded-3xl rounded-bl-md bg-white px-6 py-5 shadow-[0_10px_30px_rgba(26,111,214,.12)]">
+          <div className="min-w-0 flex-1 rounded-3xl rounded-bl-md bg-surface px-6 py-5 shadow-[0_10px_30px_rgba(26,111,214,.12)]">
             <div className="text-[15px] font-semibold text-brand">U-Fox</div>
             <p className="m-0 text-xl leading-normal md:text-[22px]">
               {t.hello} {o.business_name} {profit >= 0 ? t.profitThisMonth : t.lossThisMonth}{" "}
@@ -61,7 +61,7 @@ export function ShopOverview() {
           </div>
         </div>
 
-        <div className="relative flex flex-wrap items-center justify-center gap-5 rounded-[28px] bg-white px-6 py-5 max-sm:w-full md:rotate-1">
+        <div className="relative flex flex-wrap items-center justify-center gap-5 rounded-[28px] bg-surface px-6 py-5 max-sm:w-full md:rotate-1">
           <Note className="absolute -top-5 left-4 rounded-lg bg-sun px-2.5 py-0.5 text-[15px] !text-[#4A3500] shadow-md" tilt={-6}>
             {zone.note}
           </Note>
@@ -92,7 +92,7 @@ export function ShopOverview() {
       </section>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-6">
-        <section className="flex flex-col gap-4 rounded-[28px] bg-white p-7">
+        <section className="flex flex-col gap-4 rounded-[28px] bg-surface p-7">
           <div className="flex items-center justify-between gap-3">
             <h2 className="m-0 text-[21px] font-semibold">{t.bestSellers}</h2>
             <Link href="/stock" className="text-[15px] font-semibold no-underline">
@@ -119,7 +119,7 @@ export function ShopOverview() {
 
       <Link
         href="/market"
-        className="flex flex-wrap items-center justify-between gap-4 rounded-[28px] border-2 border-dashed border-sky-line bg-white px-7 py-6 text-ink no-underline"
+        className="flex flex-wrap items-center justify-between gap-4 rounded-[28px] border-2 border-dashed border-sky-line bg-surface px-7 py-6 text-ink no-underline"
       >
         <span>
           <span className="block text-xl font-semibold">{t.competitorCta}</span>

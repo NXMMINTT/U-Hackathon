@@ -36,13 +36,13 @@ export function TypingChat({ bot, user }: { bot: string; user: string }) {
       <div className={`flex items-end gap-2.5 ${step === 0 ? "invisible" : ""}`}>
         <UFoxFace />
         {step === 1 ? (
-          <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-white px-5 py-4 shadow-[0_4px_14px_rgba(26,111,214,.08)]" aria-label="U-Fox กำลังพิมพ์">
+          <span className="flex gap-1.5 rounded-[20px] rounded-bl-md bg-surface px-5 py-4 shadow-[0_4px_14px_rgba(26,111,214,.08)]" aria-label="U-Fox กำลังพิมพ์">
             {[0, 150, 300].map((d) => (
               <span key={d} className="h-2 w-2 animate-typing rounded-full bg-brand-light" style={{ animationDelay: `${d}ms` }} />
             ))}
           </span>
         ) : (
-          <span className={`rounded-[20px] rounded-bl-md bg-white px-[18px] py-2.5 shadow-[0_4px_14px_rgba(26,111,214,.08)] ${step === 2 ? "animate-pop" : ""}`}>{bot}</span>
+          <span className={`rounded-[20px] rounded-bl-md bg-surface px-[18px] py-2.5 shadow-[0_4px_14px_rgba(26,111,214,.08)] ${step === 2 ? "animate-pop" : ""}`}>{bot}</span>
         )}
       </div>
       <span className={`ml-28 rounded-[20px] rounded-br-md bg-chat px-[18px] py-2.5 text-[#0F2A12] ${step < 3 ? "invisible" : "animate-pop"}`}>{user}</span>

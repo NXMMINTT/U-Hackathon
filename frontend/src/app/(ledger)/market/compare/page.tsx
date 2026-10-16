@@ -24,7 +24,7 @@ function Toggle({ active, onClick, children }: { active: boolean; onClick: () =>
       aria-pressed={active}
       onClick={onClick}
       className={`inline-flex min-h-[36px] items-center rounded-[10px] px-3 text-sm ${
-        active ? "bg-navy font-semibold text-white" : "border border-line bg-white text-ink-body"
+        active ? "bg-navy font-semibold text-white" : "border border-line bg-surface text-ink-body"
       }`}
     >
       {children}
@@ -43,7 +43,7 @@ function NumberField({ label, value, onChange }: { label: string; value: string;
         min={0}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-[44px] rounded-[10px] border border-line px-3 text-base font-semibold text-navy"
+        className="min-h-[44px] rounded-[10px] border border-line px-3 text-base font-semibold text-ink"
       />
     </label>
   );
@@ -74,7 +74,7 @@ export default function ComparePage() {
   const [sellPrice, setSellPrice] = useState<string | null>(null);
   const [feePct, setFeePct] = useState("10");
 
-  if (error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>;
+  if (error) return <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{error.message}</Card>;
   if (isLoading || !data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
   const rows = data.competitors
@@ -105,7 +105,7 @@ export default function ComparePage() {
   return (
     <div className="flex flex-col gap-[22px]">
       <h2 className="flex items-center gap-3 text-xl font-semibold md:text-2xl">
-        <span className="grid h-10 w-10 flex-none place-items-center overflow-hidden rounded-[10px] bg-[#E3EEFB] text-xl" aria-hidden="true">
+        <span className="grid h-10 w-10 flex-none place-items-center overflow-hidden rounded-[10px] bg-brand-soft text-xl" aria-hidden="true">
           {productPhoto(data.product_name) ? (
             // eslint-disable-next-line @next/next/no-img-element -- static product photo
             <img src={productPhoto(data.product_name)!} alt="" className="h-full w-full object-cover" />
@@ -128,7 +128,7 @@ export default function ComparePage() {
                 className={`min-h-[40px] rounded-full px-4 text-sm font-semibold transition-colors ${
                   selectedProductId === mp.id && !stockProductId
                     ? "bg-brand text-white"
-                    : "border border-line bg-white text-ink-body hover:border-brand hover:text-brand"
+                    : "border border-line bg-surface text-ink-body hover:border-brand hover:text-brand"
                 }`}
               >
                 {mp.name}
@@ -147,7 +147,7 @@ export default function ComparePage() {
                 setCost(picked?.unit_cost ? String(Number(picked.unit_cost)) : null);
                 setSellPrice(null);
               }}
-              className="min-h-[44px] rounded-[10px] border border-line bg-white px-3 text-base text-navy"
+              className="min-h-[44px] rounded-[10px] border border-line bg-surface px-3 text-base text-ink"
             >
               <option value="">— เลือกสินค้าของร้าน —</option>
               {(products.data ?? []).map((sp) => (
@@ -165,17 +165,17 @@ export default function ComparePage() {
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl bg-[#ECFDF5] px-4 py-3.5 text-[#065F46]">
+        <div className="rounded-xl bg-success-soft px-4 py-3.5 text-success-ink">
           <div className="text-xs">{t.cheapest}</div>
           <div className="text-[22px] font-bold">{cheapest ? `฿${cheapest.thb}` : "-"}</div>
           <div className="text-xs">{cheapest ? `${cheapest.platform} · ${cheapest.seller}` : ""}</div>
         </div>
         <div className="rounded-xl bg-line-subtle px-4 py-3.5 text-ink-body">
           <div className="text-xs">{t.priciest}</div>
-          <div className="text-[22px] font-bold text-navy">{priciest ? `฿${priciest.thb}` : "-"}</div>
+          <div className="text-[22px] font-bold text-ink">{priciest ? `฿${priciest.thb}` : "-"}</div>
           <div className="text-xs">{priciest ? `${priciest.platform} · ${priciest.seller}` : ""}</div>
         </div>
-        <div className="rounded-xl bg-brand-soft px-4 py-3.5 text-[#1E40AF]">
+        <div className="rounded-xl bg-brand-soft px-4 py-3.5 text-[#1E40AF] dark:text-brand-light">
           <div className="text-xs">{t.spread}</div>
           <div className="text-[22px] font-bold">{cheapest && priciest ? `฿${priciest.thb! - cheapest.thb!}` : "-"}</div>
           <div className="text-xs">
@@ -232,10 +232,10 @@ export default function ComparePage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-[#E6EBF2]">
+        <div className="overflow-x-auto rounded-xl border border-line">
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
-              <tr className="bg-[#F5F7FA] text-left text-xs text-ink-muted">
+              <tr className="bg-line-subtle text-left text-xs text-ink-muted">
                 <th className="px-3.5 py-3 font-semibold">{t.colPlatform}</th>
                 {!thaiOnly && <th className="px-3.5 py-3 text-right font-semibold">{t.colOriginal}</th>}
                 <th className="px-3.5 py-3 text-right font-semibold">{t.colTHB}</th>
@@ -251,7 +251,7 @@ export default function ComparePage() {
                 return (
                   <tr
                     key={`${r.platform_id}-${r.seller}`}
-                    className={`border-t border-line-subtle ${isCheapest ? "bg-[#F0FDF4]" : soldOut ? "bg-[#FFFBEB]" : ""}`}
+                    className={`border-t border-line-subtle ${isCheapest ? "bg-success-soft" : soldOut ? "bg-sun-soft/50" : ""}`}
                   >
                     <td className="px-3.5 py-3">
                       <div className="flex items-center gap-2.5">
@@ -307,7 +307,7 @@ export default function ComparePage() {
             <div className="text-xs text-ink-muted">{t.feeBaht}</div>
             <div className="text-xl font-bold">฿{feeBaht.toFixed(2)}</div>
           </div>
-          <div className={`rounded-xl px-4 py-3 text-white ${profit < 0 ? "bg-expense" : "bg-navy"}`}>
+          <div className={`rounded-xl px-4 py-3 text-white ${profit < 0 ? "bg-expense-solid" : "bg-navy"}`}>
             <div className="text-xs text-[#E2E8F0]">{profit < 0 ? "ขาดทุนต่อชิ้น" : t.profit}</div>
             <div className="text-xl font-bold">฿{Math.abs(profit).toFixed(2)}</div>
             <div className={`text-xs ${profit < 0 ? "text-[#FECACA]" : "text-[#6EE7B7]"}`}>{t.margin.replace("{pct}", margin.toFixed(0))}</div>

@@ -63,7 +63,7 @@ export function ScrollSteps({
 
   const row = (
     <>
-      <div className="relative flex min-w-0 flex-[0_1_460px] flex-col gap-3.5 rounded-[28px] bg-white p-7 shadow-[0_10px_30px_rgba(26,111,214,.08)]">
+      <div className="relative flex min-w-0 flex-[0_1_460px] flex-col gap-3.5 rounded-[28px] bg-surface p-7 shadow-[0_10px_30px_rgba(26,111,214,.08)]">
         {(interactive || badge) && (
           <div className="flex items-center gap-2.5">
             {interactive && <span className="text-lg font-bold text-brand">{`${current + 1}/${steps.length}`}</span>}
@@ -85,7 +85,7 @@ export function ScrollSteps({
                 </span>
               </>
             );
-            const box = `flex w-full gap-3.5 rounded-[18px] border p-4 text-left transition-colors ${on ? "border-sky-line bg-brand-soft" : "border-line bg-white"}`;
+            const box = `flex w-full gap-3.5 rounded-[18px] border p-4 text-left transition-colors ${on ? "border-sky-line bg-brand-soft" : "border-line bg-surface"}`;
             return (
               <li key={title}>
                 {interactive ? (

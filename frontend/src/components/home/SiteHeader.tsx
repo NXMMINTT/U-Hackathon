@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Logo } from "@/components/brand/Logo";
+import { LineIcon } from "@/components/ui/LineIcon";
 import { useI18n, LOCALE_LABELS, type Locale } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 
@@ -18,14 +19,14 @@ function LangSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex min-h-[36px] items-center gap-1 rounded-full border border-line bg-white px-3 text-[13px] font-semibold text-ink-body hover:border-brand"
+        className="inline-flex min-h-[36px] items-center gap-1 rounded-full border border-line bg-surface px-3 text-[13px] font-semibold text-ink-body hover:border-brand"
       >
-        🌐 {LOCALE_LABELS[locale]}
+        <LineIcon name="globe" size={15} /> {LOCALE_LABELS[locale]}
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-30 mt-1 flex flex-col overflow-hidden rounded-xl border border-line bg-white shadow-lg">
+          <div className="absolute right-0 top-full z-30 mt-1 flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-lg">
             {LOCALES.map((l) => (
               <button
                 key={l}
@@ -50,10 +51,10 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={() => setMode(resolved === "light" ? "dark" : "light")}
-      className="inline-flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full border border-line bg-white text-[16px] hover:border-brand"
+      className="inline-flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full border border-line bg-surface text-ink-body hover:border-brand"
       title={resolved === "light" ? "Dark mode" : "Light mode"}
     >
-      {resolved === "light" ? "🌙" : "☀️"}
+      <LineIcon name={resolved === "light" ? "moon" : "sun"} size={17} />
     </button>
   );
 }
@@ -78,7 +79,7 @@ export function SiteHeader() {
   const { tr } = useI18n();
 
   return (
-    <header className="sticky top-0 z-20 bg-white/95 shadow-[0_1px_0_#E6EEF9] backdrop-blur">
+    <header className="sticky top-0 z-20 bg-surface/95 shadow-[0_1px_0_#E6EEF9] backdrop-blur">
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-6 py-3">
         <Logo />
         <nav aria-label="main" className="hidden flex-wrap text-base lg:flex">

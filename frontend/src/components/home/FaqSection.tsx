@@ -32,7 +32,7 @@ export function FaqSection() {
               <dt className="max-w-[85%] self-end rounded-[20px] rounded-br-md bg-chat px-[18px] py-2.5 font-semibold text-[#0F2A12]">{q}</dt>
               <dd className="m-0 flex max-w-[90%] items-end gap-2.5 self-start">
                 <UFoxFace size={36} />
-                <span className="rounded-[20px] rounded-bl-md bg-white px-[18px] py-2.5 text-ink-body">{a}</span>
+                <span className="rounded-[20px] rounded-bl-md bg-surface px-[18px] py-2.5 text-ink-body">{a}</span>
               </dd>
             </div>
           ))}

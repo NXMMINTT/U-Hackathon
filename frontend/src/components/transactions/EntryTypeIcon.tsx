@@ -5,7 +5,7 @@ export function EntryTypeIcon({ type, size = 44 }: { type: EntryType; size?: num
   const isIncome = type === "income";
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-full ${isIncome ? "bg-[#E6F7EE] text-income" : "bg-[#FDECEC] text-expense"}`}
+      className={`grid shrink-0 place-items-center rounded-full ${isIncome ? "bg-success-soft text-income" : "bg-danger-soft text-expense"}`}
       style={{ width: size, height: size }}
     >
       <svg width={size / 2} height={size / 2} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

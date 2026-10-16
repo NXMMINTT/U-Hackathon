@@ -8,10 +8,10 @@ import { Ring } from "@/components/ui/Ring";
 const THRESHOLD = 1_800_000;
 
 const ZONES = [
-  { upTo: 0.6, mood: "happy", color: "#34C27A", chip: "bg-[#E6F7EE] text-[#0F6B42]", label: "โซนเขียว", say: "ชิลๆ ยังห่างเพดานอีกเยอะค่ะ ขายต่อเลย!" },
+  { upTo: 0.6, mood: "happy", color: "#34C27A", chip: "bg-success-soft text-success-ink", label: "โซนเขียว", say: "ชิลๆ ยังห่างเพดานอีกเยอะค่ะ ขายต่อเลย!" },
   { upTo: 0.9, mood: "worried", color: "#FFC83D", chip: "bg-sun-soft text-sun-ink", label: "โซนเหลือง", say: "เริ่มใกล้แล้วนะ เก็บใบเสร็จค่าของไว้ให้ครบค่ะ" },
-  { upTo: 1, mood: "shocked", color: "#F26B5B", chip: "bg-[#FDECEC] text-expense", label: "โซนแดง", say: "ใกล้มากแล้ว! เตรียมเอกสารจด VAT ได้เลยค่ะ" },
-  { upTo: Infinity, mood: "shocked", color: "#F26B5B", chip: "bg-[#FDECEC] text-expense", label: "เกินเพดาน", say: "เกินแล้ว ต้องจด VAT ภายใน 30 วันนับจากวันที่เกินนะคะ" },
+  { upTo: 1, mood: "shocked", color: "#F26B5B", chip: "bg-danger-soft text-expense", label: "โซนแดง", say: "ใกล้มากแล้ว! เตรียมเอกสารจด VAT ได้เลยค่ะ" },
+  { upTo: Infinity, mood: "shocked", color: "#F26B5B", chip: "bg-danger-soft text-expense", label: "เกินเพดาน", say: "เกินแล้ว ต้องจด VAT ภายใน 30 วันนับจากวันที่เกินนะคะ" },
 ] as const;
 
 /** Drag your yearly sales and watch the tax meter (and U-Fox's face) react. */
@@ -21,7 +21,7 @@ export function TaxPlayground() {
   const zone = ZONES.find((z) => ratio < z.upTo) ?? ZONES[ZONES.length - 1];
 
   return (
-    <div className="relative flex w-[340px] max-w-full flex-col items-center gap-4 rounded-[30px] bg-white p-7 shadow-[0_24px_50px_rgba(21,48,90,.14)]">
+    <div className="relative flex w-[340px] max-w-full flex-col items-center gap-4 rounded-[30px] bg-surface p-7 shadow-[0_24px_50px_rgba(21,48,90,.14)]">
       <span className="absolute -top-3.5 left-6 rounded-full bg-sun px-3 py-1 text-sm font-bold text-[#4A3500]">ลองเลื่อนดู</span>
       <div className="flex items-center gap-3">
         <UFox size={96} mood={zone.mood} />

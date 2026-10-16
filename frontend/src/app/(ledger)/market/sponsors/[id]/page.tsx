@@ -24,16 +24,16 @@ export default function SponsorOfferPage() {
     return (
       <div className="flex flex-col gap-4">
         {back}
-        <p className="m-0 rounded-3xl bg-white p-6 text-center text-ink-muted">ไม่พบข้อเสนอนี้</p>
+        <p className="m-0 rounded-3xl bg-surface p-6 text-center text-ink-muted">ไม่พบข้อเสนอนี้</p>
       </div>
     );
-  if (!offer.data) return <p className="m-0 rounded-3xl bg-white p-6 text-center text-ink-muted">กำลังโหลดข้อเสนอ…</p>;
+  if (!offer.data) return <p className="m-0 rounded-3xl bg-surface p-6 text-center text-ink-muted">กำลังโหลดข้อเสนอ…</p>;
 
   const s = offer.data;
   return (
     <div className="flex flex-col gap-4">
       {back}
-      <article className="flex flex-col gap-5 rounded-[28px] border-2 border-[#FFE7A3] bg-white p-6 md:p-8">
+      <article className="flex flex-col gap-5 rounded-[28px] border-2 border-[#FFE7A3] dark:border-sun/30 bg-surface p-6 md:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-sun-soft px-3 py-0.5 text-[13px] font-bold text-sun-ink">ผู้สนับสนุน</span>
           <span className="text-sm text-ink-muted">{s.sponsor_type}</span>
@@ -47,20 +47,20 @@ export default function SponsorOfferPage() {
         <dl className="m-0 grid grid-cols-[repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-3">
           <div className="rounded-2xl bg-brand-tint px-4 py-3">
             <dt className="text-sm text-ink-muted">ราคา</dt>
-            <dd className="m-0 text-xl font-bold text-navy">
+            <dd className="m-0 text-xl font-bold text-ink">
               {formatBaht(s.price)}
               <span className="text-[15px] font-normal text-ink-muted">/{s.unit}</span>
             </dd>
           </div>
           <div className="rounded-2xl bg-brand-tint px-4 py-3">
             <dt className="text-sm text-ink-muted">สั่งขั้นต่ำ</dt>
-            <dd className="m-0 text-xl font-bold text-navy">
+            <dd className="m-0 text-xl font-bold text-ink">
               {s.moq} {s.unit}
             </dd>
           </div>
           <div className="rounded-2xl bg-brand-tint px-4 py-3">
             <dt className="text-sm text-ink-muted">ยอดสั่งขั้นต่ำ</dt>
-            <dd className="m-0 text-xl font-bold text-navy">{formatBaht(s.price * s.moq)}</dd>
+            <dd className="m-0 text-xl font-bold text-ink">{formatBaht(s.price * s.moq)}</dd>
           </div>
         </dl>
 
@@ -68,7 +68,7 @@ export default function SponsorOfferPage() {
           <div className="flex flex-wrap items-center gap-1.5 text-[15px]">
             <span className="text-ink-muted">เหมาะกับสินค้าในร้าน</span>
             {s.target_product_ids.map((pid) => (
-              <span key={pid} className="rounded-full bg-brand-soft px-3 py-0.5 font-semibold text-navy">
+              <span key={pid} className="rounded-full bg-brand-soft px-3 py-0.5 font-semibold text-ink">
                 {productName(pid)}
               </span>
             ))}

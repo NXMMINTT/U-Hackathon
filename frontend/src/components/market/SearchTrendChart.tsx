@@ -28,13 +28,13 @@ export function SearchTrendChart({ values }: { values: number[] }) {
     <>
       <ResponsiveContainer width="100%" height={180}>
         <LineChart data={rows} margin={{ left: 0, right: 12, top: 8, bottom: 0 }}>
-          <CartesianGrid stroke="#F1F4F8" vertical={false} />
+          <CartesianGrid stroke="rgb(var(--line-subtle))" vertical={false} />
           <XAxis
             dataKey="week"
             tickFormatter={label}
             tick={{ fontSize: 10, fill: "#5A667A" }}
             interval={0}
-            axisLine={{ stroke: "#E3E8EF" }}
+            axisLine={{ stroke: "rgb(var(--line))" }}
             tickLine={false}
           />
           <YAxis hide domain={["dataMin - 5", "dataMax + 5"]} />

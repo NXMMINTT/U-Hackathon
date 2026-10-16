@@ -25,7 +25,7 @@ export function FeatureCard({
         {tag && (
           <span
             className={`absolute top-4 rounded-2xl px-3.5 py-2 text-[15px] font-semibold shadow-[0_6px_16px_rgba(0,0,0,.08)] ${
-              tagLeft ? "left-2 bg-white text-brand" : "right-2 bg-chat text-[#0F2A12]"
+              tagLeft ? "left-2 bg-surface text-brand" : "right-2 bg-chat text-[#0F2A12]"
             }`}
           >
             {tag}

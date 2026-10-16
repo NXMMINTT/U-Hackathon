@@ -65,8 +65,8 @@ export function TransactionEditForm({ txn, onClose }: { txn: TransactionItem; on
                 className={`min-h-[40px] flex-1 rounded-[10px] text-sm font-semibold ${
                   type === value
                     ? value === "income"
-                      ? "bg-income text-white"
-                      : "bg-expense text-white"
+                      ? "bg-income-solid text-white"
+                      : "bg-expense-solid text-white"
                     : "bg-line-subtle text-ink-body"
                 }`}
               >
@@ -114,7 +114,7 @@ export function TransactionEditForm({ txn, onClose }: { txn: TransactionItem; on
               />
             </label>
           </div>
-          {error && <p className="rounded-[10px] bg-[#FEF2F2] px-3 py-2 text-sm text-[#991B1B]">{error.message}</p>}
+          {error && <p className="rounded-[10px] bg-danger-soft px-3 py-2 text-sm text-danger-ink">{error.message}</p>}
           {update.isSuccess && !confirm.isSuccess && <p className="text-sm text-income">{f.saved}</p>}
           <div className="flex flex-wrap gap-2">
             <button

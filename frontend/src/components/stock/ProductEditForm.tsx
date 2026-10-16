@@ -46,9 +46,9 @@ export function ProductEditForm({ product, onDone }: { product: ProductItem; onD
           <input type="number" min="0" step="0.01" inputMode="decimal" value={unitCost} onChange={(e) => setUnitCost(e.target.value)} placeholder="ไม่ระบุ" className={stockInputClass} />
         </label>
       </div>
-      {error && <p className="m-0 rounded-xl bg-[#FEF2F2] px-4 py-3 text-sm text-expense">{error.message}</p>}
+      {error && <p className="m-0 rounded-xl bg-danger-soft px-4 py-3 text-sm text-expense">{error.message}</p>}
       <div className="flex flex-wrap items-center gap-2.5">
-        <button type="button" onClick={onDone} className="min-h-[42px] rounded-full border-2 border-[#C7DEFC] bg-white px-5 text-[14px] font-bold text-ink-body">
+        <button type="button" onClick={onDone} className="min-h-[42px] rounded-full border-2 border-sky-line bg-surface px-5 text-[14px] font-bold text-ink-body">
           ยกเลิก
         </button>
         <button type="submit" disabled={update.isPending || !name.trim() || !unit.trim()} className="min-h-[42px] rounded-full bg-brand px-5 text-[14px] font-bold text-white disabled:opacity-50">
@@ -65,7 +65,7 @@ export function ProductEditForm({ product, onDone }: { product: ProductItem; onD
                 await remove.mutateAsync(product.id);
                 onDone();
               }}
-              className="min-h-[42px] rounded-full bg-expense px-4 font-bold text-white disabled:opacity-50"
+              className="min-h-[42px] rounded-full bg-expense-solid px-4 font-bold text-white disabled:opacity-50"
             >
               ลบเลย
             </button>

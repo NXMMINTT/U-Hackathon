@@ -13,7 +13,7 @@ import { useLocale } from "@/lib/i18n";
 
 function Summary({ label, value, tone = "text-ink" }: { label: string; value: string; tone?: string }) {
   return (
-    <div className="rounded-[22px] bg-white px-5 py-4">
+    <div className="rounded-[22px] bg-surface px-5 py-4">
       <div className="text-[13px] text-ink-muted">{label}</div>
       <div className={`text-[24px] font-bold leading-snug ${tone}`}>{value}</div>
     </div>
@@ -57,7 +57,7 @@ export default function StockPage() {
         </section>
       )}
 
-      {error && <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{error.message}</Card>}
+      {error && <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{error.message}</Card>}
       {isLoading && <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>}
       {data?.length === 0 && !adding && <Card className="text-center text-sm text-ink-muted">{th.stock.empty}</Card>}
 
@@ -67,7 +67,7 @@ export default function StockPage() {
             <span className="sr-only">ค้นหาสินค้า</span>
             <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหาสินค้า…" className={stockInputClass} />
           </label>
-          <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-[28px] bg-white">
+          <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-[28px] bg-surface">
             {shown.map((p) => (
               <ProductRow key={p.id} product={p} />
             ))}

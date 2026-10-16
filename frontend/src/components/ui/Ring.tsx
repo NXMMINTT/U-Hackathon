@@ -5,7 +5,7 @@ export function Ring({ ratio, size = 150, color = "#FFC83D", children }: { ratio
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg viewBox="0 0 180 180" className="block h-full w-full" aria-hidden="true">
-        <circle cx="90" cy="90" r={r} fill="none" stroke="#EAF3FF" strokeWidth="18" />
+        <circle cx="90" cy="90" r={r} fill="none" stroke="rgb(var(--brand-soft))" strokeWidth="18" />
         <circle
           cx="90"
           cy="90"

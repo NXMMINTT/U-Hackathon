@@ -106,15 +106,15 @@ export default function HomePage() {
           <Link
             key={item.href}
             href={item.href}
-            className="relative flex flex-col items-center gap-2 rounded-[20px] bg-white p-4 pt-5 text-center no-underline shadow-[0_2px_12px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform"
+            className="relative flex flex-col items-center gap-2 rounded-[20px] bg-surface p-4 pt-5 text-center no-underline shadow-[0_2px_12px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform"
           >
             {item.badge && (
-              <span className="absolute -top-1.5 -right-1.5 rounded-full bg-expense px-2 py-0.5 text-[10px] font-bold text-white">
+              <span className="absolute -top-1.5 -right-1.5 rounded-full bg-expense-solid px-2 py-0.5 text-[10px] font-bold text-white">
                 {item.badge}
               </span>
             )}
             <UFox pose={item.fox} size={72} />
-            <span className="text-[13px] font-bold text-navy leading-tight">{item.label}</span>
+            <span className="text-[13px] font-bold text-ink leading-tight">{item.label}</span>
             <span className="text-[11px] text-ink-muted leading-tight whitespace-pre-line">{item.sub}</span>
           </Link>
         ))}

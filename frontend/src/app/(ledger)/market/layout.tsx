@@ -50,7 +50,7 @@ export default function MarketLayout({ children }: { children: React.ReactNode }
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={`inline-flex min-h-[44px] flex-none items-center whitespace-nowrap rounded-full px-5 text-[15px] font-semibold no-underline ${
-                active ? "bg-navy text-white" : "border-2 border-[#C7DEFC] bg-white text-ink hover:border-brand hover:text-brand"
+                active ? "bg-navy text-white" : "border-2 border-sky-line bg-surface text-ink hover:border-brand hover:text-brand"
               }`}
             >
               {item.label}
@@ -60,7 +60,7 @@ export default function MarketLayout({ children }: { children: React.ReactNode }
       </nav>
 
       {locked ? (
-        <section className="flex flex-col items-center gap-4 rounded-[32px] bg-white p-10 text-center">
+        <section className="flex flex-col items-center gap-4 rounded-[32px] bg-surface p-10 text-center">
           <UFox size={110} wave mood="wink" />
           <h2 className="m-0 text-3xl font-bold">Market Radar สำหรับสมาชิก Premium</h2>
           <p className="m-0 max-w-xl text-ink-body">ดูราคาคู่แข่งทุกแพลตฟอร์มเทียบกับต้นทุนจริงของร้าน และให้ U-Fox แนะนำราคาขาย</p>

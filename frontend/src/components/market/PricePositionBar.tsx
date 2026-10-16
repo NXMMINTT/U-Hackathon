@@ -20,11 +20,11 @@ export function PricePositionBar({
   return (
     <div className="flex flex-col gap-3">
       <div className="relative mx-3 h-24" aria-hidden="true">
-        <div className="absolute inset-x-0 top-11 h-2.5 rounded-full bg-gradient-to-r from-[#D1FAE5] via-[#E0ECFF] to-[#FDE2E2]" />
+        <div className="absolute inset-x-0 top-11 h-2.5 rounded-full bg-gradient-to-r from-success-soft via-brand-soft to-danger-soft" />
         {competitorPrices.map((p, i) => (
           <span
             key={i}
-            className={`absolute top-[40px] h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-white ${
+            className={`absolute top-[40px] h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-surface ${
               p < myPrice ? "bg-[#34D399]" : "bg-[#F08A8A]"
             }`}
             style={{ left: at(p) }}

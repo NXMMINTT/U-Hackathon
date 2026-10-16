@@ -20,14 +20,14 @@ export function ProductImagePicker({
 
   return (
     <div className="flex items-center gap-4">
-      <span className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-[20px] border-2 border-dashed border-[#C7DEFC] bg-white text-brand">
+      <span className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-[20px] border-2 border-dashed border-sky-line bg-surface text-brand">
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element -- user-uploaded product photo
           <img src={src} alt="รูปสินค้า" className="h-full w-full object-cover" />
         ) : (
           <LineIcon name="box" size={32} />
         )}
-        {busy && <span className="absolute inset-0 grid place-items-center bg-white/70 text-[13px] font-semibold text-ink">กำลังอัปโหลด…</span>}
+        {busy && <span className="absolute inset-0 grid place-items-center bg-surface/70 text-[13px] font-semibold text-ink">กำลังอัปโหลด…</span>}
       </span>
       <div className="flex flex-col items-start gap-2">
         <input

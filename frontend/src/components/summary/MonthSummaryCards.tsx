@@ -27,44 +27,44 @@ export function MonthSummaryCards({ month, previousMonth }: { month: string; pre
   const show = (key: "income" | "expense" | "net_profit") => (current.isLoading ? "…" : formatBaht(Math.abs(value(key))));
 
   if (current.error) {
-    return <p className="rounded-3xl bg-[#FDECEC] p-6 text-expense">โหลดข้อมูลไม่สำเร็จ: {current.error.message}</p>;
+    return <p className="rounded-3xl bg-danger-soft p-6 text-expense">โหลดข้อมูลไม่สำเร็จ: {current.error.message}</p>;
   }
 
   return (
-    <section className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+    <section className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
       <div className="mb-5 flex items-center gap-2">
-        <h2 className="m-0 text-[18px] font-bold text-navy">สรุปภาพรวมเดือนนี้</h2>
+        <h2 className="m-0 text-[18px] font-bold text-ink">สรุปภาพรวมเดือนนี้</h2>
         <UFox size={70} pose="commerce" className="-mr-2 -mt-4 ml-auto" />
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-[#E8F5E9] p-4">
+        <div className="rounded-2xl bg-success-soft p-4">
           <div className="mb-2 flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C8E6C9] text-[#1B5E20]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-success-line text-success-ink">
               <LineIcon name="trendUp" size={16} />
             </span>
-            <span className="text-[13px] font-semibold text-[#2E7D32]">รายรับ</span>
+            <span className="text-[13px] font-semibold text-success-ink">รายรับ</span>
           </div>
-          <div className="text-[22px] font-extrabold text-[#1B5E20]">{show("income")}</div>
+          <div className="text-[22px] font-extrabold text-success-ink">{show("income")}</div>
           <Change now={value("income")} before={before("income")} />
         </div>
 
-        <div className="rounded-2xl bg-[#FCE4EC] p-4">
+        <div className="rounded-2xl bg-danger-soft p-4">
           <div className="mb-2 flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F8BBD0] text-[#B71C1C]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-danger-line text-danger-ink">
               <LineIcon name="trendDown" size={16} />
             </span>
-            <span className="text-[13px] font-semibold text-[#C62828]">รายจ่าย</span>
+            <span className="text-[13px] font-semibold text-danger-ink">รายจ่าย</span>
           </div>
-          <div className="text-[22px] font-extrabold text-[#B71C1C]">{show("expense")}</div>
+          <div className="text-[22px] font-extrabold text-danger-ink">{show("expense")}</div>
           <Change now={value("expense")} before={before("expense")} goodWhenUp={false} />
         </div>
       </div>
 
-      <div className="flex items-center gap-4 rounded-2xl bg-[#E3F2FD] p-4">
+      <div className="flex items-center gap-4 rounded-2xl bg-sky-deep p-4">
         <div className="flex-1">
           <div className="mb-1 flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#BBDEFB] text-brand">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-line text-brand">
               <LineIcon name="barChart" size={16} />
             </span>
             <span className="text-[13px] font-semibold text-brand">{value("net_profit") < 0 ? "ขาดทุนสุทธิ" : "กำไรสุทธิ"}</span>

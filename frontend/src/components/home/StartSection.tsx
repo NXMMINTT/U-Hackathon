@@ -7,7 +7,7 @@ import { Twinkle } from "@/components/decor/Twinkle";
 export function StartSection() {
   return (
     <section aria-label="เริ่มใช้งาน" className="px-6 pb-24">
-      <div className="relative mx-auto flex max-w-[1100px] flex-col items-center gap-5 overflow-hidden rounded-[36px] bg-white px-9 py-14 text-center">
+      <div className="relative mx-auto flex max-w-[1100px] flex-col items-center gap-5 overflow-hidden rounded-[36px] bg-surface px-9 py-14 text-center">
         <Twinkle className="left-[12%] top-12 h-8 w-8" />
         <Twinkle className="left-[18%] top-24 h-4 w-4" color="#BBD8FB" />
         <Paw className="bottom-14 left-[14%] h-9 w-9 -rotate-12 opacity-80 max-sm:hidden" />

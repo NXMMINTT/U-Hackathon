@@ -31,7 +31,7 @@ export default function HomePage() {
       <SiteHeader />
       <HeroSection />
       <div className="bg-sky">
-        <div className="border-y border-sky-line bg-white/60 py-3">
+        <div className="border-y border-sky-line bg-surface/60 py-3">
           <ChatMarquee items={THINGS_PEOPLE_TYPE} />
         </div>
         <LedgerSection />

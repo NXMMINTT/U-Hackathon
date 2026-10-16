@@ -82,7 +82,7 @@ export function UFoxLive({
         {tip && (
           <span
             key={tip.n}
-            className={`block animate-pop rounded-2xl bg-white px-4 py-2.5 font-hand text-[15px] font-semibold leading-snug text-ink shadow-[0_10px_24px_rgba(21,48,90,.16)] ${
+            className={`block animate-pop rounded-2xl bg-surface px-4 py-2.5 font-hand text-[15px] font-semibold leading-snug text-ink shadow-[0_10px_24px_rgba(21,48,90,.16)] ${
               bubbleSide === "left" ? "rounded-br-sm" : "rounded-bl-sm"
             }`}
           >

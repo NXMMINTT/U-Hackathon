@@ -15,7 +15,7 @@ import type { EntryType } from "@/types/dashboard";
 const OTHER = "อื่นๆ";
 
 const inputClass =
-  "min-h-[52px] w-full rounded-xl border-2 border-[#C7DEFC] bg-white px-4 text-[16px] text-ink placeholder:text-[#8A97B1] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15 disabled:cursor-not-allowed disabled:border-line disabled:bg-line-subtle";
+  "min-h-[52px] w-full rounded-xl border-2 border-sky-line bg-surface px-4 text-[16px] text-ink placeholder:text-[#8A97B1] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15 disabled:cursor-not-allowed disabled:border-line disabled:bg-line-subtle";
 
 function Field({ label, hint, required = false, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
   return (
@@ -68,10 +68,10 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
   return (
     <div className="flex flex-col gap-5">
       {/* Header with mascot */}
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#E0F2FE] to-[#F0F7FF] px-6 py-5">
+      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-sky-deep to-brand-tint px-6 py-5">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1">
-            <p className="m-0 text-[17px] font-bold leading-snug text-navy">
+            <p className="m-0 text-[17px] font-bold leading-snug text-ink">
               {isIncome ? "บันทึกรายรับกันเลยครับ!" : "บันทึกรายจ่ายกันเลยครับ!"}
             </p>
             <p className="m-0 mt-1 text-[14px] leading-snug text-ink-muted">
@@ -84,7 +84,7 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
 
       {/* Form */}
       <form
-        className="rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)] md:p-8"
+        className="rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)] md:p-8"
         onSubmit={(e) => {
           e.preventDefault();
           void handleSubmit();
@@ -93,7 +93,7 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
         <div className="mb-6 flex items-center gap-3 border-b border-line pb-5">
           <EntryTypeIcon type={mode} />
           <div>
-            <h2 className="m-0 text-xl font-bold text-navy">{isIncome ? "รายรับ" : "รายจ่าย"}</h2>
+            <h2 className="m-0 text-xl font-bold text-ink">{isIncome ? "รายรับ" : "รายจ่าย"}</h2>
             <p className="m-0 text-[13px] text-ink-muted">
               ช่องที่มี <span className="text-expense">*</span> ต้องกรอก
             </p>
@@ -150,7 +150,7 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
                     aria-checked={active}
                     onClick={() => setCategory(active ? null : name)}
                     className={`flex min-h-[48px] items-center gap-2 rounded-full border-2 px-4 text-[15px] font-semibold transition-colors ${
-                      active ? "border-brand bg-brand text-white" : "border-[#C7DEFC] bg-white text-ink hover:border-brand"
+                      active ? "border-brand bg-brand text-white" : "border-sky-line bg-surface text-ink hover:border-brand"
                     }`}
                   >
                     <CategoryLineIcon name={name} className={active ? "text-white" : "text-brand"} />
@@ -221,20 +221,20 @@ export function TransactionEntryForm({ mode }: { mode: EntryType }) {
           </Field>
         </div>
 
-        {create.error && <p className="mt-5 rounded-xl bg-[#FEF2F2] px-4 py-3 text-sm text-expense">{create.error.message}</p>}
+        {create.error && <p className="mt-5 rounded-xl bg-danger-soft px-4 py-3 text-sm text-expense">{create.error.message}</p>}
 
         <div className="mt-7 flex gap-3">
           <button
             type="button"
             onClick={() => router.back()}
-            className="min-h-[52px] flex-1 rounded-full border-2 border-[#C7DEFC] bg-white text-[16px] font-bold text-ink-body"
+            className="min-h-[52px] flex-1 rounded-full border-2 border-sky-line bg-surface text-[16px] font-bold text-ink-body"
           >
             ยกเลิก
           </button>
           <button
             type="submit"
             disabled={!canSave}
-            className={`min-h-[52px] flex-1 rounded-full text-[16px] font-bold text-white disabled:opacity-50 ${isIncome ? "bg-income" : "bg-[#FF4081]"}`}
+            className={`min-h-[52px] flex-1 rounded-full text-[16px] font-bold text-white disabled:opacity-50 ${isIncome ? "bg-income-solid" : "bg-[#FF4081]"}`}
           >
             {create.isPending ? "กำลังบันทึก…" : isIncome ? "บันทึกรายรับ" : "บันทึกรายจ่าย"}
           </button>

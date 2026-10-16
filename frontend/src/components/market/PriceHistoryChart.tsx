@@ -70,7 +70,7 @@ export function PriceHistoryChart({
               aria-pressed={sort === key}
               onClick={() => setSort(key)}
               className={`min-h-[32px] rounded-full px-3 text-xs font-semibold ${
-                sort === key ? "bg-navy text-white" : "border border-line bg-white text-ink-body"
+                sort === key ? "bg-navy text-white" : "border border-line bg-surface text-ink-body"
               }`}
             >
               {label}
@@ -98,19 +98,19 @@ export function PriceHistoryChart({
               key={r.id}
               className={`grid grid-cols-[150px_1fr_84px_60px] items-center gap-3 px-3 py-2 text-sm ${
                 i === 0 ? "" : "border-t border-line-subtle"
-              } ${isCheapest ? "bg-[#F0FDF4]" : ""}`}
+              } ${isCheapest ? "bg-success-soft" : ""}`}
             >
               {/* name */}
               <div className="flex min-w-0 items-center gap-2">
                 <span aria-hidden="true" className="h-2.5 w-2.5 flex-none rounded-full" style={{ background: color }} />
                 <span className="truncate font-semibold text-ink-body">{r.name}</span>
-                {isCheapest && <span className="rounded-full bg-income px-1.5 py-0.5 text-[10px] font-bold text-white">ถูกสุด</span>}
+                {isCheapest && <span className="rounded-full bg-income-solid px-1.5 py-0.5 text-[10px] font-bold text-white">ถูกสุด</span>}
                 {isPriciest && <span className="rounded-full bg-line-subtle px-1.5 py-0.5 text-[10px] font-bold text-ink-faint">แพงสุด</span>}
               </div>
 
               {/* price-position bar vs. other platforms this week */}
               <div className="flex items-center gap-2">
-                <span className="w-14 text-right text-[13px] font-bold tabular-nums text-navy">{baht(r.last)}</span>
+                <span className="w-14 text-right text-[13px] font-bold tabular-nums text-ink">{baht(r.last)}</span>
                 <div className="relative h-2 flex-1 rounded-full bg-line-subtle">
                   <div
                     className="absolute inset-y-0 left-0 rounded-full"
@@ -118,7 +118,7 @@ export function PriceHistoryChart({
                   />
                   <div
                     aria-hidden="true"
-                    className="absolute top-1/2 -mt-1.5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-white shadow"
+                    className="absolute top-1/2 -mt-1.5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-surface shadow"
                     style={{ left: `${pos}%`, background: color }}
                   />
                 </div>

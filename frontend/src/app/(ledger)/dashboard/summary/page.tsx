@@ -13,7 +13,7 @@ import { useLocale } from "@/lib/i18n";
 
 type TabId = "overview" | "income" | "expense" | "products";
 
-const PRODUCT_TINTS = ["bg-[#FFE9E3] text-[#C2410C]", "bg-brand-soft text-brand", "bg-[#E6F7EE] text-income"];
+const PRODUCT_TINTS = ["bg-danger-soft text-danger-ink", "bg-brand-soft text-brand", "bg-success-soft text-income"];
 
 function monthKey(year: number, month: number): string {
   const d = new Date(year, month, 1);
@@ -25,9 +25,9 @@ function BestSellers({ month }: { month: string }) {
   const s = th.summary;
   const { data, isLoading } = useOverview(month);
   return (
-    <section className="flex flex-col gap-4 rounded-[28px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+    <section className="flex flex-col gap-4 rounded-[28px] bg-surface p-6 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between">
-        <h2 className="m-0 text-[18px] font-bold text-navy">{s.bestSellers}</h2>
+        <h2 className="m-0 text-[18px] font-bold text-ink">{s.bestSellers}</h2>
         <Link href="/stock" className="text-[14px] font-semibold text-brand no-underline">
           {s.viewStock}
         </Link>
@@ -86,7 +86,7 @@ export default function SummaryPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div role="tablist" aria-label={tabs.overview} className="flex gap-2 rounded-full bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+      <div role="tablist" aria-label={tabs.overview} className="flex gap-2 rounded-full bg-surface p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -108,11 +108,11 @@ export default function SummaryPage() {
           type="button"
           onClick={prevMonth}
           aria-label={s.prevMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-ink-muted shadow-sm"
         >
           ‹
         </button>
-        <span className="text-[16px] font-bold text-navy">
+        <span className="text-[16px] font-bold text-ink">
           {s.months[month]} {year + 543}
         </span>
         <button
@@ -120,7 +120,7 @@ export default function SummaryPage() {
           onClick={nextMonth}
           disabled={isCurrentMonth}
           aria-label={s.nextMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm disabled:opacity-40"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-ink-muted shadow-sm disabled:opacity-40"
         >
           ›
         </button>

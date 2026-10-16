@@ -28,7 +28,7 @@ export default function ProductPage() {
   const [fee, setFee] = useState(10);
   const [showAll, setShowAll] = useState(false);
 
-  if (catalog.error) return <Card className="border-[#FECACA] bg-[#FEF2F2] text-sm text-[#991B1B]">{catalog.error.message}</Card>;
+  if (catalog.error) return <Card className="border-danger-line bg-danger-soft text-sm text-danger-ink">{catalog.error.message}</Card>;
   if (!catalog.data) return <Card className="text-center text-sm text-ink-muted">{th.myBusiness.loading}</Card>;
 
   const p = catalog.data.products.find((x) => x.product_id === id);
@@ -97,17 +97,17 @@ export default function ProductPage() {
               .replace("{sold}", p.sold_per_month.toLocaleString("en-US"))}
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl bg-[#ECFDF5] px-4 py-3.5 text-[#065F46]">
+            <div className="rounded-xl bg-success-soft px-4 py-3.5 text-success-ink">
               <div className="text-xs">{t.bestTotal}</div>
               <div className="text-[22px] font-bold">{baht(best.total)}</div>
               <div className="text-xs">{best.name}</div>
             </div>
             <div className="rounded-xl bg-line-subtle px-4 py-3.5 text-ink-body">
               <div className="text-xs">{t.worstTotal}</div>
-              <div className="text-[22px] font-bold text-navy">{baht(worst.total)}</div>
+              <div className="text-[22px] font-bold text-ink">{baht(worst.total)}</div>
               <div className="text-xs">{worst.name}</div>
             </div>
-            <div className="rounded-xl bg-brand-soft px-4 py-3.5 text-[#1E40AF]">
+            <div className="rounded-xl bg-brand-soft px-4 py-3.5 text-[#1E40AF] dark:text-brand-light">
               <div className="text-xs">{t.maxSave}</div>
               <div className="text-[22px] font-bold">{baht(save)}</div>
               <div className="text-xs">{worst.total ? `${Math.round((save / worst.total) * 100)}%` : ""}</div>
@@ -135,17 +135,17 @@ export default function ProductPage() {
                 type="button"
                 aria-pressed={sort === key}
                 onClick={() => setSort(key)}
-                className={`min-h-[36px] rounded-[10px] px-3 text-sm ${sort === key ? "bg-navy font-semibold text-white" : "border border-line bg-white text-ink-body"}`}
+                className={`min-h-[36px] rounded-[10px] px-3 text-sm ${sort === key ? "bg-navy font-semibold text-white" : "border border-line bg-surface text-ink-body"}`}
               >
                 {label}
               </button>
             ))}
           </div>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-[#E6EBF2]">
+        <div className="overflow-x-auto rounded-xl border border-line">
           <table className="w-full min-w-[860px] border-collapse text-sm">
             <thead>
-              <tr className="bg-[#F5F7FA] text-left text-xs text-ink-muted">
+              <tr className="bg-line-subtle text-left text-xs text-ink-muted">
                 <th className="px-3.5 py-3 font-semibold">{t.colPlatform}</th>
                 <th className="px-3.5 py-3 font-semibold">{t.colMatch}</th>
                 <th className="px-3.5 py-3 text-right font-semibold">{t.colPrice}</th>
@@ -160,7 +160,7 @@ export default function ProductPage() {
               {(showAll ? sorted : sorted.slice(0, TOP_ROWS)).map((o) => {
                 const isBest = o.platform_id === best.platform_id;
                 return (
-                  <tr key={o.platform_id} className={`border-t border-[#E6EBF2] ${isBest ? "bg-[#F0FDF4]" : ""}`}>
+                  <tr key={o.platform_id} className={`border-t border-line ${isBest ? "bg-success-soft" : ""}`}>
                     <td className="px-3.5 py-3">
                       <div className="flex items-center gap-2.5">
                         <PlatformBadge id={o.platform_id} name={o.name} />
@@ -198,7 +198,7 @@ export default function ProductPage() {
           <button
             type="button"
             onClick={() => setShowAll((v) => !v)}
-            className="min-h-[44px] self-center rounded-full border-2 border-[#C7DEFC] bg-white px-6 font-semibold text-brand hover:border-brand"
+            className="min-h-[44px] self-center rounded-full border-2 border-sky-line bg-surface px-6 font-semibold text-brand hover:border-brand"
           >
             {showAll ? "ย่อเหลือ 10 อันดับ" : `ดูทั้งหมด ${sorted.length} ร้าน`}
           </button>
@@ -227,7 +227,7 @@ export default function ProductPage() {
           <p className="text-sm leading-relaxed">{insight}</p>
           <Link
             href="/market/chat"
-            className="inline-flex min-h-[40px] items-center self-start rounded-[10px] bg-white px-4 text-sm font-semibold text-navy"
+            className="inline-flex min-h-[40px] items-center self-start rounded-[10px] bg-surface px-4 text-sm font-semibold text-ink"
           >
             {t.askAI}
           </Link>
@@ -268,7 +268,7 @@ export default function ProductPage() {
               <div className="text-xs text-ink-muted">{th.marketRadar.compare.feeBaht}</div>
               <div className="text-xl font-bold">{baht(feeBaht)}</div>
             </div>
-            <div className={`rounded-xl px-4 py-3 text-white ${profit >= 0 ? "bg-navy" : "bg-expense"}`}>
+            <div className={`rounded-xl px-4 py-3 text-white ${profit >= 0 ? "bg-navy" : "bg-expense-solid"}`}>
               <div className="text-xs text-[#CBD5E1]">{th.marketRadar.compare.profit}</div>
               <div className="text-xl font-bold">{baht(profit)}</div>
               <div className="text-xs text-[#6EE7B7]">
