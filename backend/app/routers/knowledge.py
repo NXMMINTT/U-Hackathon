@@ -1,4 +1,5 @@
 import base64
+import time
 from datetime import date
 
 from fastapi import APIRouter, HTTPException
@@ -10,6 +11,11 @@ from app.routers.voice import _synthesize
 from app.core.ai_provider_settings import GEMINI_MODEL
 
 router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
+
+MAX_SCRIPT_TOKENS = 320
+# A topic's script is the same all day, so cache it and avoid repeat Gemini calls.
+SCRIPT_CACHE_SECONDS = 6 * 60 * 60
+_script_cache: dict[str, tuple[float, str]] = {}
 
 SCRIPT_SYSTEM_PROMPT = """คุณคือผู้ประกาศข่าวธุรกิจสั้นประจำวันของแอป U-Ledger AI
 สำหรับพ่อค้าแม่ค้าออนไลน์ SME ไทย เขียนสคริปต์พูดความยาวประมาณ 45-60 วินาที (ราว 120-150 คำ)
@@ -42,6 +48,10 @@ def _todays_topic() -> dict:
 
 
 def _generate_script(topic: dict) -> str:
+    cached = _script_cache.get(topic["topic_id"])
+    if cached and time.monotonic() < cached[0]:
+        return cached[1]
+
     client = get_client()
     outline = "\n".join(f"- {point}" for point in topic["outline"])
     user_prompt = f"หัวข้อ: {topic['title']}\nหมวด: {topic['category']}\nประเด็นที่ต้องพูดถึง:\n{outline}"
@@ -49,6 +59,7 @@ def _generate_script(topic: dict) -> str:
     try:
         completion = client.chat.completions.create(
             model=GEMINI_MODEL,
+            max_tokens=MAX_SCRIPT_TOKENS,
             messages=[
                 {"role": "system", "content": SCRIPT_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
@@ -57,7 +68,10 @@ def _generate_script(topic: dict) -> str:
     except Exception as exc:  # noqa: BLE001 - surface upstream error to caller
         raise HTTPException(status_code=502, detail=f"เรียก Gemini ไม่สำเร็จ: {exc}") from exc
 
-    return (completion.choices[0].message.content or "").strip()
+    script = (completion.choices[0].message.content or "").strip()
+    if script:
+        _script_cache[topic["topic_id"]] = (time.monotonic() + SCRIPT_CACHE_SECONDS, script)
+    return script
 
 
 @router.get("/topics")
@@ -84,6 +98,12 @@ def daily_audio():
         script=script,
         audio_base64=base64.b64encode(audio).decode("ascii"),
     )
+
+
+@router.get("/topics/{topic_id}/script")
+def topic_script(topic_id: str):
+    topic = _find_topic(topic_id)
+    return {**topic, "script": _generate_script(topic)}
 
 
 @router.get("/topics/{topic_id}/audio", response_model=TopicAudioResponse)

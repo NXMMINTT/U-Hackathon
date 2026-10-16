@@ -11,6 +11,7 @@ const MENU_ITEMS: { href: string; fox: FoxPose; label: string; sub: string; badg
   { href: "/dashboard/summary", fox: "idea", label: "สรุปภาพรวม", sub: "ดูรายรับ-รายจ่าย\nรายเดือน" },
   { href: "/stock", fox: "commerce", label: "จัดการสินค้า", sub: "เช็ครายการสินค้า\nและสต็อก" },
   { href: "/market", fox: "radar", label: "ดูตลาดคู่แข่ง", sub: "ส่งสินค้า / เทรนด์\nต่างประเทศ", badge: "ใหม่" },
+  { href: "/knowledge", fox: "idea", label: "ความรู้/ข่าวสาร", sub: "เกร็ดภาษี-การตลาด\nสำหรับร้าน", badge: "ใหม่" },
   { href: "/market/plans", fox: "proud", label: "อัปเกรดแพ็คเกจ", sub: "ฟีเจอร์เพิ่มเติม\nเพื่อธุรกิจของคุณ" },
 ];
 
