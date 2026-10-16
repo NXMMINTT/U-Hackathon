@@ -52,6 +52,14 @@ summary:focus-visible {
   0%, 92%, 100% { transform: scaleY(1); }
   95% { transform: scaleY(0.1); }
 }
+.animate-loading-progress {
+  animation: loading-progress 1.8s ease-in-out infinite;
+  transform-origin: left center;
+}
+@keyframes loading-progress {
+  0%, 100% { transform: translateX(-8%) scaleX(.82); opacity: .78; }
+  50% { transform: translateX(24%) scaleX(1); opacity: 1; }
+}
 .ubot-eyes {
   transform-box: fill-box;
   transform-origin: center;
