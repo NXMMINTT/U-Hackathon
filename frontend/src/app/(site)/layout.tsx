@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { LiffStateHandler } from "@/components/LiffStateHandler";
+
 import { fontVariables } from "../fonts";
 import "../globals.css";
 
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="th" className={`${fontVariables} scroll-smooth`}>
-      <body className="font-sans text-[17px] leading-relaxed">{children}</body>
+      <body className="font-sans text-[17px] leading-relaxed">
+        <LiffStateHandler />
+        {children}
+      </body>
     </html>
   );
 }

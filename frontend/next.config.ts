@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
+const BACKEND_URL = (process.env.BACKEND_URL ?? "http://localhost:8000").trim();
 
 const nextConfig: NextConfig = {
   // One public origin for everything (LIFF, tunnel, phone): the browser calls /api/* on this

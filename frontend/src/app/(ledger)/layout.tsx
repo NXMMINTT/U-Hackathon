@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { LiffAuthGate } from "@/components/LiffAuthGate";
 import { NavTabs, SiteHeader } from "@/components/NavTabs";
 import { QueryProvider } from "@/components/QueryProvider";
 
@@ -17,13 +18,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <html lang="th" className={fontVariables}>
       <body className="min-h-screen bg-brand-tint font-sans text-[17px] leading-relaxed">
         <QueryProvider>
-          <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="mx-auto w-full max-w-[1160px] flex-1 px-4 pb-28 pt-6 md:px-6 md:pb-16 md:pt-8">
-              {children}
-            </main>
-            <NavTabs />
-          </div>
+          <LiffAuthGate>
+            <div className="flex min-h-screen flex-col">
+              <SiteHeader />
+              <main className="mx-auto w-full max-w-[1160px] flex-1 px-4 pb-28 pt-6 md:px-6 md:pb-16 md:pt-8">
+                {children}
+              </main>
+              <NavTabs />
+            </div>
+          </LiffAuthGate>
         </QueryProvider>
       </body>
     </html>

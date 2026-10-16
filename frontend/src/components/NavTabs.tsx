@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/brand";
+import { LineProfileBadge } from "@/components/LineProfileBadge";
 
 // The app's two tabs (spec 2.1 / 2.2). Transactions and stock live under ร้านของฉัน.
 const TABS = [
@@ -42,9 +43,12 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <Link href="/" className="text-[15px] font-medium text-ink-muted no-underline hover:text-brand">
-          หน้าแรก
-        </Link>
+        <div className="flex items-center gap-4">
+          <LineProfileBadge />
+          <Link href="/" className="text-[15px] font-medium text-ink-muted no-underline hover:text-brand">
+            หน้าแรก
+          </Link>
+        </div>
       </div>
     </header>
   );

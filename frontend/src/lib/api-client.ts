@@ -1,7 +1,7 @@
 import { getIdToken, isLiffConfigured } from "./liff";
 
 // Empty = same origin; next.config.ts forwards /api/* to FastAPI (needed for LIFF / phones).
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim();
 const JWT_STORAGE_KEY = "u-ledger-jwt";
 
 export function getStoredJwt(): string | null {
@@ -21,7 +21,7 @@ let sessionPromise: Promise<void> | null = null;
 
 /** Inside LIFF: exchanges the LINE ID token for our JWT once. Without LIFF
  * (local dev / demo) the backend serves the seeded demo shop, so no-op. */
-function ensureSession(): Promise<void> {
+export function ensureSession(): Promise<void> {
   if (!isLiffConfigured() || getStoredJwt()) return Promise.resolve();
   sessionPromise ??= (async () => {
     const idToken = await getIdToken();
