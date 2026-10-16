@@ -22,10 +22,11 @@ export function initLiff(): Promise<void> {
 export async function ensureLoggedIn(): Promise<void> {
   await initLiff();
   if (!LIFF_ID) return;
-  // Return to the page the user is on. The endpoint URL is the site root, so any
-  // in-app path is under it, which is what LINE requires for redirectUri.
+  // redirectUri must exactly match a Callback URL registered on the LINE Login channel.
+  // Only the site origin is registered, so use it (not the full path) to avoid
+  // "invalid url" 400. liff.state deep links still route after login via LiffStateHandler.
   if (!liff.isLoggedIn()) {
-    liff.login({ redirectUri: window.location.href });
+    liff.login({ redirectUri: window.location.origin });
   }
 }
 
